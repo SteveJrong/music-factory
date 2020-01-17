@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.stevejrong.music.factory.module"/>
+
+    <!--Flac格式的音频文件，元数据解析器-->
+    <bean id="flacMetadataQueryResolver" class="com.stevejrong.music.factory.analysis.metadata.query.resolver.impl.FlacMetadataQueryResolver"/>
+    <!--MP3格式的音频文件，元数据解析器-->
+    <bean id="mp3MetadataQueryResolver" class="com.stevejrong.music.factory.analysis.metadata.query.resolver.impl.Mp3MetadataQueryResolver"/>
+
+    <!--Flac格式的音频文件，元数据存储器-->
+    <bean id="flacMetadataPersistResolver" class="com.stevejrong.music.factory.analysis.metadata.persist.resolver.impl.FlacMetadataPersistResolver"/>
+    <!--MP3格式的音频文件，元数据存储器-->
+    <bean id="mp3MetadataPersistResolver" class="com.stevejrong.music.factory.analysis.metadata.persist.resolver.impl.Mp3MetadataPersistResolver"/>
+
+    <!--QQ音乐第三方数据源-->
+    <bean id="qqMusicDataSource" class="com.stevejrong.music.factory.analysis.datasource.impl.qqmusic.QQMusicDataSourceImpl"/>
+    <!--QQ音乐歌曲搜索返回的音乐信息解析器-->
+    <bean id="qqMusicInfoResolver" class="com.stevejrong.music.factory.analysis.datasource.impl.qqmusic.QQMusicInfoResolver"/>
+
+    <!--业务模块：分析原始音频文件-->
+    <bean id="analysisOriginalMusicFileModule" class="com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule">
+        <property name="springConfigurationFileName" value="application-bean.xml"/>
+        <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
+    </bean>
+
+    <!--业务模块：补全音乐元数据信息-->
+    <bean id="complementsMusicInfoModule" class="com.stevejrong.music.factory.module.impl.ComplementsMusicInfoModule">
+        <property name="springConfigurationFileName" value="application-bean.xml"/>
+        <property name="partnerDataSourceBeanName" value="qqMusicDataSource"/>
+        <property name="partnerMusicInfoResolverBeanName" value="qqMusicInfoResolver"/>
+    </bean>
+
+    <!--日志记录基础Bean-->
+    <bean id="businessModuleAdvice" class="com.stevejrong.music.factory.log.aspect.BusinessModuleAdvice"/>
+
+    <!--分析原始音频文件的日志记录业务类-->
+    <bean id="analysisOriginalMusicFileModuleLogService" class="com.stevejrong.music.factory.log.service.impl.AnalysisOriginalMusicFileModuleLogServiceImpl"/>
+    <!--补全音乐元数据信息的日志记录业务类-->
+    <bean id="complementsMusicInfoModuleLogService" class="com.stevejrong.music.factory.log.service.impl.ComplementsMusicInfoModuleLogServiceImpl"/>
+
+    <aop:aspectj-autoproxy/>
+    <aop:config proxy-target-class="true">
+        <!--分析原始音频文件 切入点-->
+        <aop:pointcut expression="execution(* com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule.doAction(..))" id="analysisOriginalMusicFileModulePointcut"/>
+
+        <!--补全音乐元数据信息 切入点-->
+        <aop:pointcut expression="execution(* com.stevejrong.music.factory.module.impl.ComplementsMusicInfoModule.doAction(..))" id="complementsMusicInfoModulePointcut"/>
+
+        <aop:aspect ref="businessModuleAdvice">
+            <aop:after-returning method="afterReturn" returning="returnObject" pointcut-ref="analysisOriginalMusicFileModulePointcut"/>
+            <aop:after-throwing method="afterException" pointcut-ref="analysisOriginalMusicFileModulePointcut"/>
+
+            <aop:after-returning method="afterReturn" returning="returnObject" pointcut-ref="complementsMusicInfoModulePointcut"/>
+            <aop:after-throwing method="afterException" pointcut-ref="complementsMusicInfoModulePointcut"/>
+        </aop:aspect>
+    </aop:config>
+</beans>

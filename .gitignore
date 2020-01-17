@@ -1,0 +1,30 @@
+# 忽略Gradle组件文件夹
+gradle/
+.gradle/
+# 忽略Gradle编译项目后的文件夹
+out/
+build/
+# 忽略IDEA模块目录
+.idea/
+log/
+temp/
+
+# 忽略已编译文件
+*.class
+# 忽略日志文件
+*.log
+# 忽略已打包文件
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+# 忽略IDEA模块文件
+*.iml
+# 忽略Gradle生成的多余脚本
+gradlew
+*.bat
+# 忽略macOS下的多余文件
+.DS_Store

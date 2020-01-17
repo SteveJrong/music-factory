@@ -1,0 +1,14 @@
+/**
+ * 全局版本配置
+ */
+ext {
+    project = [
+            groupName     : "com.stevejrong",
+            projectVersion: "1.0.0-SNAPSHOT"
+    ]
+
+    dependencies = [
+            jUnLitVersion                      : '4.12',
+            hamcrestVersion                   : '1.3'
+    ]
+}
