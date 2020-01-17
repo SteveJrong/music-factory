@@ -18,7 +18,7 @@ tasks.withType(JavaCompile) {
 // 设置编译时的编码
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-// 设置根项目的软件源库
+// 设置项目的软件源库
 repositories {
     mavenLocal()
     maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
@@ -26,13 +26,13 @@ repositories {
 }
 
 dependencies {
-    compile("net.jthink:jaudiotagger:2.2.6-PATHRIK")
-    compile("com.google.guava:guava:28.2-jre")
-    compile("com.alibaba:fastjson:1.2.62")
-    compile("com.squareup.okhttp3:okhttp:3.10.0")
-    compile("org.apache.commons:commons-lang3:3.9")
-    compile("org.springframework:spring-context:5.2.2.RELEASE")
-    compile("org.projectlombok:lombok:1.18.10")
-    compile("org.aspectj:aspectjweaver:1.9.5")
+    compile("org.springframework:spring-context:$rootProject.ext.dependencies.springContextVersion")
+    compile("org.aspectj:aspectjweaver:$rootProject.ext.dependencies.aspectjweaverVersion")
 
+    compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
+    compile("com.alibaba:fastjson:$rootProject.ext.dependencies.fastjsonVersion")
+    compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
+    compile("org.projectlombok:lombok:$rootProject.ext.dependencies.lombokVersion")
+    compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
+    compile("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
 }

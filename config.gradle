@@ -8,7 +8,16 @@ ext {
     ]
 
     dependencies = [
-            jUnLitVersion                      : '4.12',
-            hamcrestVersion                   : '1.3'
+            springContextVersion: '5.2.2.RELEASE',
+            aspectjweaverVersion: '1.9.5',
+            jAudioTaggerVersion : '2.2.6-PATHRIK',
+            fastjsonVersion     : '1.2.62',
+            okHttpVersion       : '3.10.0',
+            lombokVersion       : '1.18.10',
+            guavaVersion        : '28.2-jre',
+            commonsLang3Version : '3.9',
+
+            jUnLitVersion       : '4.12',
+            hamcrestVersion     : '1.3'
     ]
 }
