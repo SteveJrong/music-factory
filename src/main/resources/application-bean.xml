@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.stevejrong.music.factory.module"/>
+    <context:component-scan base-package="com.stevejrong.music.factory.module,com.stevejrong.music.factory.log.aspect"/>
 
     <!--Flac格式的音频文件，元数据解析器-->
     <bean id="flacMetadataQueryResolver" class="com.stevejrong.music.factory.analysis.metadata.query.resolver.impl.FlacMetadataQueryResolver"/>
@@ -30,7 +30,7 @@
     <!--业务模块：分析原始音频文件-->
     <bean id="analysisOriginalMusicFileModule" class="com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule">
         <property name="springConfigurationFileName" value="application-bean.xml"/>
-        <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
+        <property name="musicFileDirectory" value="\\DESKTOP-NQSKNL5\musictest"/>
     </bean>
 
     <!--业务模块：补全音乐元数据信息-->
@@ -58,10 +58,10 @@
 
         <aop:aspect ref="businessModuleAdvice">
             <aop:after-returning method="afterReturn" returning="returnObject" pointcut-ref="analysisOriginalMusicFileModulePointcut"/>
-            <aop:after-throwing method="afterException" pointcut-ref="analysisOriginalMusicFileModulePointcut"/>
+            <aop:after-throwing method="afterException" arg-names="exception" throwing="exception" pointcut-ref="analysisOriginalMusicFileModulePointcut"/>
 
             <aop:after-returning method="afterReturn" returning="returnObject" pointcut-ref="complementsMusicInfoModulePointcut"/>
-            <aop:after-throwing method="afterException" pointcut-ref="complementsMusicInfoModulePointcut"/>
+            <aop:after-throwing method="afterException" arg-names="exception" throwing="exception" pointcut-ref="complementsMusicInfoModulePointcut"/>
         </aop:aspect>
     </aop:config>
 </beans>

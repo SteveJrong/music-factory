@@ -19,4 +19,9 @@ public final class StringUtil {
 
         return encodeResult;
     }
+
+    public static String replaceSpecialCharOfDirectoryByWindows(String sourceString) {
+        return sourceString.replaceAll("[/\\\\:*?|]", "-")
+                .replaceAll("[\"<>]", "-");
+    }
 }

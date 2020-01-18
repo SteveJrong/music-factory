@@ -42,6 +42,9 @@ public class BaseConstants {
     public static final String ANALYSIS_ORIGINAL_MUSIC_FILE_MODULE_LOG_NAME = "analysis_original_music_file_module_log_"
             .concat(DateTimeUtil.formatDate(DateTimeUtil.YYYYMMDD_HHMMSS_FORMAT_WITHOUT_SYMBOL, DateTimeUtil.getDateByNow()));
 
-    public static final String COMPLEMENTS_MUSIC_INFO_MODULE_LOG_NAME = "complements_music_info_module_log_"
+    public static final String COMPLEMENTS_SUCCESS_MUSIC_INFO_MODULE_LOG_NAME = "complements_success_music_info_module_log_"
+            .concat(DateTimeUtil.formatDate(DateTimeUtil.YYYYMMDD_HHMMSS_FORMAT_WITHOUT_SYMBOL, DateTimeUtil.getDateByNow()));
+
+    public static final String COMPLEMENTS_FAILURE_SUCCESS_MUSIC_INFO_MODULE_LOG_NAME = "complements_failure_music_info_module_log_"
             .concat(DateTimeUtil.formatDate(DateTimeUtil.YYYYMMDD_HHMMSS_FORMAT_WITHOUT_SYMBOL, DateTimeUtil.getDateByNow()));
 }

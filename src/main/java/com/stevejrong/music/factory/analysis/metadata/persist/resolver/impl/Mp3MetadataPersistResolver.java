@@ -10,9 +10,7 @@ import org.jaudiotagger.tag.FieldDataInvalidException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.id3.AbstractID3v2Frame;
-import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
-import org.jaudiotagger.tag.id3.ID3v23Tag;
+import org.jaudiotagger.tag.id3.*;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
 import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.ArtworkFactory;
@@ -104,7 +102,7 @@ public class Mp3MetadataPersistResolver implements IFileMetadataPersistResolver 
 
     @Override
     public void persistMetadata(AudioFile audioFile, Tag tag) {
-        ((MP3File) audioFile).setID3v2Tag((ID3v23Tag) tag);
+        ((MP3File) audioFile).setID3v2Tag((AbstractID3v2Tag) tag);
         try {
             ((MP3File) audioFile).save();
         } catch (IOException | TagException e) {

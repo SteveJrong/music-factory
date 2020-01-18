@@ -1,5 +1,7 @@
 package com.stevejrong.music.factory.analysis.datasource;
 
+import com.stevejrong.music.factory.common.exception.NoSearchResultOfSongException;
+
 /**
  * 第三方音乐信息解析器接口
  */
@@ -11,5 +13,5 @@ public interface IPartnerMusicInfoResolver<T> {
      * @param searchSongResult
      * @return
      */
-    T getMusicInfoBySearchSongResult(String searchSongResult);
+    T getMusicInfoBySearchSongResult(String searchSongResult) throws NoSearchResultOfSongException;
 }

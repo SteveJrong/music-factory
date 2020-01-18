@@ -3,6 +3,7 @@ package com.stevejrong.music.factory.analysis.metadata.persist.resolver.impl;
 import com.stevejrong.music.factory.analysis.metadata.persist.resolver.IFileMetadataPersistResolver;
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.util.FileUtil;
+import com.stevejrong.music.factory.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
@@ -79,7 +80,9 @@ public class FlacMetadataPersistResolver implements IFileMetadataPersistResolver
             Artwork artwork = null;
             try {
                 artwork = ArtworkFactory.createArtworkFromFile(FileUtil.byteArrayToFile(albumPicByteArray,
-                        BaseConstants.ARTWORK_TEMP_DIRECTORY + File.separator + songName + "-" + singerName + ".jpg"));
+                        BaseConstants.ARTWORK_TEMP_DIRECTORY + File.separator
+                                + StringUtil.replaceSpecialCharOfDirectoryByWindows(songName) + "-"
+                                + StringUtil.replaceSpecialCharOfDirectoryByWindows(singerName) + ".jpg"));
             } catch (IOException e) {
                 e.printStackTrace();
             }

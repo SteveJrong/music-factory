@@ -1,11 +1,27 @@
 apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
 apply from: 'config.gradle'
 
-// 组织名
-group ext.project.groupName
-// 版本号
-version ext.project.projectVersion
+buildscript {
+    // 设置在构建项目时的软件源库
+    repositories {
+        mavenLocal()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
+
+    // 设置引用在构建项目时的插件
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
+    }
+}
+
+// Jar包基础名称
+def jarBaseName = ext.project.projectName
+// Jar包版本号
+def jarVersion = ext.project.projectVersion
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -17,6 +33,25 @@ tasks.withType(JavaCompile) {
 
 // 设置编译时的编码
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// 设置项目的资源目录位置
+sourceSets.main.resources.srcDirs = ["src/main/java", "src/main/resources"]
+
+mainClassName = 'com.stevejrong.music.factory.boot.MusicFactoryApplication'
+
+// 设置Jar包属性
+jar {
+    // 生成Jar包的基础名
+    baseName = jarBaseName
+    // 生成Jar包的版本号
+    version jarVersion
+
+    // 生成Jar包的manifest清单属性
+    manifest {
+        attributes 'Manifest-Version': 1.0,
+                'Main-Class': 'com.stevejrong.music.factory.boot.MusicFactoryApplication'
+    }
+}
 
 // 设置项目的软件源库
 repositories {

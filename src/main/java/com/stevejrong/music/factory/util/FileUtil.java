@@ -42,8 +42,15 @@ public final class FileUtil {
         String[] keywords = new String[2];
         String keywords1, keywords2;
 
-        keywords1 = fileName.substring(0, fileName.indexOf("-")).trim();
-        keywords2 = fileName.substring(fileName.indexOf("-") + 1).trim();
+        if (fileName.contains("-")) {
+            keywords1 = fileName.substring(0, fileName.indexOf("-")).replace("+", " ").trim();
+            keywords2 = fileName.substring(fileName.indexOf("-") + 1).replace("+", " ").trim();
+
+        } else {
+            keywords1 = fileName.replace("+", " ").trim();
+            keywords2 = "";
+        }
+
 
         keywords[0] = keywords1;
         keywords[1] = keywords2;

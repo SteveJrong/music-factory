@@ -7,6 +7,7 @@ import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.PartnerApiEnums;
 import com.stevejrong.music.factory.util.HttpUtil;
 import com.stevejrong.music.factory.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
@@ -35,7 +36,11 @@ public class QQMusicDataSourceImpl extends AbstractPartnerDataSource implements 
         requestParams.put("n", "2");
 
         StringBuffer sb = new StringBuffer();
-        for (String keyword: keywords) {
+        for (String keyword : keywords) {
+            if (StringUtils.isEmpty(keyword) || StringUtils.isBlank(keyword)) {
+                continue;
+            }
+
             sb.append(keyword).append(" ");
         }
         requestParams.put("w", StringUtil.urlEncode(sb.toString().trim()));

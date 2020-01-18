@@ -4,6 +4,7 @@
 ext {
     project = [
             groupName     : "com.stevejrong",
+            projectName   : "music-factory",
             projectVersion: "1.0.0-SNAPSHOT"
     ]
 
