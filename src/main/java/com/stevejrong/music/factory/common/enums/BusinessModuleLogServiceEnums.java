@@ -1,7 +1,7 @@
 package com.stevejrong.music.factory.common.enums;
 
-import com.stevejrong.music.factory.log.service.impl.AnalysisOriginalMusicFileModuleLogServiceImpl;
-import com.stevejrong.music.factory.log.service.impl.ComplementsMusicInfoModuleLogServiceImpl;
+import com.stevejrong.music.factory.logs.service.impl.AnalysisOriginalMusicFileModuleLogServiceImpl;
+import com.stevejrong.music.factory.logs.service.impl.ComplementsMusicInfoModuleLogServiceImpl;
 import com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule;
 import com.stevejrong.music.factory.module.impl.ComplementsMusicInfoModule;
 

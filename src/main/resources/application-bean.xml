@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.stevejrong.music.factory.module,com.stevejrong.music.factory.log.aspect"/>
+    <context:component-scan base-package="com.stevejrong.music.factory.module,com.stevejrong.music.factory.logs.aspect"/>
 
     <!--Flac格式的音频文件，元数据解析器-->
     <bean id="flacMetadataQueryResolver" class="com.stevejrong.music.factory.analysis.metadata.query.resolver.impl.FlacMetadataQueryResolver"/>
@@ -27,10 +27,14 @@
     <!--QQ音乐歌曲搜索返回的音乐信息解析器-->
     <bean id="qqMusicInfoResolver" class="com.stevejrong.music.factory.analysis.datasource.impl.qqmusic.QQMusicInfoResolver"/>
 
+    <!-- Flac音频文件转换为Apple Lossless音频文件格式转换器 -->
+    <bean id="flacToM4aAlacConverter" class="com.stevejrong.music.factory.transcode.converter.impl.FlacToM4aAlacConverter"/>
+
     <!--业务模块：分析原始音频文件-->
     <bean id="analysisOriginalMusicFileModule" class="com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule">
         <property name="springConfigurationFileName" value="application-bean.xml"/>
         <property name="musicFileDirectory" value="\\DESKTOP-NQSKNL5\musictest"/>
+<!--        <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>-->
     </bean>
 
     <!--业务模块：补全音乐元数据信息-->
@@ -40,14 +44,26 @@
         <property name="partnerMusicInfoResolverBeanName" value="qqMusicInfoResolver"/>
     </bean>
 
+    <!--业务模块：音频文件格式转换-->
+    <bean id="musicFormatConvertModule" class="com.stevejrong.music.factory.module.impl.MusicFormatConvertModule">
+        <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
+        <property name="convertedMusicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
+        <property name="convertRules">
+            <map>
+                <entry key="flac" value="m4a_alac"/>
+            </map>
+        </property>
+    </bean>
+
     <!--日志记录基础Bean-->
-    <bean id="businessModuleAdvice" class="com.stevejrong.music.factory.log.aspect.BusinessModuleAdvice"/>
+    <bean id="businessModuleAdvice" class="com.stevejrong.music.factory.logs.aspect.BusinessModuleAdvice"/>
 
     <!--分析原始音频文件的日志记录业务类-->
-    <bean id="analysisOriginalMusicFileModuleLogService" class="com.stevejrong.music.factory.log.service.impl.AnalysisOriginalMusicFileModuleLogServiceImpl"/>
+    <bean id="analysisOriginalMusicFileModuleLogService" class="com.stevejrong.music.factory.logs.service.impl.AnalysisOriginalMusicFileModuleLogServiceImpl"/>
     <!--补全音乐元数据信息的日志记录业务类-->
-    <bean id="complementsMusicInfoModuleLogService" class="com.stevejrong.music.factory.log.service.impl.ComplementsMusicInfoModuleLogServiceImpl"/>
+    <bean id="complementsMusicInfoModuleLogService" class="com.stevejrong.music.factory.logs.service.impl.ComplementsMusicInfoModuleLogServiceImpl"/>
 
+    <!-- 日志切面 -->
     <aop:aspectj-autoproxy/>
     <aop:config proxy-target-class="true">
         <!--分析原始音频文件 切入点-->
@@ -64,4 +80,22 @@
             <aop:after-throwing method="afterException" arg-names="exception" throwing="exception" pointcut-ref="complementsMusicInfoModulePointcut"/>
         </aop:aspect>
     </aop:config>
+
+    <!-- Spring线程池 -->
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 核心线程数 -->
+        <property name="corePoolSize" value="5" />
+        <!-- 线程池维护线程的最大数量 -->
+        <property name="maxPoolSize" value="10" />
+        <!-- 允许的空闲时间, 默认60秒 -->
+        <property name="keepAliveSeconds" value="60" />
+        <!-- 任务队列 -->
+        <property name="queueCapacity" value="50" />
+        <!-- 线程超过空闲时间限制，均会退出直到线程数量为0 -->
+        <property name="allowCoreThreadTimeOut" value="true"/>
+        <!-- 对拒绝task的处理策略 -->
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy" />
+        </property>
+    </bean>
 </beans>

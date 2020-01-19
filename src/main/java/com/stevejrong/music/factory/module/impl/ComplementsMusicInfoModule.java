@@ -38,7 +38,7 @@ import java.util.List;
  * 补全音乐元数据信息
  * 作用：对缺失必要元数据信息的音频文件进行数据补全
  */
-public class ComplementsMusicInfoModule extends AbstractBusinessModule implements IBusinessModule {
+public class ComplementsMusicInfoModule extends AbstractBusinessModule implements IBusinessModule<Object> {
 
     /**
      * 需要补全信息的音频文件信息集合
