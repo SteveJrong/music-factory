@@ -47,4 +47,11 @@ public class BaseConstants {
 
     public static final String COMPLEMENTS_FAILURE_SUCCESS_MUSIC_INFO_MODULE_LOG_NAME = "complements_failure_music_info_module_log_"
             .concat(DateTimeUtil.formatDate(DateTimeUtil.YYYYMMDD_HHMMSS_FORMAT_WITHOUT_SYMBOL, DateTimeUtil.getDateByNow()));
+
+    public static final String DEFAULT_ALBUM_PIC_FILE_PATH = FileUtil.getProjectAbsolutePath().concat(File.separator)
+            .concat("src").concat(File.separator)
+            .concat("main").concat(File.separator)
+            .concat("resources").concat(File.separator)
+            .concat("img").concat(File.separator)
+            .concat("default_album_pic.jpg");
 }

@@ -6,6 +6,7 @@ import com.stevejrong.music.factory.analysis.datasource.IPartnerMusicInfoResolve
 import com.stevejrong.music.factory.analysis.datasource.bo.BaseMusicInfoBo;
 import com.stevejrong.music.factory.analysis.metadata.persist.resolver.IFileMetadataPersistResolver;
 import com.stevejrong.music.factory.analysis.metadata.query.resolver.IFileMetadataQueryResolver;
+import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.FileMetadataPersistResolverEnums;
 import com.stevejrong.music.factory.common.enums.FileMetadataQueryResolverEnums;
 import com.stevejrong.music.factory.common.exception.NoSearchResultOfSongException;
@@ -16,6 +17,7 @@ import com.stevejrong.music.factory.module.bo.ComplementedMetadataMusicFileBo;
 import com.stevejrong.music.factory.util.FileUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -155,7 +157,7 @@ public class ComplementsMusicInfoModule extends AbstractBusinessModule implement
 
         // 实例化对应的第三方音乐提供商解析器，解析到有用的音乐信息
         IPartnerMusicInfoResolver<BaseMusicInfoBo> partnerMusicInfoResolver = (IPartnerMusicInfoResolver<BaseMusicInfoBo>) context.getBean(partnerMusicInfoResolverBeanName);
-        BaseMusicInfoBo baseMusicInfoBo = null;
+        BaseMusicInfoBo baseMusicInfoBo;
         try {
             baseMusicInfoBo = partnerMusicInfoResolver.getMusicInfoBySearchSongResult(searchSongResult);
         } catch (NoSearchResultOfSongException e) {
@@ -164,7 +166,11 @@ public class ComplementsMusicInfoModule extends AbstractBusinessModule implement
 
         // 查询并设置专辑图片
         byte[] albumPicByteArray = partnerDataSource.searchAlbumPicByPartnerCredential(baseMusicInfoBo.getPartnerCredentialBySearchAlbum());
-        baseMusicInfoBo.setAlbumPic(albumPicByteArray);
+        if (ArrayUtils.isEmpty(albumPicByteArray)) {
+            baseMusicInfoBo.setAlbumPic(FileUtil.imgFileToByteArray(BaseConstants.DEFAULT_ALBUM_PIC_FILE_PATH));
+        } else {
+            baseMusicInfoBo.setAlbumPic(albumPicByteArray);
+        }
 
         return baseMusicInfoBo;
     }

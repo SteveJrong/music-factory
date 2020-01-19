@@ -1,6 +1,8 @@
 package com.stevejrong.music.factory.util;
 
+import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,6 +26,35 @@ public final class FileUtil {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * 图片转字节数组
+     *
+     * @param path 图片路径
+     * @return
+     * @throws Exception
+     */
+    public static byte[] imgFileToByteArray(String path) {
+        File file = new File(path);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] imgByteArray = new byte[]{};
+
+        try {
+            BufferedImage bi = ImageIO.read(file);
+            ImageIO.write(bi, "jpg", byteArrayOutputStream);
+            imgByteArray = byteArrayOutputStream.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return imgByteArray;
     }
 
     /**
