@@ -34,7 +34,6 @@
     <bean id="analysisOriginalMusicFileModule" class="com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule">
         <property name="springConfigurationFileName" value="application-bean.xml"/>
         <property name="musicFileDirectory" value="\\DESKTOP-NQSKNL5\musictest"/>
-<!--        <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>-->
     </bean>
 
     <!--业务模块：补全音乐元数据信息-->
@@ -47,7 +46,7 @@
     <!--业务模块：音频文件格式转换-->
     <bean id="musicFormatConvertModule" class="com.stevejrong.music.factory.module.impl.MusicFormatConvertModule">
         <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
-        <property name="convertedMusicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
+        <property name="convertedMusicFileDirectory" value="C:\Users\SteveJrong\Documents\convertmusic"/>
         <property name="convertRules">
             <map>
                 <entry key="flac" value="m4a_alac"/>
@@ -80,22 +79,4 @@
             <aop:after-throwing method="afterException" arg-names="exception" throwing="exception" pointcut-ref="complementsMusicInfoModulePointcut"/>
         </aop:aspect>
     </aop:config>
-
-    <!-- Spring线程池 -->
-    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <!-- 核心线程数 -->
-        <property name="corePoolSize" value="5" />
-        <!-- 线程池维护线程的最大数量 -->
-        <property name="maxPoolSize" value="10" />
-        <!-- 允许的空闲时间, 默认60秒 -->
-        <property name="keepAliveSeconds" value="60" />
-        <!-- 任务队列 -->
-        <property name="queueCapacity" value="50" />
-        <!-- 线程超过空闲时间限制，均会退出直到线程数量为0 -->
-        <property name="allowCoreThreadTimeOut" value="true"/>
-        <!-- 对拒绝task的处理策略 -->
-        <property name="rejectedExecutionHandler">
-            <bean class="java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy" />
-        </property>
-    </bean>
 </beans>
