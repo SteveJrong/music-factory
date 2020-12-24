@@ -69,6 +69,4 @@ dependencies {
     compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
     compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
     compile("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
-
-    annotationProcessor "org.projectlombok:lombok:$rootProject.ext.dependencies.lombokVersion"
 }
