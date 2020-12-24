@@ -7,8 +7,6 @@ import com.stevejrong.music.factory.common.enums.FileMetadataQueryResolverEnums;
 import com.stevejrong.music.factory.module.AbstractBusinessModule;
 import com.stevejrong.music.factory.module.IBusinessModule;
 import com.stevejrong.music.factory.module.bo.AnalysisOriginalMusicFileModuleBo;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -35,9 +33,15 @@ public class AnalysisOriginalMusicFileModule extends AbstractBusinessModule impl
     /**
      * 音乐文件的存放目录
      */
-    @Getter
-    @Setter
     private String musicFileDirectory;
+
+    public String getMusicFileDirectory() {
+        return musicFileDirectory;
+    }
+
+    public void setMusicFileDirectory(String musicFileDirectory) {
+        this.musicFileDirectory = musicFileDirectory;
+    }
 
     @Override
     public List<AnalysisOriginalMusicFileModuleBo> doAction() {

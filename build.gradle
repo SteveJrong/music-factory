@@ -67,7 +67,6 @@ dependencies {
     compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
     compile("com.alibaba:fastjson:$rootProject.ext.dependencies.fastjsonVersion")
     compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
-    compile("org.projectlombok:lombok:$rootProject.ext.dependencies.lombokVersion")
     compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
     compile("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
 }

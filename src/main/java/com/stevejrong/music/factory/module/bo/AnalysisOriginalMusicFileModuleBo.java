@@ -1,10 +1,7 @@
 package com.stevejrong.music.factory.module.bo;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
-@Data
 public class AnalysisOriginalMusicFileModuleBo implements Serializable {
     private static final long serialVersionUID = -1591136590926715426L;
 
@@ -27,4 +24,46 @@ public class AnalysisOriginalMusicFileModuleBo implements Serializable {
      * 需要做信息补全的音频文件的演唱者
      */
     private String singerName;
+
+    public String getFileAbsolutePath() {
+        return fileAbsolutePath;
+    }
+
+    public void setFileAbsolutePath(String fileAbsolutePath) {
+        this.fileAbsolutePath = fileAbsolutePath;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getSongName() {
+        return songName;
+    }
+
+    public void setSongName(String songName) {
+        this.songName = songName;
+    }
+
+    public String getSingerName() {
+        return singerName;
+    }
+
+    public void setSingerName(String singerName) {
+        this.singerName = singerName;
+    }
+
+    public AnalysisOriginalMusicFileModuleBo() {
+    }
+
+    public AnalysisOriginalMusicFileModuleBo(String fileAbsolutePath, String fileName, String songName, String singerName) {
+        this.fileAbsolutePath = fileAbsolutePath;
+        this.fileName = fileName;
+        this.songName = songName;
+        this.singerName = singerName;
+    }
 }

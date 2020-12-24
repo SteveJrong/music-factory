@@ -15,8 +15,6 @@ import com.stevejrong.music.factory.module.IBusinessModule;
 import com.stevejrong.music.factory.module.bo.AnalysisOriginalMusicFileModuleBo;
 import com.stevejrong.music.factory.module.bo.ComplementedMetadataMusicFileBo;
 import com.stevejrong.music.factory.util.FileUtil;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
@@ -43,23 +41,41 @@ public class ComplementsMusicInfoModule extends AbstractBusinessModule implement
     /**
      * 需要补全信息的音频文件信息集合
      */
-    @Getter
-    @Setter
     List<AnalysisOriginalMusicFileModuleBo> needComplementsMusicList;
 
     /**
      * 第三方音乐数据源Bean名称
      */
-    @Getter
-    @Setter
     private String partnerDataSourceBeanName;
 
     /**
      * 第三方音乐信息解析器Bean名称
      */
-    @Getter
-    @Setter
     private String partnerMusicInfoResolverBeanName;
+
+    public List<AnalysisOriginalMusicFileModuleBo> getNeedComplementsMusicList() {
+        return needComplementsMusicList;
+    }
+
+    public void setNeedComplementsMusicList(List<AnalysisOriginalMusicFileModuleBo> needComplementsMusicList) {
+        this.needComplementsMusicList = needComplementsMusicList;
+    }
+
+    public String getPartnerDataSourceBeanName() {
+        return partnerDataSourceBeanName;
+    }
+
+    public void setPartnerDataSourceBeanName(String partnerDataSourceBeanName) {
+        this.partnerDataSourceBeanName = partnerDataSourceBeanName;
+    }
+
+    public String getPartnerMusicInfoResolverBeanName() {
+        return partnerMusicInfoResolverBeanName;
+    }
+
+    public void setPartnerMusicInfoResolverBeanName(String partnerMusicInfoResolverBeanName) {
+        this.partnerMusicInfoResolverBeanName = partnerMusicInfoResolverBeanName;
+    }
 
     @Override
     public Object doAction() {

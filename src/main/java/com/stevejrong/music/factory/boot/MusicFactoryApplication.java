@@ -26,7 +26,7 @@ public class MusicFactoryApplication {
         complementsMusicInfoModule.doAction();
 
         // Setup 3：音频文件格式转换
-        MusicFormatConvertModule musicFormatConvertModule = (MusicFormatConvertModule) context.getBean("musicFormatConvertModule");
-        musicFormatConvertModule.doAction();
+        /*MusicFormatConvertModule musicFormatConvertModule = (MusicFormatConvertModule) context.getBean("musicFormatConvertModule");
+        musicFormatConvertModule.doAction();*/
     }
 }

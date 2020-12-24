@@ -7,8 +7,6 @@ import com.stevejrong.music.factory.module.AbstractBusinessModule;
 import com.stevejrong.music.factory.module.IBusinessModule;
 import com.stevejrong.music.factory.module.bo.MusicFormatConvertModuleBo;
 import com.stevejrong.music.factory.transcode.converter.IMusicFileConverter;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,24 +25,42 @@ public class MusicFormatConvertModule extends AbstractBusinessModule implements 
     /**
      * 待转换的音乐文件存放目录
      */
-    @Getter
-    @Setter
     private String musicFileDirectory;
 
     /**
      * 转换后的音乐文件存放目录
      */
-    @Getter
-    @Setter
     private String convertedMusicFileDirectory;
 
     /**
      * 转换规则
      * Key表示待转换的原始音频文件类型，Value表示要转换为的目标音频文件格式
      */
-    @Getter
-    @Setter
     private Map<String, String> convertRules;
+
+    public String getMusicFileDirectory() {
+        return musicFileDirectory;
+    }
+
+    public void setMusicFileDirectory(String musicFileDirectory) {
+        this.musicFileDirectory = musicFileDirectory;
+    }
+
+    public String getConvertedMusicFileDirectory() {
+        return convertedMusicFileDirectory;
+    }
+
+    public void setConvertedMusicFileDirectory(String convertedMusicFileDirectory) {
+        this.convertedMusicFileDirectory = convertedMusicFileDirectory;
+    }
+
+    public Map<String, String> getConvertRules() {
+        return convertRules;
+    }
+
+    public void setConvertRules(Map<String, String> convertRules) {
+        this.convertRules = convertRules;
+    }
 
     @Override
     public List<MusicFormatConvertModuleBo> doAction() {
