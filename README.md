@@ -62,7 +62,8 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
     ```
     com.stevejrong.music.factory.boot.MusicFactoryApplication
     ```
-    > 执行期间会有两次日志生成，日志文件位于项目根目录的```log```文件夹下，分别会生成需要补全的音频文件和补全成功或失败的音频文件信息
+    > 执行期间会有两次日志生成。  
+    日志文件位于项目根目录的```log```文件夹下，分别会生成需要补全的音频文件和补全成功或失败的音频文件信息
 
 2. 想批量转换本地文件夹中所有音频文件为FLAC格式
 ☞ 指南：
@@ -84,8 +85,8 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
     ```
     com.stevejrong.music.factory.boot.MusicFactoryApplication
     ```
-    > 执行期间无日志生成。
-      目前支持WAV -> FLAC、M4A（AAC/ALAC） -> FLAC和APE -> FLAC格式的转换。
+    > 执行期间无日志生成。  
+      目前支持WAV -> FLAC、M4A（AAC/ALAC） -> FLAC和APE -> FLAC格式的转换。  
       转换时使用Ffmpeg库进行转换，故本机中必须要安装Ffmpeg。
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 #### 版本信息
