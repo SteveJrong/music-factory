@@ -48,7 +48,7 @@ jar {
 
     // 生成Jar包的manifest清单属性
     manifest {
-        attributes 'Manifest-Version': 1.0,
+        attributes 'Manifest-Version': 1.1,
                 'Main-Class': 'com.stevejrong.music.factory.boot.MusicFactoryApplication'
     }
 }
@@ -65,6 +65,8 @@ dependencies {
     compile("org.aspectj:aspectjweaver:$rootProject.ext.dependencies.aspectjweaverVersion")
 
     compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
+    compile("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
+
     compile("com.alibaba:fastjson:$rootProject.ext.dependencies.fastjsonVersion")
     compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
     compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")

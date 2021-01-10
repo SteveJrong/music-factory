@@ -9,8 +9,32 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-
     <context:component-scan base-package="com.stevejrong.music.factory.module,com.stevejrong.music.factory.logs.aspect"/>
+
+    <!-- 系统基础配置 -->
+    <bean id="baseConfig" class="com.stevejrong.music.factory.config.BaseConfig">
+        <!-- Spring配置文件的文件名称 -->
+        <property name="springConfigurationFileName" value="application-bean.xml"/>
+    </bean>
+    <!-- 分析和补全音乐信息配置 -->
+    <bean id="analysisAndComplementsMusicInfoConfig" class="com.stevejrong.music.factory.config.AnalysisAndComplementsMusicInfoConfig">
+        <!-- 原始音频文件存放目录 -->
+        <property name="musicFileDirectoryOfOriginal" value="/Users/stevejrong/Desktop/old"/>
+    </bean>
+    <bean id="convertMusicFileConfig" class="com.stevejrong.music.factory.config.ConvertMusicFileConfig">
+        <!-- 转换后的音频文件存放目录 -->
+        <property name="musicFileDirectoryOfConverted" value="/Users/stevejrong/Desktop/new"/>
+        <!-- FFmpeg组件的ffmpeg文件路径 -->
+        <property name="ffmpegFileDirectory" value="/Volumes/Document/Softwares/ffmpeg-4.1-macos64-static/bin/ffmpeg"/>
+        <!-- FFmpeg组件的ffprobe文件路径 -->
+        <property name="ffprobeFileDirectory" value="/Volumes/Document/Softwares/ffmpeg-4.1-macos64-static/bin/ffprobe"/>
+    </bean>
+    <!-- 系统配置 -->
+    <bean id="systemConfig" class="com.stevejrong.music.factory.config.SystemConfig">
+        <property name="baseConfig" ref="baseConfig"/>
+        <property name="analysisAndComplementsMusicInfoConfig" ref="analysisAndComplementsMusicInfoConfig"/>
+        <property name="convertMusicFileConfig" ref="convertMusicFileConfig"/>
+    </bean>
 
     <!--Flac格式的音频文件，元数据解析器-->
     <bean id="flacMetadataQueryResolver" class="com.stevejrong.music.factory.analysis.metadata.query.resolver.impl.FlacMetadataQueryResolver"/>
@@ -27,29 +51,43 @@
     <!--QQ音乐歌曲搜索返回的音乐信息解析器-->
     <bean id="qqMusicInfoResolver" class="com.stevejrong.music.factory.analysis.datasource.impl.qqmusic.QQMusicInfoResolver"/>
 
-    <!-- Flac音频文件转换为Apple Lossless音频文件格式转换器 -->
-    <bean id="flacToM4aAlacConverter" class="com.stevejrong.music.factory.transcode.converter.impl.FlacToM4aAlacConverter"/>
+    <!-- M4A（AAC）音频格式转换为FLAC音频文件格式转换器 -->
+    <bean id="m4aAacToFlacConverter" class="com.stevejrong.music.factory.transcode.converter.impl.M4aAacToFlacConverter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+    <!-- APE音频格式转换为FLAC音频格式转换器 -->
+    <bean id="apeToFlacConverter" class="com.stevejrong.music.factory.transcode.converter.impl.ApeToFlacConverter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+    <!-- WAV音频格式转换为FLAC音频格式转换器 -->
+    <bean id="wavToFlacConverter" class="com.stevejrong.music.factory.transcode.converter.impl.WavToFlacConverter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
 
     <!--业务模块：分析原始音频文件-->
     <bean id="analysisOriginalMusicFileModule" class="com.stevejrong.music.factory.module.impl.AnalysisOriginalMusicFileModule">
-        <property name="springConfigurationFileName" value="application-bean.xml"/>
-        <property name="musicFileDirectory" value="\\DESKTOP-NQSKNL5\musictest"/>
+        <property name="systemConfig" ref="systemConfig"/>
     </bean>
 
     <!--业务模块：补全音乐元数据信息-->
     <bean id="complementsMusicInfoModule" class="com.stevejrong.music.factory.module.impl.ComplementsMusicInfoModule">
-        <property name="springConfigurationFileName" value="application-bean.xml"/>
+        <property name="systemConfig" ref="systemConfig"/>
         <property name="partnerDataSourceBeanName" value="qqMusicDataSource"/>
         <property name="partnerMusicInfoResolverBeanName" value="qqMusicInfoResolver"/>
     </bean>
 
     <!--业务模块：音频文件格式转换-->
     <bean id="musicFormatConvertModule" class="com.stevejrong.music.factory.module.impl.MusicFormatConvertModule">
-        <property name="musicFileDirectory" value="C:\Users\SteveJrong\Documents\testmusic"/>
-        <property name="convertedMusicFileDirectory" value="C:\Users\SteveJrong\Documents\convertmusic"/>
-        <property name="convertRules">
+        <property name="systemConfig" ref="systemConfig"/>
+        <!-- 某一种受支持的音频格式，转换为FLAC音频格式，其音频转换器的使用规则 -->
+        <property name="rulesByMusicConverter">
             <map>
-                <entry key="flac" value="m4a_alac"/>
+                <!-- M4A（AAC）音频格式转换为FLAC音频格式 -->
+                <entry key="m4a_aac" value="m4aAacToFlacConverter"/>
+                <!-- APE音频格式转换为FLAC音频格式 -->
+                <entry key="ape" value="apeToFlacConverter"/>
+                <!-- WAV音频格式转换为FLAC音频格式 -->
+                <entry key="wav" value="wavToFlacConverter"/>
             </map>
         </property>
     </bean>

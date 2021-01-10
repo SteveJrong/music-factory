@@ -7,7 +7,9 @@ public interface AbstractEnum {
      *
      * @return 枚举的描述
      */
-    String getDesc();
+    default String getDesc() {
+        return null;
+    }
 
     /**
      * 获取枚举值

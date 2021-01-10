@@ -5,13 +5,14 @@ ext {
     project = [
             groupName     : "com.stevejrong",
             projectName   : "music-factory",
-            projectVersion: "1.0.0-SNAPSHOT"
+            projectVersion: "1.1.0-SNAPSHOT"
     ]
 
     dependencies = [
             springContextVersion: '5.2.2.RELEASE',
             aspectjweaverVersion: '1.9.5',
             jAudioTaggerVersion : '2.2.6-PATHRIK',
+            ffmpegVersion       : '0.6.2',
             fastjsonVersion     : '1.2.62',
             okHttpVersion       : '3.10.0',
             lombokVersion       : '1.18.10',

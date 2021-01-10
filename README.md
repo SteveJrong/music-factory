@@ -43,9 +43,9 @@ Eclipse（系统需要安装JDK并配置JDK环境变量）
 ```
 https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 ```
-> 下载后无需配置系统环境变量，在IDE中设置Gradle的解压目录即可
+> 下载后无需配置系统环境变量，在IDE中设置Gradle解压到的目录即可
 
-###### 执行功能
+###### 功能使用
 1. 想批量补全本地文件夹中所有音频文件的元数据信息
 ☞ 指南：
     - 定位到项目中的以下类：
@@ -57,14 +57,14 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
     ```
     resources/application-bean.xml
     ```
-    修改Bean名称为```analysisOriginalMusicFileModule```中```musicFileDirectory```属性的值，将此值改为电脑本地存储音频文件的文件夹路径
+    修改Bean ID为```analysisAndComplementsMusicInfoConfig```中```musicFileDirectoryOfOriginal```属性的值，将此值改为电脑本地存储音频文件的文件夹路径
     - 再次定位到项目中的以下类，右键运行即可：
     ```
     com.stevejrong.music.factory.boot.MusicFactoryApplication
     ```
     > 执行期间会有两次日志生成，日志文件位于项目根目录的```log```文件夹下，分别会生成需要补全的音频文件和补全成功或失败的音频文件信息
 
-2. 想批量转换本地文件夹中所有音频文件为另一格式
+2. 想批量转换本地文件夹中所有音频文件为FLAC格式
 ☞ 指南：
     - 定位到项目中的以下类：
     ```
@@ -75,17 +75,21 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
     ```
     resources/application-bean.xml
     ```
-    修改Bean名称为```musicFormatConvertModule```中：
-        - ```musicFileDirectory```属性的值，将此值改为电脑本地存储音频文件的文件夹路径
-        - ```convertedMusicFileDirectory```属性的值，将此值改为转换后的音频文件存储的文件夹路径
+    修改Bean ID为```analysisAndComplementsMusicInfoConfig```中```musicFileDirectoryOfOriginal```属性的值，将此值改为本机存放原始音频文件的目录绝对路径
+    修改Bean ID为```convertMusicFileConfig```中：
+        - ```musicFileDirectoryOfConverted```属性的值，将此值改为存放转换后音频文件的目录绝对路径
+        - ```ffmpegFileDirectory```属性的值，将此值改为本机FFmpeg安装路径下ffmpeg文件的绝对路径
+        - ```ffprobeFileDirectory```属性的值，将此值改为本机FFmpeg安装路径下ffprobe文件的绝对路径
     - 再次定位到项目中的以下类，右键运行即可：
     ```
     com.stevejrong.music.factory.boot.MusicFactoryApplication
     ```
-    > 执行期间无日志生成。目前仅支持FLAC转换M4A（Apple Lossless）格式，使用ffmpeg命令行转换，电脑中必须要安装并配置好Ffmpeg
+    > 执行期间无日志生成。
+      目前支持WAV -> FLAC、M4A（AAC/ALAC） -> FLAC和APE -> FLAC格式的转换。
+      转换时使用Ffmpeg库进行转换，故本机中必须要安装Ffmpeg。
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 #### 版本信息
-1.0
+1.1
 
 #### 开发计划
 - 架构优化，插件化开发，多平台兼容支持
@@ -117,3 +121,8 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 2020/01/21：
 1. 去掉无用配置，启动入口放开注释掉的方法
 2. RADEME.md文件补充更新
+
+2021/01/10：
+1. 完善音频文件格式转换功能，支持WAV、M4A和APE到FLAC的转换
+2. 系统配置类优化，根据功能进行拆分
+3. 其他代码优化

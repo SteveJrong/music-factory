@@ -10,6 +10,7 @@ import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.FileMetadataPersistResolverEnums;
 import com.stevejrong.music.factory.common.enums.FileMetadataQueryResolverEnums;
 import com.stevejrong.music.factory.common.exception.NoSearchResultOfSongException;
+import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.module.AbstractBusinessModule;
 import com.stevejrong.music.factory.module.IBusinessModule;
 import com.stevejrong.music.factory.module.bo.AnalysisOriginalMusicFileModuleBo;
@@ -39,6 +40,11 @@ import java.util.List;
 public class ComplementsMusicInfoModule extends AbstractBusinessModule implements IBusinessModule<Object> {
 
     /**
+     * 系统配置
+     */
+    private SystemConfig systemConfig;
+
+    /**
      * 需要补全信息的音频文件信息集合
      */
     List<AnalysisOriginalMusicFileModuleBo> needComplementsMusicList;
@@ -52,6 +58,14 @@ public class ComplementsMusicInfoModule extends AbstractBusinessModule implement
      * 第三方音乐信息解析器Bean名称
      */
     private String partnerMusicInfoResolverBeanName;
+
+    public SystemConfig getSystemConfig() {
+        return systemConfig;
+    }
+
+    public void setSystemConfig(SystemConfig systemConfig) {
+        this.systemConfig = systemConfig;
+    }
 
     public List<AnalysisOriginalMusicFileModuleBo> getNeedComplementsMusicList() {
         return needComplementsMusicList;
@@ -107,7 +121,7 @@ public class ComplementsMusicInfoModule extends AbstractBusinessModule implement
     }
 
     public ComplementedMetadataMusicFileBo execute(AnalysisOriginalMusicFileModuleBo analysisOriginalMusicFileModuleBo, AudioFile audioFile) {
-        ApplicationContext context = new ClassPathXmlApplicationContext(super.springConfigurationFileName);
+        ApplicationContext context = new ClassPathXmlApplicationContext(systemConfig.getBaseConfig().getSpringConfigurationFileName());
 
         BaseMusicInfoBo baseMusicInfoBo = buildMetadata(context, analysisOriginalMusicFileModuleBo, audioFile);
 

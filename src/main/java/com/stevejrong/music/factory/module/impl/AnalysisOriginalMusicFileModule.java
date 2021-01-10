@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.analysis.metadata.query.resolver.IFileMetadataQueryResolver;
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.FileMetadataQueryResolverEnums;
+import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.module.AbstractBusinessModule;
 import com.stevejrong.music.factory.module.IBusinessModule;
 import com.stevejrong.music.factory.module.bo.AnalysisOriginalMusicFileModuleBo;
@@ -31,27 +32,27 @@ import java.util.List;
 public class AnalysisOriginalMusicFileModule extends AbstractBusinessModule implements IBusinessModule<List<AnalysisOriginalMusicFileModuleBo>> {
 
     /**
-     * 音乐文件的存放目录
+     * 系统配置
      */
-    private String musicFileDirectory;
+    private SystemConfig systemConfig;
 
-    public String getMusicFileDirectory() {
-        return musicFileDirectory;
+    public SystemConfig getSystemConfig() {
+        return systemConfig;
     }
 
-    public void setMusicFileDirectory(String musicFileDirectory) {
-        this.musicFileDirectory = musicFileDirectory;
+    public void setSystemConfig(SystemConfig systemConfig) {
+        this.systemConfig = systemConfig;
     }
 
     @Override
     public List<AnalysisOriginalMusicFileModuleBo> doAction() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(super.springConfigurationFileName);
+        ApplicationContext context = new ClassPathXmlApplicationContext(systemConfig.getBaseConfig().getSpringConfigurationFileName());
         // 需要做信息补全的音频文件信息集合
         List<AnalysisOriginalMusicFileModuleBo> needComplementsMusicList = Lists.newArrayList();
 
         try {
-            Files.newDirectoryStream(Paths.get(musicFileDirectory),
-                    path -> path.toString().endsWith(BaseConstants.FLAC_FILE_SUFFIX) || path.toString().endsWith(BaseConstants.MP3_FILE_SUFFIX))
+            Files.newDirectoryStream(Paths.get(systemConfig.getAnalysisAndComplementsMusicInfoConfig().getMusicFileDirectoryOfOriginal()),
+                    path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC) || path.toString().endsWith(BaseConstants.FILE_SUFFIX_MP3))
                     .forEach(file -> {
                         AudioFile audioFile = null;
                         try {

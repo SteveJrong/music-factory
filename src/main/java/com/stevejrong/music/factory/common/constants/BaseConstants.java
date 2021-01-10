@@ -31,9 +31,16 @@ public class BaseConstants {
 
     public static final String APPLICATION_JSON_UTF_8 = APPLICATION_JSON.concat(";").concat("charset=utf-8");
 
-    public static final String FLAC_FILE_SUFFIX = ".flac";
+    public static final String FILE_SUFFIX_FLAC = ".flac";
+    public static final String FILE_SUFFIX_MP3 = ".mp3";
+    public static final String FILE_SUFFIX_M4A = ".m4a";
+    public static final String FILE_SUFFIX_APE = ".ape";
+    public static final String FILE_SUFFIX_WAV = ".wav";
 
-    public static final String MP3_FILE_SUFFIX = ".mp3";
+    public static final String MUSIC_ENCODE_FLAC = "flac";
+    public static final String MUSIC_ENCODE_M4A_AAC = "m4a_aac";
+    public static final String MUSIC_ENCODE_APE = "ape";
+    public static final String MUSIC_ENCODE_WAV = "wav";
 
     public static final String ARTWORK_TEMP_DIRECTORY = FileUtil.getProjectAbsolutePath() + File.separator + "temp" + File.separator + "artwork";
 

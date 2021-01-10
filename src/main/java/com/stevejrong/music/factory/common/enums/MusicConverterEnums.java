@@ -5,30 +5,79 @@ import java.lang.reflect.Method;
 
 /**
  * 音频转换器枚举
+ * 目前仅支持 格式N -> FLAC 格式的转换
+ *
+ * 此类已弃用
  */
+@Deprecated
 public enum MusicConverterEnums implements AbstractEnum {
 
     /**
-     * FLAC音频格式转换为Apple Lossless音频格式
+     * M4A（AAC）音频格式转换为FLAC音频格式
      */
-    CONVERT_FLAC_TO_M4A_ALAC {
+    CONVERT_M4A_AAC_TO_FLAC {
         @Override
         public String getDesc() {
             return null;
         }
 
         public MusicFormatEnums getSourceFormatInfo() {
-            return MusicFormatEnums.FLAC_FORMAT;
+            return MusicFormatEnums.M4A_AAC_FORMAT;
         }
 
         public MusicFormatEnums getTargetFormatInfo() {
-            return MusicFormatEnums.M4A_ALAC_FORMAT;
+            return MusicFormatEnums.FLAC_FORMAT;
         }
 
         public String getMusicConverterBeanName() {
-            return "flacToM4aAlacConverter";
+            return "m4aAacToFlacConverter";
+        }
+    },
+
+    /**
+     * APE音频格式转换为FLAC音频格式
+     */
+    CONVERT_APE_TO_FLAC {
+        @Override
+        public String getDesc() {
+            return null;
+        }
+
+        public MusicFormatEnums getSourceFormatInfo() {
+            return MusicFormatEnums.APE_FORMAT;
+        }
+
+        public MusicFormatEnums getTargetFormatInfo() {
+            return MusicFormatEnums.FLAC_FORMAT;
+        }
+
+        public String getMusicConverterBeanName() {
+            return "apeToFlacConverter";
+        }
+    },
+
+    /**
+     * WAV音频格式转换为FLAC音频格式
+     */
+    CONVERT_WAV_TO_FLAC {
+        @Override
+        public String getDesc() {
+            return null;
+        }
+
+        public MusicFormatEnums getSourceFormatInfo() {
+            return MusicFormatEnums.WAV_FORMAT;
+        }
+
+        public MusicFormatEnums getTargetFormatInfo() {
+            return MusicFormatEnums.FLAC_FORMAT;
+        }
+
+        public String getMusicConverterBeanName() {
+            return "wavToFlacConverter";
         }
     };
+
 
     /**
      * 根据待转换的音频格式和转换为的音频格式获取音频格式转换器的Bean名称

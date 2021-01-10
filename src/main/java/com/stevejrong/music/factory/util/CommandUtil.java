@@ -10,11 +10,19 @@ import java.io.InputStreamReader;
  */
 public final class CommandUtil {
 
-    public static String execute(String command) {
+    /**
+     * 执行CMD/Shell命令
+     *
+     * 对于格式转换功能来说，此方法因稳定性及可操作性较差，故已不再使用命令行的方式进行格式转换
+     *
+     * @param commands 多个命令参数
+     * @return
+     */
+    public static String execute(String... commands) {
         StringBuffer executeResult = new StringBuffer();
 
         try {
-            Process process = Runtime.getRuntime().exec(command);
+            Process process = Runtime.getRuntime().exec(commands);
 
             InputStream in = process.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
