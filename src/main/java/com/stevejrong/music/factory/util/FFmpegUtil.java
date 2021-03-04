@@ -57,7 +57,7 @@ public class FFmpegUtil {
                 .setAudioChannels(FFmpeg.AUDIO_STEREO)
                 .setAudioSampleFormat(FFmpeg.AUDIO_FORMAT_S16)
                 .setAudioSampleRate(FFmpeg.AUDIO_SAMPLE_48000)
-                .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
+                .setStrict(FFmpegBuilder.Strict.NORMAL)
                 .done();
 
         executor.createJob(builder).run();
