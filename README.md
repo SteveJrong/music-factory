@@ -127,3 +127,6 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 1. 完善音频文件格式转换功能，支持WAV、M4A和APE到FLAC的转换
 2. 系统配置类优化，根据功能进行拆分
 3. 其他代码优化
+
+2021/11/08：
+1. 修复音频信息补全时，标签残缺的MP3音频文件，读取ID3vX标签NPE的问题。

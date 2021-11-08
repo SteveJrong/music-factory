@@ -213,7 +213,7 @@ public class ComplementsMusicInfoModule extends AbstractBusinessModule implement
      * @param baseMusicInfoBo
      */
     private void persistMetadata(ApplicationContext context, AudioFile audioFile, BaseMusicInfoBo baseMusicInfoBo) {
-        Tag persistTag = audioFile.getTag();
+        Tag persistTag = audioFile.getTagOrCreateDefault();
 
         AudioHeader audioHeader = audioFile.getAudioHeader();
         String encodingType = audioHeader.getEncodingType();

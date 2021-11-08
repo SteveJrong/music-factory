@@ -25,9 +25,9 @@
         <!-- 转换后的音频文件存放目录 -->
         <property name="musicFileDirectoryOfConverted" value="/Users/stevejrong/Desktop/new"/>
         <!-- FFmpeg组件的ffmpeg文件路径 -->
-        <property name="ffmpegFileDirectory" value="/Volumes/Document/Softwares/ffmpeg-4.1-macos64-static/bin/ffmpeg"/>
+        <property name="ffmpegFileDirectory" value="/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffmpeg"/>
         <!-- FFmpeg组件的ffprobe文件路径 -->
-        <property name="ffprobeFileDirectory" value="/Volumes/Document/Softwares/ffmpeg-4.1-macos64-static/bin/ffprobe"/>
+        <property name="ffprobeFileDirectory" value="/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffprobe"/>
     </bean>
     <!-- 系统配置 -->
     <bean id="systemConfig" class="com.stevejrong.music.factory.config.SystemConfig">
