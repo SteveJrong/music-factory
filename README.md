@@ -14,7 +14,7 @@ com.stevejrong.music.factory.common --------------------------------------------
 com.stevejrong.music.factory.logs ------------------------------------------------- 基于Spring AOP的业务模块日志处理 
 com.stevejrong.music.factory.module ----------------------------------------------- 业务模块 
 com.stevejrong.music.factory.transcode -------------------------------------------- 音频文件转码相关（隶属于音频文件转码业务)  
-com.stevejrong.music.factory.util ------------------------------------------------- 通用工具类 
+com.stevejrong.music.factory.common.util ------------------------------------------------- 通用工具类 
 ```
 
 #### 说明
@@ -130,3 +130,7 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 
 2021/11/08：
 1. 修复音频信息补全时，标签残缺的MP3音频文件，读取ID3vX标签NPE的问题。
+
+2021/11/22：
+1. 切换到develop-2.0.0分支。
+2. 代码重构，使用过滤器，来优化音频文件分析逻辑以及元数据信息抓取逻辑（未完成，待收尾）。

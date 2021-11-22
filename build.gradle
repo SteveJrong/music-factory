@@ -62,13 +62,20 @@ repositories {
 
 dependencies {
     compile("org.springframework:spring-context:$rootProject.ext.dependencies.springContextVersion")
+    compile("org.springframework:spring-test:$rootProject.ext.dependencies.springTestVersion")
     compile("org.aspectj:aspectjweaver:$rootProject.ext.dependencies.aspectjweaverVersion")
 
     compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
     compile("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
 
-    compile("com.alibaba:fastjson:$rootProject.ext.dependencies.fastjsonVersion")
+    compile("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")
+    compile("org.yaml:snakeyaml:$rootProject.ext.dependencies.snakeyamlVersion")
     compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
     compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
     compile("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
+    compile("org.apache.commons:commons-collections4:$rootProject.ext.dependencies.commonsCollections4Version")
+    compile("net.sf.dozer:dozer:$rootProject.ext.dependencies.dozerVersion")
+
+    testCompile("junit:junit:$rootProject.ext.dependencies.junitVersion")
+    testCompile("org.hamcrest:hamcrest-core:$rootProject.ext.dependencies.hamcrestCoreVersion")
 }

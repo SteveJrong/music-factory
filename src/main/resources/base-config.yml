@@ -1,0 +1,19 @@
+musicFactory:
+  base:
+    partner:
+      songinfo:
+        analyzingInfo:
+          filterGroup:
+            activeConfig: analyzingInfoForAudioFileFilterConfig
+        datasource:
+          filterGroup:
+            activeConfig: kuGouMusicPartnerSongInfoDataSourceFilterConfig
+            filters:
+              kuGouMusicPartnerSongInfoDataSourceFilter:
+                kuGouMusicPartnerSongInfoFilter_1:
+                  requestUrl: 'http://mobilecdn.kugou.com/api/v3/search/song'
+                kuGouMusicPartnerSongInfoFilter_2:
+                  requestUrl: 'https://wwwapi.kugou.com/yy/index.php'
+                kuGouMusicPartnerSongInfoFilter_3:
+                  requestUrl: 'http://kmrserviceretry.kugou.com/container/v1/album'
+

@@ -1,5 +1,9 @@
 package com.stevejrong.music.factory.config;
 
+import com.stevejrong.music.factory.config.sub.*;
+
+import java.util.List;
+
 /**
  * 系统配置类
  */
@@ -11,14 +15,19 @@ public class SystemConfig {
     private BaseConfig baseConfig;
 
     /**
+     * 过滤器组配置
+     */
+    private List<FilterGroupsConfig> filterGroupsConfig;
+
+    /**
      * 分析和补全音乐信息配置
      */
-    private AnalysisAndComplementsMusicInfoConfig analysisAndComplementsMusicInfoConfig;
+    private AnalysingAndComplementsForAudioFileConfig analysingAndComplementsForAudioFileConfig;
 
     /**
      * 音频文件转换配置
      */
-    private ConvertMusicFileConfig convertMusicFileConfig;
+    private AudioFileFormatConversionConfig audioFileFormatConversionConfig;
 
     public BaseConfig getBaseConfig() {
         return baseConfig;
@@ -28,19 +37,27 @@ public class SystemConfig {
         this.baseConfig = baseConfig;
     }
 
-    public AnalysisAndComplementsMusicInfoConfig getAnalysisAndComplementsMusicInfoConfig() {
-        return analysisAndComplementsMusicInfoConfig;
+    public List<FilterGroupsConfig> getFilterGroupsConfig() {
+        return filterGroupsConfig;
     }
 
-    public void setAnalysisAndComplementsMusicInfoConfig(AnalysisAndComplementsMusicInfoConfig analysisAndComplementsMusicInfoConfig) {
-        this.analysisAndComplementsMusicInfoConfig = analysisAndComplementsMusicInfoConfig;
+    public void setFilterGroupsConfig(List<FilterGroupsConfig> filterGroupsConfig) {
+        this.filterGroupsConfig = filterGroupsConfig;
     }
 
-    public ConvertMusicFileConfig getConvertMusicFileConfig() {
-        return convertMusicFileConfig;
+    public AnalysingAndComplementsForAudioFileConfig getAnalysingAndComplementsForAudioFileConfig() {
+        return analysingAndComplementsForAudioFileConfig;
     }
 
-    public void setConvertMusicFileConfig(ConvertMusicFileConfig convertMusicFileConfig) {
-        this.convertMusicFileConfig = convertMusicFileConfig;
+    public void setAnalysingAndComplementsForAudioFileConfig(AnalysingAndComplementsForAudioFileConfig analysingAndComplementsForAudioFileConfig) {
+        this.analysingAndComplementsForAudioFileConfig = analysingAndComplementsForAudioFileConfig;
+    }
+
+    public AudioFileFormatConversionConfig getAudioFileFormatConversionConfig() {
+        return audioFileFormatConversionConfig;
+    }
+
+    public void setAudioFileFormatConversionConfig(AudioFileFormatConversionConfig audioFileFormatConversionConfig) {
+        this.audioFileFormatConversionConfig = audioFileFormatConversionConfig;
     }
 }

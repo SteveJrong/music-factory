@@ -1,0 +1,15 @@
+musicFactory:
+  base:
+    audioFileDirectory: '/Users/stevejrong/Desktop/test' #音频文件的存放位置。
+  filters:
+    analyzingInfoForAudioFile:
+      songLyricsFilter: false
+      albumArtistFilter: false
+      albumPublishDateFilter: false
+      albumDescriptionFilter: false
+      albumLanguageFilter: false
+      albumCopyrightFilter: false
+  convert:
+    convertedAudioFileDirectory: '/Users/stevejrong/Desktop/converted' # 转换格式后的音频文件存放位置。
+    ffmpegFileDirectory: '/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffmpeg' # FFmpeg组件中，ffmpeg文件的位置。
+    ffprobeFileDirectory: '/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffprobe' # FFmpeg组件中，ffprobe文件的位置。
