@@ -1,20 +1,22 @@
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'idea'
 apply from: 'config.gradle'
 
+// 项目构建时的脚本
 buildscript {
-    // 设置在构建项目时的软件源库
+
+    // 项目构建所需依赖包的仓库
     repositories {
         mavenLocal()
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
     }
 
     // 设置引用在构建项目时的插件
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
     }
 }
 
@@ -22,11 +24,19 @@ buildscript {
 def jarBaseName = ext.project.projectName
 // Jar包版本号
 def jarVersion = ext.project.projectVersion
+// Jar包全名
+def jarFullName = jarBaseName + '-' + jarVersion + '-' + releaseTime()
+// 主类
+def mainClassFullName = ext.project.mainClassFullName
 
+// 设置编译兼容性版本
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-// 设置编译时的编码
+// 设置主类
+mainClassName = mainClassFullName
+
+// 设置编译时的编码格式
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -35,46 +45,77 @@ tasks.withType(JavaCompile) {
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // 设置项目的资源目录位置
-sourceSets.main.resources.srcDirs = ["src/main/java", "src/main/resources"]
+sourceSets {
+    main.resources.srcDirs = ["src/main/java", "src/main/resources"]
+}
 
-mainClassName = 'com.stevejrong.music.factory.boot.MusicFactoryApplication'
+/**
+ * 返回当前日期时间字符串
+ *
+ * @return 当前日期时间字符串
+ */
+static def releaseTime() {
+    return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
+}
 
-// 设置Jar包属性
+// 生成Jar包的基本属性信息
 jar {
     // 生成Jar包的基础名
     baseName = jarBaseName
     // 生成Jar包的版本号
     version jarVersion
 
-    // 生成Jar包的manifest清单属性
+    // 生成Jar包的Manifest属性清单
     manifest {
-        attributes 'Manifest-Version': 1.1,
-                'Main-Class': 'com.stevejrong.music.factory.boot.MusicFactoryApplication'
+        attributes 'Implementation-Title': jarBaseName, 'Implementation-Version': jarVersion, 'Main-Class': mainClassFullName
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
-// 设置项目的软件源库
-repositories {
-    mavenLocal()
-    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-    mavenCentral()
+// 自定义Jar包构建方法（主要用于依赖包中同名文件内容的合并）
+shadowJar {
+    // 生成Jar包的基础名
+    archiveBaseName.set(jarFullName)
+    archiveClassifier.set('')
+    // 生成Jar包的版本号
+    archiveVersion.set('')
+
+    // 将依赖包中重名的spring相关文件（spring.schema等）做内容合并，避免内容被覆盖导致运行异常
+    mergeServiceFiles {
+        path = 'META-INF/spring.*'
+    }
 }
 
+shadowJar.dependsOn([clean])
+
+// 项目开发及运行所需依赖包的仓库
+repositories {
+    mavenLocal()
+    maven { url 'https://maven.aliyun.com/repository/central' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+}
+
+// 项目依赖包
 dependencies {
     compile("org.springframework:spring-context:$rootProject.ext.dependencies.springContextVersion")
     compile("org.springframework:spring-test:$rootProject.ext.dependencies.springTestVersion")
-    compile("org.aspectj:aspectjweaver:$rootProject.ext.dependencies.aspectjweaverVersion")
 
     compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
     compile("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
 
-    compile("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")
-    compile("org.yaml:snakeyaml:$rootProject.ext.dependencies.snakeyamlVersion")
     compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
+    compile("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")
     compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
     compile("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
     compile("org.apache.commons:commons-collections4:$rootProject.ext.dependencies.commonsCollections4Version")
     compile("net.sf.dozer:dozer:$rootProject.ext.dependencies.dozerVersion")
+    compile("org.yaml:snakeyaml:$rootProject.ext.dependencies.snakeyamlVersion")
+    compile("org.slf4j:slf4j-api:$rootProject.ext.dependencies.slf4jApiVersion")
+    compile("ch.qos.logback:logback-core:$rootProject.ext.dependencies.logbackCoreVersion")
+    compile("ch.qos.logback:logback-classic:$rootProject.ext.dependencies.logbackClassicVersion")
 
     testCompile("junit:junit:$rootProject.ext.dependencies.junitVersion")
     testCompile("org.hamcrest:hamcrest-core:$rootProject.ext.dependencies.hamcrestCoreVersion")

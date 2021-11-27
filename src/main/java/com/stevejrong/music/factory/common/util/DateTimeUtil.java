@@ -7,11 +7,15 @@ import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Util - 日期时间工具类
  */
 public final class DateTimeUtil {
+    public static final Pattern DATE_PATTERN_OF_YYYY_FORMAT = Pattern.compile(DatePattern.YYYY_FORMAT.getDesc());
+    public static final Pattern DATE_PATTERN_OF_YYYYMMDD_FORMAT = Pattern.compile(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getDesc());
+    public static final Pattern DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL = Pattern.compile(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getDesc());
 
     /**
      * 日期时间格式化定义枚举
@@ -19,12 +23,29 @@ public final class DateTimeUtil {
     public enum DatePattern implements AbstractEnum {
         YYYY_FORMAT {
             @Override
+            public String getDesc() {
+                return "\\d{4}";
+            }
+
+            @Override
             public String getValue() {
                 return "yyyy";
             }
         },
 
+        YYYYMM_FORMAT {
+            @Override
+            public String getValue() {
+                return "yyyy-MM";
+            }
+        },
+
         YYYYMMDD_FORMAT {
+            @Override
+            public String getDesc() {
+                return "\\d{4}[-]\\d{1,2}[-]\\d{1,2}";
+            }
+
             @Override
             public String getValue() {
                 return "yyyy-MM-dd";
@@ -32,6 +53,11 @@ public final class DateTimeUtil {
         },
 
         YYYYMMDD_FORMAT_WITHOUT_SYMBOL {
+            @Override
+            public String getDesc() {
+                return "\\d{4}\\d{2}\\d{2}";
+            }
+
             @Override
             public String getValue() {
                 return "yyyyMMdd";
@@ -125,6 +151,17 @@ public final class DateTimeUtil {
      */
     public static String dateToString(String datePattern, Date date) {
         return DateTimeFormatter.ofPattern(datePattern).format(dateToLocalDateTime(date, BaseConstants.UTC_GMT8_ZONE_ID));
+    }
+
+    /**
+     * LocalDate格式化为字符串
+     *
+     * @param datePattern 格式
+     * @param localDate   LocalDate对象
+     * @return 时间字符串
+     */
+    public static String localDateToString(String datePattern, LocalDate localDate) {
+        return localDate.format(DateTimeFormatter.ofPattern(datePattern));
     }
 
     /**

@@ -1,13 +1,26 @@
 package com.stevejrong.music.factory.provider.service.music.metadata.resolver.query.impl;
 
+import com.google.common.collect.Lists;
+import com.stevejrong.music.factory.common.util.DateTimeUtil;
+import com.stevejrong.music.factory.common.util.StringUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.flac.FlacTag;
+import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Flac音频文件的元数据解析器
@@ -18,9 +31,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getSongTitle(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.TITLE);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField songTitleTagField = flacTag.getFirstField(FieldKey.TITLE);
+        if (null != songTitleTagField && StringUtils.isNotBlank(((VorbisCommentTagField) songTitleTagField).getContent())) {
+            return ((VorbisCommentTagField) (songTitleTagField)).getContent();
         }
 
         return null;
@@ -30,9 +43,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getSongArtist(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.ARTIST);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField songArtistTagField = flacTag.getFirstField(FieldKey.ARTIST);
+        if (null != songArtistTagField && StringUtils.isNotBlank(((VorbisCommentTagField) songArtistTagField).getContent())) {
+            return ((VorbisCommentTagField) songArtistTagField).getContent();
         }
 
         return null;
@@ -42,9 +55,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getSongLyrics(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.LYRICS);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField songLyricsTagField = flacTag.getFirstField(FieldKey.LYRICS);
+        if (null != songLyricsTagField && StringUtils.isNotBlank(((VorbisCommentTagField) songLyricsTagField).getContent())) {
+            return ((VorbisCommentTagField) songLyricsTagField).getContent();
         }
 
         return null;
@@ -54,9 +67,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getAlbumName(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.ALBUM);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField albumNameTagField = flacTag.getFirstField(FieldKey.ALBUM);
+        if (null != albumNameTagField && StringUtils.isNotBlank(((VorbisCommentTagField) albumNameTagField).getContent())) {
+            return ((VorbisCommentTagField) albumNameTagField).getContent();
         }
 
         return null;
@@ -66,9 +79,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getAlbumArtist(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.ALBUM_ARTIST);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField albumArtistTagField = flacTag.getFirstField(FieldKey.ALBUM_ARTIST);
+        if (null != albumArtistTagField && StringUtils.isNotBlank(((VorbisCommentTagField) albumArtistTagField).getContent())) {
+            return ((VorbisCommentTagField) albumArtistTagField).getContent();
         }
 
         return null;
@@ -78,12 +91,21 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public LocalDate getAlbumPublishDate(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.YEAR);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            //return DateTimeUtil.stringToLocalDate(tagField.toString());
-            return null;
+        List<TagField> albumPublishDateTagFields = Optional.ofNullable(flacTag.getFields("DATE")).orElse(Lists.newArrayList());
+        String albumPublishDate;
+        if (CollectionUtils.isNotEmpty(albumPublishDateTagFields)) {
+            albumPublishDate = ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent();
+
+            if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT.matcher(albumPublishDate).matches()) {
+
+                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent());
+            } else if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL.matcher(albumPublishDate).matches()) {
+
+                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(), ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent());
+            }
         }
 
+        // FLAC中的标签支持年月日完整存储。除了形如 0000-00-00 或 00001122 这两种形式外，其余形式均认为发布时间不存在，返回null打标签，来进行补全
         return null;
     }
 
@@ -91,9 +113,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getAlbumDescription(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.COMMENT);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField albumDescriptionTagField = flacTag.getFirstField(FieldKey.COMMENT);
+        if (null != albumDescriptionTagField && StringUtils.isNotBlank(((VorbisCommentTagField) albumDescriptionTagField).getContent())) {
+            return ((VorbisCommentTagField) albumDescriptionTagField).getContent();
         }
 
         return null;
@@ -103,9 +125,9 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getAlbumLanguage(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.LANGUAGE);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField albumLanguageTagField = flacTag.getFirstField(FieldKey.LANGUAGE);
+        if (null != albumLanguageTagField && StringUtils.isNotBlank(((VorbisCommentTagField) albumLanguageTagField).getContent())) {
+            return ((VorbisCommentTagField) albumLanguageTagField).getContent();
         }
 
         return null;
@@ -115,9 +137,10 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public String getAlbumCopyright(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        TagField tagField = flacTag.getFirstField(FieldKey.PRODUCER);
-        if (null != tagField && StringUtils.isNotEmpty(tagField.toString()) && StringUtils.isNotBlank(tagField.toString())) {
-            return tagField.toString();
+        TagField albumCopyrightTagField = flacTag.getFirstField(FieldKey.COPYRIGHT);
+        if (null != albumCopyrightTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) albumCopyrightTagField).getContent())) {
+            return ((VorbisCommentTagField) albumCopyrightTagField).getContent();
         }
 
         return null;
@@ -127,8 +150,21 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
     public byte[] getAlbumPicture(AudioFile audioFile) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
 
-        if (null != flacTag.getFirstArtwork() && flacTag.getFirstArtwork().getBinaryData().length > 0) {
-            return flacTag.getFirstArtwork().getBinaryData();
+        byte[] originalAlbumPictureData;
+        if (null != flacTag.getFirstArtwork() && ArrayUtils.isNotEmpty(flacTag.getFirstArtwork().getBinaryData())) {
+            originalAlbumPictureData = flacTag.getFirstArtwork().getBinaryData();
+
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read(new ByteArrayInputStream(originalAlbumPictureData));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (image.getWidth() * image.getHeight() >= 500 * 500) {
+                // 当专辑封面存在且符合尺寸时，才返回专辑图片的字节数组
+                return originalAlbumPictureData;
+            }
         }
 
         return null;

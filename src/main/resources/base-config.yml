@@ -1,3 +1,4 @@
+# 项目基础YML/YAML配置文件
 musicFactory:
   base:
     partner:
@@ -16,4 +17,3 @@ musicFactory:
                   requestUrl: 'https://wwwapi.kugou.com/yy/index.php'
                 kuGouMusicPartnerSongInfoFilter_3:
                   requestUrl: 'http://kmrserviceretry.kugou.com/container/v1/album'
-

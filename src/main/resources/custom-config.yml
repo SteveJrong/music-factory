@@ -1,14 +1,15 @@
+# 使用前，需要视实际情况进行修改
 musicFactory:
   base:
-    audioFileDirectory: '/Users/stevejrong/Desktop/test' #音频文件的存放位置。
+    audioFileDirectory: '/Users/stevejrong/Desktop/test' # 原始音频文件的存放位置。
   filters:
     analyzingInfoForAudioFile:
-      songLyricsFilter: false
-      albumArtistFilter: false
-      albumPublishDateFilter: false
-      albumDescriptionFilter: false
-      albumLanguageFilter: false
-      albumCopyrightFilter: false
+      songLyricsFilter: true # 设置是否以歌曲内嵌歌词的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲内嵌歌词是否存在；false - 跳过验证歌曲内嵌歌词。
+      albumArtistFilter: true # 设置是否以歌曲所属专辑的艺术家的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的艺术家是否存在；false - 跳过验证歌曲所属专辑的艺术家。
+      albumPublishDateFilter: true # 设置是否以歌曲所属专辑的发布时间的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的发布时间是否存在；false - 跳过验证歌曲所属专辑的发布时间。
+      albumDescriptionFilter: true # 设置是否以歌曲所属专辑的描述的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的描述是否存在；false - 跳过验证歌曲所属专辑的描述。
+      albumLanguageFilter: true # 设置是否以歌曲所属专辑的语言类型的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的语言类型是否存在；false - 跳过验证歌曲所属专辑的语言类型。
+      albumCopyrightFilter: true # 设置是否以歌曲所属专辑的版权信息的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的版权信息是否存在；false - 跳过验证歌曲所属专辑的版权信息。
   convert:
     convertedAudioFileDirectory: '/Users/stevejrong/Desktop/converted' # 转换格式后的音频文件存放位置。
     ffmpegFileDirectory: '/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffmpeg' # FFmpeg组件中，ffmpeg文件的位置。

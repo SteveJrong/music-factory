@@ -31,9 +31,19 @@ public class KuGouMusicPartnerSongInfoFilter_1InfoBo implements Serializable {
     private String album_id;
 
     /**
+     * 歌曲所属的专辑ID（备用）
+     */
+    private String album_audio_id;
+
+    /**
      * 歌曲标题
      */
     private String songname;
+
+    /**
+     * 歌曲标题（备用）
+     */
+    private String singername;
 
     /**
      * 歌曲哈希码
@@ -48,12 +58,28 @@ public class KuGouMusicPartnerSongInfoFilter_1InfoBo implements Serializable {
         this.album_id = album_id;
     }
 
+    public String getAlbum_audio_id() {
+        return album_audio_id;
+    }
+
+    public void setAlbum_audio_id(String album_audio_id) {
+        this.album_audio_id = album_audio_id;
+    }
+
     public String getSongname() {
         return songname;
     }
 
     public void setSongname(String songname) {
         this.songname = songname;
+    }
+
+    public String getSingername() {
+        return singername;
+    }
+
+    public void setSingername(String singername) {
+        this.singername = singername;
     }
 
     public String getHash() {

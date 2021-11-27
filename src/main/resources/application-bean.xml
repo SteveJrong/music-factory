@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
     <context:property-placeholder local-override="true" properties-ref="yamlProperties"/>
     <context:component-scan base-package="com.stevejrong.music.factory.config,com.stevejrong.music.factory.provider.service"/>
 
     <!-- 系统基础配置 -->
-    <bean id="baseConfig" class="com.stevejrong.music.factory.config.sub.BaseConfig">
+    <bean id="baseConfig" class="com.stevejrong.music.factory.config.sub.BaseConfig" lazy-init="false">
         <!-- Spring配置文件的文件名称 -->
         <property name="springConfigurationFileName" value="application-bean.xml"/>
+        <property name="welcomeMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+[1] 分析指定目录下的音频文件，并补全音频文件元数据信息。&#x000A;
+[2] 批量转换指定目录下的音频文件格式。&#x000A;
+[0] 退出程序。&#x000A;
+输入上述数字序号来执行任务：_"/>
+
+        <property name="analyzingCompletedForAudioFileMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 您的音频文件全部分析完成 =============================== &#x000A;
+您有{{audioFileCountForNeedComplements}}个音频文件需要补全元数据信息。&#x000A;
+输入[Y]或[y]以补全缺失的音频文件元数据信息，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="metadataInfoCompletedForAudioFileMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 您的音频文件元数据全部补全完成 =============================== &#x000A;
+此次共补全{{audioFileTotalCountForMetadataInfoCompleted}}个音频文件的元数据信息：&#x000A;
+√ 已成功补全{{audioFileCountForMetadataInfoCompletedSuccess}}个音频文件的元数据信息。&#x000A;
+× 未成功补全{{audioFileCountForMetadataInfoCompletedFailure}}个音频文件的元数据信息。"/>
     </bean>
     <!-- 分析和补全音乐信息配置 -->
     <bean id="analysingAndComplementsForAudioFileConfig" class="com.stevejrong.music.factory.config.sub.AnalysingAndComplementsForAudioFileConfig">
@@ -101,7 +117,7 @@
     <bean id="mp3MetadataQueryResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.query.impl.Mp3MetadataQueryResolver"/>
 
     <!--酷狗音乐第三方音频服务平台，音频元数据解析器-->
-    <bean id="kuGouPartnerSongInfoResolver" class="com.stevejrong.music.factory.provider.service.music.analyzing.partner.datasource.impl.qqmusic.KuGouPartnerSongInfoResolver"/>
+    <bean id="kuGouPartnerSongInfoResolver" class="com.stevejrong.music.factory.provider.service.music.analyzing.partner.resolver.impl.KuGouPartnerSongInfoResolver"/>
 
     <!--Flac格式的音频文件，元数据存储器-->
     <bean id="flacMetadataPersistResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.persist.impl.FlacMetadataPersistResolver"/>
@@ -221,14 +237,6 @@
         <property name="status" value="${musicFactory.filters.analyzingInfoForAudioFile.albumCopyrightFilter}"/>
     </bean>
 
-    <!--日志记录基础Bean-->
-    <bean id="musicFactoryModuleAdvice" class="com.stevejrong.music.factory.provider.service.log.aspect.MusicFactoryModuleAdvice"/>
-
-    <!--分析原始音频文件的日志记录业务类-->
-    <bean id="analyzingInfoForAudioFileModuleLogService" class="com.stevejrong.music.factory.provider.service.log.impl.AnalyzingInfoForAudioFileModuleLogServiceImpl"/>
-    <!--补全音乐元数据信息的日志记录业务类-->
-    <bean id="complementsInfoForAudioFileModuleLogService" class="com.stevejrong.music.factory.provider.service.log.impl.ComplementsInfoForAudioFileModuleLogServiceImpl"/>
-
     <!-- 用于支持项目读取Yml/Yaml配置文件 -->
     <bean id="yamlProperties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
         <property name="resources">
@@ -238,22 +246,4 @@
             </array>
         </property>
     </bean>
-
-    <!-- 日志切面 -->
-    <aop:aspectj-autoproxy/>
-    <aop:config proxy-target-class="true">
-        <!--分析原始音频文件 切入点-->
-        <aop:pointcut expression="execution(* com.stevejrong.music.factory.provider.service.music.impl.AnalyzingInfoForAudioFileModule.doAction(..))" id="analyzingInfoForAudioFileModulePointcut"/>
-
-        <!--补全音乐元数据信息 切入点-->
-        <aop:pointcut expression="execution(* com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule.doAction(..))" id="complementsInfoForAudioFileModulePointcut"/>
-
-        <aop:aspect ref="musicFactoryModuleAdvice">
-            <aop:after-returning method="afterReturn" returning="returnObject" pointcut-ref="analyzingInfoForAudioFileModulePointcut"/>
-            <aop:after-throwing method="afterException" arg-names="exception" throwing="exception" pointcut-ref="analyzingInfoForAudioFileModulePointcut"/>
-
-            <aop:after-returning method="afterReturn" returning="returnObject" pointcut-ref="complementsInfoForAudioFileModulePointcut"/>
-            <aop:after-throwing method="afterException" arg-names="exception" throwing="exception" pointcut-ref="complementsInfoForAudioFileModulePointcut"/>
-        </aop:aspect>
-    </aop:config>
 </beans>

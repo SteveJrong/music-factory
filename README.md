@@ -90,7 +90,7 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
       转换时使用Ffmpeg库进行转换，故本机中必须要安装Ffmpeg。
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 #### 版本信息
-1.1
+2.0.0-SNAPSHOT
 
 #### 开发计划
 - 架构优化，插件化开发，多平台兼容支持
@@ -134,3 +134,8 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 2021/11/22：
 1. 切换到develop-2.0.0分支。
 2. 代码重构，使用过滤器，来优化音频文件分析逻辑以及元数据信息抓取逻辑（未完成，待收尾）。
+
+2021/11/28：
+1. 已完善音频文件元数据信息分析及补全。
+2. 日志方案由Spring AOP改为SLF4J+Logback方案。
+3. 已支持Gradle一键打包（在项目根目录下，执行`gradle shadowJar`即可一键打包）。

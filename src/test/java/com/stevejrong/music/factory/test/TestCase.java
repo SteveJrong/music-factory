@@ -15,7 +15,10 @@
  */
 package com.stevejrong.music.factory.test;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.stevejrong.music.factory.bean.TestBean1;
 import com.stevejrong.music.factory.bean.TestBean2;
 import com.stevejrong.music.factory.common.util.*;
@@ -23,8 +26,10 @@ import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
+import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -46,8 +51,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Steve Jrong
@@ -71,7 +78,7 @@ public class TestCase {
         List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = analyzingInfoForAudioFileModule.doAction();
 
         ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = SpringBeanUtil.getBean("complementsInfoForAudioFileModule");
-        complementsInfoForAudioFileModule.setNeedComplementsMusicList(needComplementsMusicList);
+        complementsInfoForAudioFileModule.setNeedComplementsAudioFileList(needComplementsMusicList);
         complementsInfoForAudioFileModule.doAction();
     }
 
@@ -83,7 +90,7 @@ public class TestCase {
                 .newArrayList(new AnalyzingForAudioFileModuleBo.Builder(audioFilePath, songTitle, songArtist).build());
 
         ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = SpringBeanUtil.getBean("complementsInfoForAudioFileModule");
-        complementsInfoForAudioFileModule.setNeedComplementsMusicList(needComplementsMusicList);
+        complementsInfoForAudioFileModule.setNeedComplementsAudioFileList(needComplementsMusicList);
         complementsInfoForAudioFileModule.doAction();
     }
 
@@ -96,9 +103,9 @@ public class TestCase {
 
     @Test
     public void stringToLocalDateTest() {
-        String val = "20130406";
-        LocalDate date = DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(), val);
-        System.out.println(date);
+        String dateString = "2018-11 1";
+        Pattern pattern = Pattern.compile("\\d{4}[-]\\d{1,2}[-]\\d{1,2}");
+        System.out.println(pattern.matcher(dateString).matches());
     }
 
     @Test
@@ -240,9 +247,9 @@ public class TestCase {
         AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/Aanysa-Snakehips - Burn Break Crash.mp3"));
         byte[] bytesOfPicture = FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/demo500500.jpg");
 
-        Tag persistTag = audioFile.getTagOrCreateDefault();
         IAudioFileMetadataPersistResolver persistResolver = SpringBeanUtil.getBean("mp3MetadataPersistResolver");
-        persistResolver.setAlbumPicture(audioFile, persistTag, bytesOfPicture);
+        persistResolver.setAudioFile(audioFile);
+        persistResolver.setAlbumPicture(bytesOfPicture);
     }
 
     @Test
@@ -269,5 +276,51 @@ public class TestCase {
         int height = bufferedImage.getHeight();
 
         System.out.println(String.format("Picture width: %d, height: %d.", width, height));
+    }
+
+    @Test
+    public void persistSongInfoTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+        AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/Paul Van Dyk、Adam Young - Eternity.flac"));
+
+        IAudioFileMetadataPersistResolver metadataPersistResolver = SpringBeanUtil.getBean("flacMetadataPersistResolver");
+        metadataPersistResolver.setAudioFile(audioFile);
+        metadataPersistResolver.setSongTitle("新设置的标题");
+        metadataPersistResolver.setSongArtist("新设置的艺术家");
+        metadataPersistResolver.setAlbumName("新设置的专辑名称");
+        metadataPersistResolver.setAlbumPicture(FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/cover.jpeg"));
+        metadataPersistResolver.setSongLyrics("新设置的内嵌歌词");
+        metadataPersistResolver.setAlbumArtist("新设置的专辑艺术家");
+        metadataPersistResolver.setAlbumPublishDate(DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), "2000-12-31"));
+        metadataPersistResolver.setAlbumDescription("新设置的描述");
+        metadataPersistResolver.setAlbumLanguage("eng");
+        metadataPersistResolver.setAlbumCopyright("© 新设置的版权");
+    }
+
+    @Test
+    public void beanToJsonStringWithGson() {
+        TestBean2 bean2 = new TestBean2();
+        bean2.setFavoriteColor("red");
+        bean2.setFavoriteFoods(Lists.newArrayList("noodles", "rice", "beef soup", "chicken", "LaoGanMa"));
+        bean2.setFavoriteFriendsNameAndAddress(new HashMap<String, String>() {{
+            put("A", "AA");
+            put("B", "BB");
+            put("C", "CC");
+        }});
+        bean2.setFavoriteNum(100);
+
+        TestBean1 bean1 = new TestBean1();
+        bean1.setName("Mariah Carey");
+        bean1.setSerialNum(33492576);
+        bean1.setBean2(bean2);
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        Gson gson = gsonBuilder.create();
+        String jsonBean1 = gson.toJson(bean1);
+        String jsonBean2 = GsonUtil.beanToJsonString(bean1);
+        String jsonBean3 = GsonUtil.beanToJsonString("Alan Walker、K-391、Tungevaag - Play.flac");
+        Assert.assertNotNull(jsonBean1);
+        Assert.assertNotNull(jsonBean2);
+        Assert.assertNotNull(jsonBean3);
     }
 }

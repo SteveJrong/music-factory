@@ -2,6 +2,7 @@ package com.stevejrong.music.factory.provider.service.music.impl;
 
 import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.constants.BaseConstants;
+import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.common.util.SpringBeanUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.spi.music.bean.MusicInfoByFilterBean;
@@ -20,6 +21,8 @@ import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
  * 作用：判断哪些音频文件需要进行数据补全
  */
 public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzingInfoForAudioFileModule.class);
 
     @Override
     public List<AnalyzingForAudioFileModuleBo> doAction() {
@@ -49,7 +53,8 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                         try {
                             audioFile = AudioFileIO.read(new File(file.toAbsolutePath().toString()));
                         } catch (CannotReadException | ReadOnlyFileException | InvalidAudioFrameException | TagException | IOException e) {
-                            e.printStackTrace();
+                            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析")
+                                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
                         }
 
                         AudioHeader audioHeader = audioFile.getAudioHeader();
@@ -91,14 +96,24 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                                 .albumCopyright(albumCopyright)
                                 .songLyrics(songLyrics)
                                 .build();
+
+                        LOGGER.info(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "开始分析音频文件")
+                                .append("filePath", file.getFileName().toAbsolutePath())
+                                .append("musicInfoBean", musicInfoBean)
+                                .toString());
+
                         List<FiltratedResultBo> filtratedResultBoList = filterChain.filtrateParams(
                                 "analyzingInfoForAudioFileFilterConfig", musicInfoBean);
-
                         List<Boolean> filtratedFalseResultBoList = filtratedResultBoList.stream()
                                 .map(FiltratedResultBo::getFiltratedResult)
                                 .map(FiltratedResultDataBo::isResult)
                                 .filter(item -> !item)
                                 .collect(Collectors.toList());
+
+                        LOGGER.info(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "分析音频文件结束")
+                                .append("filePath", file.getFileName().toAbsolutePath())
+                                .append("filtratedFalseResultBoList", filtratedFalseResultBoList)
+                                .toString());
 
                         if (CollectionUtils.isNotEmpty(filtratedFalseResultBoList)) {
                             /*
@@ -111,7 +126,8 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                         }
                     });
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return needComplementsMusicList;

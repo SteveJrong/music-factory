@@ -17,10 +17,7 @@ package com.stevejrong.music.factory.provider.service.music.analyzing.partner.da
 
 import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.enums.BaseEnums;
-import com.stevejrong.music.factory.common.util.BeanMapperUtil;
-import com.stevejrong.music.factory.common.util.GsonUtil;
-import com.stevejrong.music.factory.common.util.HttpUtil;
-import com.stevejrong.music.factory.common.util.RandomUtil;
+import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.spi.music.bean.partner.kugoumusic.KuGouMusicPartnerSongInfoFilterCriteriaBean;
 import com.stevejrong.music.factory.spi.music.bean.partner.kugoumusic.filter3.KuGouMusicPartnerSongInfoFilter3Bean;
 import com.stevejrong.music.factory.spi.music.bean.partner.kugoumusic.filter3.KuGouMusicPartnerSongInfoFilter3DataBean;
@@ -29,6 +26,8 @@ import com.stevejrong.music.factory.spi.music.bo.partner.filter3.KuGouMusicPartn
 import com.stevejrong.music.factory.spi.music.bo.validator.filtrated.FiltratedResultDataBo;
 import com.stevejrong.music.factory.spi.music.vo.partner.filter3.KuGouMusicPartnerSongInfoFilter_3Vo;
 import com.stevejrong.music.factory.spi.service.music.analyzing.partner.AbstractPartnerSongInfoFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Steve Jrong
@@ -37,6 +36,7 @@ import com.stevejrong.music.factory.spi.service.music.analyzing.partner.Abstract
  */
 public class KuGouMusicPartnerSongInfoFilter_3
         extends AbstractPartnerSongInfoFilter<KuGouMusicPartnerSongInfoFilterCriteriaBean, FiltratedResultDataBo<KuGouMusicPartnerSongInfoFilter_3Bo>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KuGouMusicPartnerSongInfoFilter_3.class);
 
     @Override
     public FiltratedResultDataBo<KuGouMusicPartnerSongInfoFilter_3Bo> filtrate(KuGouMusicPartnerSongInfoFilterCriteriaBean criteriaBean) {
@@ -48,10 +48,15 @@ public class KuGouMusicPartnerSongInfoFilter_3
                         ((KuGouMusicPartnerSongInfoFilter_2Bo) criteriaBean.getRedirectDataOnPreview()).getData().getAlbum_id()
                 ))
         );
+        LOGGER.info(LoggerUtil.builder().append("kuGouMusicPartnerSongInfoFilter_3_filtrate", "执行酷狗音乐第三方音乐服务商过滤器3")
+                .append("criteriaBean", criteriaBean).append("filter3Bean", filter3Bean).toString());
 
-        String requestResult = HttpUtil.post(super.getRequestUrl(), BaseEnums.HttpRequestBodyDataType.APPLICATION_JSON, GsonUtil.beanToJsonString(filter3Bean));
+        String response = HttpUtil.post(super.getRequestUrl(), BaseEnums.HttpRequestBodyDataType.APPLICATION_JSON, GsonUtil.beanToJsonString(filter3Bean));
+        LOGGER.info(LoggerUtil.builder().append("kuGouMusicPartnerSongInfoFilter_3_filtrate", "执行酷狗音乐第三方音乐服务商过滤器3结束")
+                .append("response", response).append("criteriaBean", criteriaBean).append("filter3Bean", filter3Bean)
+                .toString());
 
-        KuGouMusicPartnerSongInfoFilter_3Vo filter_3Vo = GsonUtil.jsonStringToBean(requestResult, KuGouMusicPartnerSongInfoFilter_3Vo.class);
+        KuGouMusicPartnerSongInfoFilter_3Vo filter_3Vo = GsonUtil.jsonStringToBean(response, KuGouMusicPartnerSongInfoFilter_3Vo.class);
         KuGouMusicPartnerSongInfoFilter_3Bo filter_3Bo = BeanMapperUtil.copy(filter_3Vo, KuGouMusicPartnerSongInfoFilter_3Bo.class);
 
         return new FiltratedResultDataBo

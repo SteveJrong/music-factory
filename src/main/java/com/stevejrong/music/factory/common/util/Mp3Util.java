@@ -40,10 +40,10 @@ public final class Mp3Util {
      * @param contentKey 要获取内容的Key值
      * @return 有用的内容。若没获取到，则返回null。
      */
-    public static String getContentByContentKeyAndMp3FrameNameInID3v2Tag(String frameName, String contentKey, AbstractID3v2Tag id3v2Tag) {
+    public static <T> T getContentByContentKeyAndMp3FrameNameInID3v2Tag(String frameName, String contentKey, AbstractID3v2Tag id3v2Tag) {
         List<TagField> tagFields = Optional.ofNullable(id3v2Tag.getFields(frameName)).orElse(Lists.newArrayList());
         if (CollectionUtils.isNotEmpty(tagFields)) {
-            return ((AbstractTagFrame) tagFields.get(0)).getBody().getObjectValue(contentKey).toString();
+            return (T)((AbstractTagFrame) tagFields.get(0)).getBody().getObjectValue(contentKey);
         }
 
         return null;

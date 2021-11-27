@@ -2,6 +2,7 @@ package com.stevejrong.music.factory.spi.music.bean;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class MusicInfoByFilterBean extends AbstractFilterBean implements Serializable {
     private static final long serialVersionUID = -4925180047338035848L;

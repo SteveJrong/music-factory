@@ -4,10 +4,13 @@ import com.stevejrong.music.factory.common.enums.ID3v2FramesForMP3Enum;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.common.util.Mp3Util;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.id3.*;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyTDAT;
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * MP3音频文件的元数据解析器
@@ -129,13 +133,29 @@ public class Mp3MetadataQueryResolver implements IAudioFileMetadataQueryResolver
                     .filter(item -> item instanceof FrameBodyTDAT)
                     .findFirst();
 
-            return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
-                    publishYearBody.get().getObjectValue("Text").toString()
-                            + publishMonthAndDayBody.get().getObjectValue("Text").toString());
-        } else if (null != id3v1Tag) {
-            // ID3v1标签中的发布时间，仅支持年份。月日默认为1月1日
-            return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
-                    id3v1Tag.getFirst(FieldKey.YEAR) + "0101");
+            String albumPublishDate = publishYearBody.get().getObjectValue("Text").toString()
+                    + publishMonthAndDayBody.get().getObjectValue("Text").toString();
+
+            if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT.matcher(albumPublishDate).matches()) {
+
+                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(),
+                        publishYearBody.get().getObjectValue("Text").toString()
+                                + publishMonthAndDayBody.get().getObjectValue("Text").toString());
+            } else if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL.matcher(albumPublishDate).matches()) {
+
+                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
+                        publishYearBody.get().getObjectValue("Text").toString()
+                                + publishMonthAndDayBody.get().getObjectValue("Text").toString());
+            }
+        } else if (null != id3v1Tag
+                && CollectionUtils.isNotEmpty(id3v1Tag.getFields(FieldKey.YEAR))
+                && StringUtils.isNotBlank(id3v1Tag.getFirstField(FieldKey.YEAR).toString())) {
+
+            if (DateTimeUtil.DATE_PATTERN_OF_YYYY_FORMAT.matcher(id3v1Tag.getFirstField(FieldKey.YEAR).toString()).matches()) {
+
+                // 当在ID3v1标签中存在4位年份的数据时，就默认此信息正确，直接返回当前时间来认为此音频文件ID3v1标签中的发布时间信息没有缺失
+                return DateTimeUtil.getNowDate();
+            }
         }
 
         return null;

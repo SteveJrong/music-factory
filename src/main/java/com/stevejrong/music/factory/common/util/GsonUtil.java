@@ -17,6 +17,7 @@ package com.stevejrong.music.factory.common.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.stevejrong.music.factory.common.util.sub.DefineTypeAdapterByGson;
 
 /**
  * @author Steve Jrong
@@ -24,10 +25,21 @@ import com.google.gson.GsonBuilder;
  * @since 1.0
  */
 public final class GsonUtil {
-    private static final Gson GSON;
+    private static final Gson DEFAULT_GSON_INSTANCE;
+    private static final GsonBuilder GSON_BUILDER;
 
     static {
-        GSON = new GsonBuilder().setDateFormat(DateTimeUtil.DatePattern.YYYYMMDD_HHMMSS_FORMAT.getValue()).create();
+        GSON_BUILDER = new GsonBuilder();
+        DEFAULT_GSON_INSTANCE = GSON_BUILDER
+                .setDateFormat(DateTimeUtil.DatePattern.YYYYMMDD_HHMMSS_FORMAT.getValue())
+                .create();
+    }
+
+    private static <T> Gson getGsonInstanceWithTypeAdapter(Class<T> clazz) {
+        return GSON_BUILDER
+                .setDateFormat(DateTimeUtil.DatePattern.YYYYMMDD_HHMMSS_FORMAT.getValue())
+                .registerTypeAdapter(clazz, new DefineTypeAdapterByGson<T>())
+                .create();
     }
 
     /**
@@ -36,9 +48,20 @@ public final class GsonUtil {
      * @param bean 要转换的Java Bean实例
      * @return JSON字符串
      */
-    public static String beanToJsonString(Object bean) {
-        return null != GSON ? GSON.toJson(bean) : null;
+    public static <T> String beanToJsonString(T bean) {
+        return DEFAULT_GSON_INSTANCE.toJson(bean);
     }
+
+    /**
+     * Java Bean转换为JSON字符串
+     *
+     * @param bean 要转换的Java Bean实例
+     * @return JSON字符串
+     */
+    public static <T> String beanToJsonStringWithTypeAdapter(T bean) {
+        return getGsonInstanceWithTypeAdapter(bean.getClass()).toJson(bean);
+    }
+
 
     /**
      * JSON字符串转换为Java Bean对象
@@ -49,6 +72,6 @@ public final class GsonUtil {
      * @return Java Bean对象
      */
     public static <T> T jsonStringToBean(String jsonString, Class<T> clazz) {
-        return null != GSON ? GSON.fromJson(jsonString, clazz) : null;
+        return DEFAULT_GSON_INSTANCE.fromJson(jsonString, clazz);
     }
 }

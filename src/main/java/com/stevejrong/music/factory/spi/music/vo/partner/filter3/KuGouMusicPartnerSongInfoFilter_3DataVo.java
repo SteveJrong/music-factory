@@ -15,6 +15,8 @@
  */
 package com.stevejrong.music.factory.spi.music.vo.partner.filter3;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class KuGouMusicPartnerSongInfoFilter_3DataVo implements Serializable {
     }
 
     public String getSizable_cover() {
-        return sizable_cover.replaceAll("/\\{size\\}/", "/");
+        return StringUtils.isNotBlank(this.sizable_cover) ? sizable_cover.replaceAll("/\\{size\\}/", "/") : null;
     }
 
     public void setSizable_cover(String sizable_cover) {

@@ -9,6 +9,7 @@ import com.stevejrong.music.factory.spi.music.bean.AbstractFilterBean;
 import com.stevejrong.music.factory.spi.music.bo.validator.filtrated.FiltratedResultBo;
 import com.stevejrong.music.factory.spi.music.bo.validator.filtrated.FiltratedResultDataBo;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.Comparator;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * create date: 2019-11-11 23:26
  * @since 1.0
  */
-public class BaseFilterChain<T> {
+public class BaseFilterChain {
     /**
      * 过滤器Map键值对集合
      * <p>
@@ -53,11 +54,6 @@ public class BaseFilterChain<T> {
      */
     private List<FiltratedResultBo> filtrate(String filterGroupTag, AbstractFilterBean criteriaBean) {
         List<AbstractFilter> filters = getFiltersByFilterGroupTag(filterGroupTag);
-
-        /*SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
-        FilterGroupsConfig filterGroupConfig = systemConfig.getFilterGroupsConfig().stream().filter(config -> config.getFilterGroupTag().equals(filterGroupTag))
-                .findAny().get();*/
-
         List<FiltratedResultBo> validateResultList = Lists.newArrayList();
 
         if (CollectionUtils.isNotEmpty(filters)) {
@@ -71,12 +67,13 @@ public class BaseFilterChain<T> {
         return validateResultList;
     }
 
+
     /**
-     * 过滤器链构造方法
+     * 过滤器链初始化方法
      * <p>
      * 过滤器链初始化时，将过滤器组加载到HashMap中
      */
-    public BaseFilterChain() {
+    public void init() {
         SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
 
         for (FilterGroupsConfig config : systemConfig.getFilterGroupsConfig()) {
@@ -90,6 +87,10 @@ public class BaseFilterChain<T> {
      * @return 过滤器集合
      */
     private List<AbstractFilter> getFiltersByFilterGroupTag(String filterGroupTag) {
+        if (MapUtils.isEmpty(this.filterGroupsMap)) {
+            init();
+        }
+
         for (Map.Entry item : this.filterGroupsMap.entrySet()) {
             if (filterGroupTag.equals(item.getKey())) {
                 return ((List<AbstractFilter>) item.getValue())
