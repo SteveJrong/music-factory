@@ -139,3 +139,6 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 1. 已完善音频文件元数据信息分析及补全。
 2. 日志方案由Spring AOP改为SLF4J+Logback方案。
 3. 已支持Gradle一键打包（在项目根目录下，执行`gradle shadowJar`即可一键打包）。
+
+2021/11/29：
+1. 修复Gradle打包不正确的Bug。

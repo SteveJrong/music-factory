@@ -54,42 +54,35 @@ sourceSets {
  *
  * @return 当前日期时间字符串
  */
-static def releaseTime() {
-    return new Date().format("yyyyMMdd_HHmm", TimeZone.getTimeZone("GMT+08:00"))
+def releaseTime() {
+    return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("GMT+08:00"))
 }
 
 // 生成Jar包的基本属性信息
 jar {
-    // 生成Jar包的基础名
-    baseName = jarBaseName
-    // 生成Jar包的版本号
-    version jarVersion
-
-    // 生成Jar包的Manifest属性清单
+    // 生成Jar包的属性清单
     manifest {
-        attributes 'Implementation-Title': jarBaseName, 'Implementation-Version': jarVersion, 'Main-Class': mainClassFullName
+        attributes 'Implementation-Title': jarBaseName,
+                'Implementation-Version': jarVersion,
+                'Main-Class': mainClassFullName
     }
 
+    // 编译后的字节码文件以及各种资源文件打包
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
-// 自定义Jar包构建方法（主要用于依赖包中同名文件内容的合并）
+// 使用影子工具生成Jar包的基本信息
 shadowJar {
-    // 生成Jar包的基础名
-    archiveBaseName.set(jarFullName)
-    archiveClassifier.set('')
-    // 生成Jar包的版本号
-    archiveVersion.set('')
+    // Jar包全名
+    archiveBaseName = jarFullName
 
     // 将依赖包中重名的spring相关文件（spring.schema等）做内容合并，避免内容被覆盖导致运行异常
     mergeServiceFiles {
         path = 'META-INF/spring.*'
     }
 }
-
-shadowJar.dependsOn([clean])
 
 // 项目开发及运行所需依赖包的仓库
 repositories {
