@@ -5,7 +5,7 @@ ext {
     project = [
             groupName     : "com.stevejrong",
             projectName   : "music-factory",
-            projectVersion: "2.0.1",
+            projectVersion: "2.0.2-SNAPSHOT",
             mainClassFullName: "com.stevejrong.music.factory.boot.MusicFactoryApplication"
     ]
 
