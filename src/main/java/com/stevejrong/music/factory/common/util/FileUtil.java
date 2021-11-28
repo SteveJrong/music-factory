@@ -1,7 +1,7 @@
 package com.stevejrong.music.factory.common.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
@@ -24,15 +24,17 @@ public final class FileUtil {
      */
     public static byte[] getDefaultAlbumPictureByteArray() {
         if (ArrayUtils.isEmpty(DEFAULT_ALBUM_PICTURE_BYTE_ARRAY)) {
-            ClassPathResource resource = new ClassPathResource("img/default_album_pic.png");
-            File defaultAlbumPicture = null;
+            InputStream inputStream = FileUtil.class.getClassLoader()
+                    .getResourceAsStream("img/default_album_pic.png");
+            File defaultAlbumPictureFile = null;
             try {
-                defaultAlbumPicture = resource.getFile();
+                defaultAlbumPictureFile = File.createTempFile("music_factory_default_album_pic", "temp");
+                FileUtils.copyInputStreamToFile(inputStream, defaultAlbumPictureFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = imageFileToByteArray(defaultAlbumPicture.getPath());
+            DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = imageFileToByteArray(defaultAlbumPictureFile.getPath());
         }
 
         return DEFAULT_ALBUM_PICTURE_BYTE_ARRAY;
@@ -57,14 +59,14 @@ public final class FileUtil {
     /**
      * 图片转字节数组
      *
-     * @param path 图片路径
+     * @param pictureFilePath 图片路径
      * @return 字节数组
      */
-    public static byte[] imageFileToByteArray(String path) {
+    public static byte[] imageFileToByteArray(String pictureFilePath) {
         byte[] imageByteArray = null;
         FileImageInputStream imageInputStream;
         try {
-            imageInputStream = new FileImageInputStream(new File(path));
+            imageInputStream = new FileImageInputStream(new File(pictureFilePath));
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             byte[] buf = new byte[1024];
             int numBytesRead;
