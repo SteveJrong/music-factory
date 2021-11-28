@@ -116,6 +116,7 @@ public final class FileUtil {
      *
      * @return 项目的根绝对路径
      */
+    @Deprecated
     public static String getProjectAbsolutePath() {
         String projectAbsolutePath = null;
 
@@ -160,12 +161,12 @@ public final class FileUtil {
     }
 
     /**
-     * 根据文件位置获取文件名称（不含文件后缀名）
+     * 检查路径是否为正确的目录
      *
-     * @param filePath 文件位置
-     * @return 不含文件后缀名的文件名称
+     * @param path 路径
+     * @return true - 是正确的目录；false - 目录不存在
      */
-    public static String getFileNameWithoutSuffixByFilePath(String filePath) {
-        return filePath.substring(0, filePath.lastIndexOf("."));
+    public static boolean checkIsDirectory(String path) {
+        return com.google.common.io.Files.isDirectory().test(new File(path));
     }
 }

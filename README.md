@@ -1,98 +1,77 @@
 # music-factory
 
-#### 介绍
-音频文件元数据信息补全、音频批量转码工具 
+## 介绍
+音频文件元数据信息补全、音频批量转码工具。 
 
-#### 项目结构
-```
-com.stevejrong.music.factory ------------------------------------------------------ 项目根包 
-com.stevejrong.music.factory.analysis --------------------------------------------- 音频分析相关（隶属于音频信息补全业务） 
-com.stevejrong.music.factory.analysis.datasource ---------------------------------- 第三方数据源提供商API接口交互相关。用于在线搜索音乐信息 
-com.stevejrong.music.factory.analysis.metadata ------------------------------------ 第三方数据源提供商API接口数据返回的数据解析器相关。针对不同的第三方数据源提供商来实现不同的API解析方式 
-com.stevejrong.music.factory.boot ------------------------------------------------- 启动main()方法 
-com.stevejrong.music.factory.common ----------------------------------------------- 通用类 
-com.stevejrong.music.factory.logs ------------------------------------------------- 基于Spring AOP的业务模块日志处理 
-com.stevejrong.music.factory.module ----------------------------------------------- 业务模块 
-com.stevejrong.music.factory.transcode -------------------------------------------- 音频文件转码相关（隶属于音频文件转码业务)  
-com.stevejrong.music.factory.common.util ------------------------------------------------- 通用工具类 
+## 说明
+* 为何要做这样一个工具？
+    * 音乐是疲劳的缓释剂，再忙也要照顾好自己，包括情绪。所以很爱听音乐。
+    * 于是从很多平台下载了各种有损和无损音乐，有损的WMA、MP3-192K/320K、无损的WAV、FLAC、APE，甚至是DSD，应有尽有。
+    * 但是：
+        * 由于音频资源的来源不确定，这就导致了很多时候，下载下来的音频文件，有的缺专辑封面、有的专辑封面太小看不清、有的缺歌曲名称、有的缺演唱者等等。
+        * 有人说，能听就行了，哪那么多麻烦事。
+        * 此时突然想听Taylor Swift的歌，然后去播放器里根据艺术家去找Taylor Swift，然而发现根本没有！最后苦苦寻找，原来是被播放器分类到了`未知艺术家`一栏。
+        * 好不容易啥信息都显示的很全，而偏偏专辑封面模糊的像一坨屎，瞬间没了欣赏音乐的心情。
+* 目前实现的功能：
+    * 音频文件内的`元数据信息填充补全`。包括歌曲标题、歌曲艺术家、歌曲所属的专辑名称、歌曲所属的专辑封面、歌曲内嵌歌词、歌曲所属专辑的艺术家、歌曲所属专辑的发布时间、歌曲所属专辑的描述、歌曲所属专辑的语言类型和歌曲所属专辑的版权信息。
+    * 对音频文件内的元数据信息填充补全时，是通过过滤器来判断哪些文件是需要做元数据信息补全的。此`元数据属性的判断依据`，可通过配置文件`灵活配置`。
+    * 针对音频文件内原有内嵌的专辑封面尺寸过小而导致模糊的问题，也能够重新`替换尺寸更大更清晰的专辑封面`。
+    * 音频文件批量转码（业务改造中，目前未开放）。
+* 音频文件元数据的获取：
+    * 是基于第三方在线音乐服务提供商暴露的API接口实现的。
+
+## 快速开始
+使用本工具，有两种途径，分别是`运行已编译好的Jar包`和`自行编译Jar包并运行`。
+
+### 使用已编译好的Jar包【基础】
+* 适用场景：
+    * 默认配置足够实现需求的用户。
+    * 不想自己编译Jar包的用户。
+* 快速上手指南：
+    * 基于的默认配置：
+        * musicFactory.base.audioFileDirectory: /Users/stevejrong/Desktop/test
+
+### 自行编译Jar包【高级】
+* 适用场景：
+    * 默认配置无法实现需求，需要自定义配置的用户。
+
+## 结构
+### 代码结构
+```text
+com.stevejrong.music.factory.boot ------------------------------------------------- 启动入口类所在的包 
+com.stevejrong.music.factory.common ----------------------------------------------- 通用类和工具类所在的包 
+com.stevejrong.music.factory.config ----------------------------------------------- 综合配置所在的包 
+com.stevejrong.music.factory.provider.service.music ------------------------------- 主要核心业务服务提供根包 
+ |__com.stevejrong.music.factory.provider.service.music.analyzing ----------------- 原始音频文件分析服务所在的包 
+ |__com.stevejrong.music.factory.provider.service.music.formatConversion ---------- 音频文件格式批量转换服务所在的包 
+ |__com.stevejrong.music.factory.provider.service.music.metadata.resolver --------- 音频文件解析和元数据信息存储服务所在的包
+com.stevejrong.music.factory.spi.music - 主要核心业务服务接口根包 
+ |__com.stevejrong.music.factory.spi.music.bean/bo/vo - PoJo类所在的包 
+ |__com.stevejrong.music.factory.spi.service.music - 主要核心业务服务接口所在的包 
+     |__com.stevejrong.music.factory.spi.service.music.analyzing - 原始音频文件分析服务接口所在的包 
+     |__com.stevejrong.music.factory.spi.service.music.filter - 过滤器接口所在的包
+     |__com.stevejrong.music.factory.spi.service.music.formatConversion - 音频文件格式批量转换服务接口所在的包
+     |__com.stevejrong.music.factory.spi.service.music.metadata.resolver - 音频文件解析和元数据信息存储服务接口所在的包
 ```
 
-#### 说明
-1. 由于开发时间仓促，仅实现了功能，但代码结构和实现方式还待优化。原本计划使用```Swing```开发，第一时间不允许，第二Swing没有很深入的接触，使用此技术开发会浪费时间
-2. 目前实现的功能有：
- - 音频文件元数据信息补全功能，基于第三方音乐提供商API
- - 音频批量转码功能，基于ffmpeg命令行转码
-3. 基于Microsoft Windows环境开发，可正常运行；其他环境未测试，不能保证功能正常，有时间会测试和修复
-4. 为什么要开发：
-    - 音乐叉烧一枚，于是本地存有不少音频文件，无损有损、WAV、FLAC各种格式都有。
-    但是！
-    - 这些资源的来源都参差不齐。有的音频元数据信息不全，导入到手机里搜不到对应的歌曲（因为被播放器分类到“未知”专辑里了），有的音频文件名有特殊符号，强迫症受不了，易读性也差
-    - 本人有iPhone、Walkman和安卓手机。后两者还好，FLAC、WAV基本都能识别，但是iPhone真的让我犯了难（无损太大，iPhone 32GB根本不够放，我只能从几百首中一个个挑出来，再用Foobar2000
-    转为ALAC格式，再用爱思助手导入进去，这已经够烦了，重点是音频文件的元数据不准确，导致有时候想搜一首想听的歌，就是搜不到，最后发现在最后的“未知”里……）
-
-#### 如何使用
-###### 先决条件
-1. 下载并安装Java IDE。以下任意一种均可：
+### 资源文件结构
+```text
+src/main/resources ------------------------------------------------- 资源文件根目录
+ |__src/main/resources/img ----------------------------------------- 图片存储目录
+     |__src/main/resources/img/default_album_pic.png --------------- 歌曲专辑默认封面图片
+src/main/resources/application-bean.xml ---------------------------- Spring XML配置文件
+src/main/resources/base-config.yml --------------------------------- 项目基础YML/YAML配置文件
+src/main/resources/custom-config.yml ------------------------------- 动态配置（用户自定义配置）文件
+src/main/resources/logback.xml ------------------------------------- 日志记录组件配置文件
+build.gradle ------------------------------------------------------- Gradle构建配置文件
+config.gradle ------------------------------------------------------ Gradle基础配置文件
+settings.gradle ---------------------------------------------------- Gradle综合设置文件
 ```
-Visual Code（系统需要安装JDK并配置JDK环境变量，IDE中需要安装Java相关插件。将项目打开后，会自动提示安装哪些插件）
-IntelliJ IDEA（无需安装和配置JDK变量，IDE中自带OpenJDK）
-Eclipse（系统需要安装JDK并配置JDK环境变量）
-```
-
-2. 下载并解压Gradle插件。以下为下载地址：
-```
-https://services.gradle.org/distributions/gradle-4.5.1-all.zip
-```
-> 下载后无需配置系统环境变量，在IDE中设置Gradle解压到的目录即可
-
-###### 功能使用
-1. 想批量补全本地文件夹中所有音频文件的元数据信息
-☞ 指南：
-    - 定位到项目中的以下类：
-    ```
-    com.stevejrong.music.factory.boot.MusicFactoryApplication
-    ```
-    - 执行此功能只需执行```Setup 1```和```Setup 2```的代码，将```Setup 3```的代码注释掉即可
-    - 定位到项目中的以下配置文件：
-    ```
-    resources/application-bean.xml
-    ```
-    修改Bean ID为```analysisAndComplementsMusicInfoConfig```中```musicFileDirectoryOfOriginal```属性的值，将此值改为电脑本地存储音频文件的文件夹路径
-    - 再次定位到项目中的以下类，右键运行即可：
-    ```
-    com.stevejrong.music.factory.boot.MusicFactoryApplication
-    ```
-    > 执行期间会有两次日志生成。  
-    日志文件位于项目根目录的```log```文件夹下，分别会生成需要补全的音频文件和补全成功或失败的音频文件信息
-
-2. 想批量转换本地文件夹中所有音频文件为FLAC格式
-☞ 指南：
-    - 定位到项目中的以下类：
-    ```
-    com.stevejrong.music.factory.boot.MusicFactoryApplication
-    ```
-    - 执行此功能只需执行```Setup 3```的代码，将```Setup 1```和```Setup 2```的代码注释掉即可
-    - 定位到项目中的以下配置文件：
-    ```
-    resources/application-bean.xml
-    ```
-    修改Bean ID为```analysisAndComplementsMusicInfoConfig```中```musicFileDirectoryOfOriginal```属性的值，将此值改为本机存放原始音频文件的目录绝对路径
-    修改Bean ID为```convertMusicFileConfig```中：
-        - ```musicFileDirectoryOfConverted```属性的值，将此值改为存放转换后音频文件的目录绝对路径
-        - ```ffmpegFileDirectory```属性的值，将此值改为本机FFmpeg安装路径下ffmpeg文件的绝对路径
-        - ```ffprobeFileDirectory```属性的值，将此值改为本机FFmpeg安装路径下ffprobe文件的绝对路径
-    - 再次定位到项目中的以下类，右键运行即可：
-    ```
-    com.stevejrong.music.factory.boot.MusicFactoryApplication
-    ```
-    > 执行期间无日志生成。  
-      目前支持WAV -> FLAC、M4A（AAC/ALAC） -> FLAC和APE -> FLAC格式的转换。  
-      转换时使用Ffmpeg库进行转换，故本机中必须要安装Ffmpeg。
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-#### 版本信息
-2.0.0-SNAPSHOT
+## 版本信息
+当前主版本：2.0.0-SNAPSHOT
 
-#### 开发计划
+#### 后续开发计划
 - 架构优化，插件化开发，多平台兼容支持
 - 更多第三方API对接
 - 支持多种音频格式互转，加速音频文件的转换（如GPU加速转换）
@@ -139,6 +118,5 @@ https://services.gradle.org/distributions/gradle-4.5.1-all.zip
 1. 已完善音频文件元数据信息分析及补全。
 2. 日志方案由Spring AOP改为SLF4J+Logback方案。
 3. 已支持Gradle一键打包（在项目根目录下，执行`gradle shadowJar`即可一键打包）。
-
-2021/11/29：
-1. 修复Gradle打包不正确的Bug。
+4. 修复Gradle打包不正确的Bug。
+5. 支持自定义原始音频文件存放目录。

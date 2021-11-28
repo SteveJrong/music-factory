@@ -27,6 +27,16 @@ public class BaseConfig {
      */
     private String metadataInfoCompletedForAudioFileMessage;
 
+    /**
+     * 自定义音频文件存放目录提示信息
+     */
+    private String customAudioFileDirectoryMessage;
+
+    /**
+     * 自定义音频文件存放目录成功的提示信息
+     */
+    private String customAudioFileDirectorySuccessMessage;
+
     public String getSpringConfigurationFileName() {
         return springConfigurationFileName;
     }
@@ -57,5 +67,21 @@ public class BaseConfig {
 
     public void setMetadataInfoCompletedForAudioFileMessage(String metadataInfoCompletedForAudioFileMessage) {
         this.metadataInfoCompletedForAudioFileMessage = metadataInfoCompletedForAudioFileMessage;
+    }
+
+    public String getCustomAudioFileDirectoryMessage() {
+        return customAudioFileDirectoryMessage;
+    }
+
+    public void setCustomAudioFileDirectoryMessage(String customAudioFileDirectoryMessage) {
+        this.customAudioFileDirectoryMessage = customAudioFileDirectoryMessage;
+    }
+
+    public String getCustomAudioFileDirectorySuccessMessage() {
+        return customAudioFileDirectorySuccessMessage;
+    }
+
+    public void setCustomAudioFileDirectorySuccessMessage(String customAudioFileDirectorySuccessMessage) {
+        this.customAudioFileDirectorySuccessMessage = customAudioFileDirectorySuccessMessage;
     }
 }

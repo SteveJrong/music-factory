@@ -15,8 +15,8 @@
  */
 package com.stevejrong.music.factory.test;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.stevejrong.music.factory.bean.TestBean1;
@@ -26,10 +26,8 @@ import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
-import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
-import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -51,8 +49,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -322,5 +318,11 @@ public class TestCase {
         Assert.assertNotNull(jsonBean1);
         Assert.assertNotNull(jsonBean2);
         Assert.assertNotNull(jsonBean3);
+    }
+
+    @Test
+    public void isDirectoryTest() {
+        boolean result = Files.isDirectory().test(new File("/Users/stevejrong/Desktop/test/Adam Young、Orjan Nilsen - In The Air.flac"));
+        System.out.println(result ? "是目录" : "不是目录");
     }
 }

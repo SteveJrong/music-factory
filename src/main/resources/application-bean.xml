@@ -15,10 +15,23 @@
         <property name="springConfigurationFileName" value="application-bean.xml"/>
         <property name="welcomeMessage" value="
 &#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
-[1] 分析指定目录下的音频文件，并补全音频文件元数据信息。&#x000A;
-[2] 批量转换指定目录下的音频文件格式。&#x000A;
-[0] 退出程序。&#x000A;
+当前用户配置信息：&#x000A;{{currentCustomConfigInfo}}&#x000A;
+[1] 自定义原始音频文件的存放位置。&#x000A;
+[2] 分析指定目录下的音频文件，并补全音频文件元数据信息。&#x000A;
+[3] 批量转换指定目录下的音频文件格式。&#x000A;
+[0] 退出程序。&#x000A;&#x000A;
 输入上述数字序号来执行任务：_"/>
+
+        <property name="customAudioFileDirectoryMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义原始音频文件存放目录 =============================== &#x000A;
+当前原始音频文件存放目录为：{{defaultAudioFileDirectory}}。&#x000A;
+将原始音频文件的根文件夹直接拖动或从地址栏粘贴至此处，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="customAudioFileDirectorySuccessMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义原始音频文件存放目录成功 =============================== &#x000A;
+原始音频文件的存放目录，已由{{oldAudioFileDirectory}}成功地更改为了{{newAudioFileDirectory}}。&#x000A;"/>
 
         <property name="analyzingCompletedForAudioFileMessage" value="
 &#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
