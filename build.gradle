@@ -84,6 +84,21 @@ shadowJar {
     }
 }
 
+// Jar包发布任务
+task releaseJar(type: Copy) {
+    // 先删除Jar包发布目录
+    file(rootDir.toString() + '/distribution') deleteDir()
+
+    // 将自带shadowJar任务生成的Jar包拷贝到Jar包发布目录下
+    from libsDirectory
+    into rootDir.toString() + '/distribution'
+
+    // 设置任务间依赖关系
+    dependsOn(['clean', 'shadowJar'])
+    // 设置任务间执行顺序
+    shadowJar.mustRunAfter(clean)
+}
+
 // 项目开发及运行所需依赖包的仓库
 repositories {
     mavenLocal()
