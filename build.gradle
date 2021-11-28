@@ -87,11 +87,21 @@ shadowJar {
 // Jar包发布任务
 task releaseJar(type: Copy) {
     // 先删除Jar包发布目录
-    file(rootDir.toString() + '/distribution') deleteDir()
+    delete rootDir.toString() + '/distribution'
 
     // 将自带shadowJar任务生成的Jar包拷贝到Jar包发布目录下
     from libsDirectory
     into rootDir.toString() + '/distribution'
+
+    // 同时创建适用于Microsoft Windows和macOS、Linux操作系统下，可直接双击运行的脚本
+    mkdir rootDir.toString() + '/distribution'
+    file(rootDir.toString() + '/distribution/run.sh') withWriter { writer ->
+        writer.write('#!/bin/sh\n' +
+                'java -jar *.jar')
+    }
+    file(rootDir.toString() + '/distribution/run.bat') withWriter { writer ->
+        writer.write('java -jar *.jar')
+    }
 
     // 设置任务间依赖关系
     dependsOn(['clean', 'shadowJar'])
