@@ -2,6 +2,7 @@ package com.stevejrong.music.factory.provider.service.music.metadata.resolver.pe
 
 import com.stevejrong.music.factory.common.util.AlbumCoverUtil;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
+import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
@@ -66,9 +67,15 @@ public class FlacMetadataPersistResolver extends AbstractAudioFileMetadataPersis
     @Override
     public void setAlbumPicture(byte[] albumPictureByteArray) {
         FlacTag flacTag = (FlacTag) audioFile.getTag();
+
+        if (ArrayUtils.isEmpty(albumPictureByteArray)) {
+            // 若第三方在线音乐服务平台中都没有查询到专辑图片，则使用默认专辑图片
+            albumPictureByteArray = FileUtil.getDefaultAlbumPictureByteArray();
+        }
+
         byte[] originalAlbumPictureByteArray = super.metadataQueryResolver.getAlbumPicture(getAudioFile());
 
-        if (ArrayUtils.isNotEmpty(albumPictureByteArray) && ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
+        if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
             // 先删除专辑封面属性
             flacTag.deleteField(FieldKey.COVER_ART);
 

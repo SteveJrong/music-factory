@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.enums.ID3v2FramesForMP3Enum;
 import com.stevejrong.music.factory.common.util.AlbumCoverUtil;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
+import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.common.util.Mp3Util;
-import com.stevejrong.music.factory.common.util.StringUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
@@ -14,21 +14,17 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.mp3.MP3File;
-import org.jaudiotagger.tag.*;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.id3.*;
-import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyTDAT;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyTYER;
 import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.ArtworkFactory;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,23 +113,25 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
         // 专辑封面不支持ID3v1标签
         AbstractID3v2Tag id3v2Tag = ((MP3File) getAudioFile()).getID3v2Tag();
 
-        byte[] oldAlbumPictureData = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.APIC.getValue(), "PictureData", id3v2Tag);
-        BufferedImage image = null;
-        if (ArrayUtils.isNotEmpty(oldAlbumPictureData)) {
-            try {
-                image = ImageIO.read(new ByteArrayInputStream(oldAlbumPictureData));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (ArrayUtils.isEmpty(albumPictureByteArray)) {
+            // 若第三方在线音乐服务平台中都没有查询到专辑图片，则使用默认专辑图片
+            albumPictureByteArray = FileUtil.getDefaultAlbumPictureByteArray();
         }
 
-        if (ArrayUtils.isNotEmpty(albumPictureByteArray) && (ArrayUtils.isEmpty(oldAlbumPictureData) || image.getWidth() * image.getHeight() < 500 * 500)) {
-            if (ArrayUtils.isNotEmpty(oldAlbumPictureData)) {
-                // 当音频文件元数据中专辑图片尺寸过小时，需要先删除专辑封面属性
-                id3v2Tag.deleteField(FieldKey.COVER_ART);
-            }
+        // 读取音频文件内的专辑封面图片
+        byte[] originalAlbumPictureByteArray = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.APIC.getValue(), "PictureData", id3v2Tag);
 
-            // 音频文件元数据中没有专辑图片或尺寸过小，则将其设置进去
+        BufferedImage originalAlbumPicture = null;
+        if (ArrayUtils.isNotEmpty(originalAlbumPictureByteArray)) {
+            originalAlbumPicture = FileUtil.getBufferedImageByPictureByteArray(originalAlbumPictureByteArray);
+        }
+
+        if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)
+                || (null != originalAlbumPicture && originalAlbumPicture.getWidth() * originalAlbumPicture.getHeight() < 500 * 500)) {
+            // 先删除专辑封面属性
+            id3v2Tag.deleteField(FieldKey.COVER_ART);
+
+            // 再设置新的专辑封面图片
             Artwork artwork = ArtworkFactory.createArtworkFromMetadataBlockDataPicture(AlbumCoverUtil.buildMetadataBlockDataPicture(albumPictureByteArray));
             setFieldAndCommit(id3v2Tag, artwork, getAudioFile());
         }

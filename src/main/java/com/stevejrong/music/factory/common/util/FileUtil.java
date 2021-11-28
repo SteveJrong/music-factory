@@ -1,6 +1,10 @@
 package com.stevejrong.music.factory.common.util;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.core.io.ClassPathResource;
+
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -11,6 +15,28 @@ import java.nio.file.Paths;
  * Util - 文件操作工具类
  */
 public final class FileUtil {
+    private static byte[] DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = null;
+
+    /**
+     * 获取默认专辑封面图片字节数组
+     *
+     * @return
+     */
+    public static byte[] getDefaultAlbumPictureByteArray() {
+        if (ArrayUtils.isEmpty(DEFAULT_ALBUM_PICTURE_BYTE_ARRAY)) {
+            ClassPathResource resource = new ClassPathResource("img/default_album_pic.png");
+            File defaultAlbumPicture = null;
+            try {
+                defaultAlbumPicture = resource.getFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = imageFileToByteArray(defaultAlbumPicture.getPath());
+        }
+
+        return DEFAULT_ALBUM_PICTURE_BYTE_ARRAY;
+    }
 
     /**
      * 字节数组存为图片
@@ -35,25 +61,25 @@ public final class FileUtil {
      * @return 字节数组
      */
     public static byte[] imageFileToByteArray(String path) {
-        File file = new File(path);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byte[] imgByteArray = new byte[]{};
-
+        byte[] imageByteArray = null;
+        FileImageInputStream imageInputStream;
         try {
-            BufferedImage bi = ImageIO.read(file);
-            ImageIO.write(bi, "jpg", byteArrayOutputStream);
-            imgByteArray = byteArrayOutputStream.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                byteArrayOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            imageInputStream = new FileImageInputStream(new File(path));
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int numBytesRead;
+            while ((numBytesRead = imageInputStream.read(buf)) != -1) {
+                output.write(buf, 0, numBytesRead);
             }
+
+            imageByteArray = output.toByteArray();
+            output.close();
+            imageInputStream.close();
+        } catch (IOException ex1) {
+            ex1.printStackTrace();
         }
 
-        return imgByteArray;
+        return imageByteArray;
     }
 
     /**
@@ -112,25 +138,6 @@ public final class FileUtil {
     }
 
     /**
-     * 获取项目的根绝对路径
-     *
-     * @return 项目的根绝对路径
-     */
-    @Deprecated
-    public static String getProjectAbsolutePath() {
-        String projectAbsolutePath = null;
-
-        File file = new File("");
-        try {
-            projectAbsolutePath = file.getCanonicalPath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return projectAbsolutePath;
-    }
-
-    /**
      * 字符串内容写入文本文件
      *
      * @param content    要写入的字符串内容
@@ -168,5 +175,22 @@ public final class FileUtil {
      */
     public static boolean checkIsDirectory(String path) {
         return com.google.common.io.Files.isDirectory().test(new File(path));
+    }
+
+    /**
+     * 获取图片字节数组的BufferedImage对象
+     *
+     * @param pictureByteArray 图片字节数组
+     * @return 图片字节数组的BufferedImage对象
+     */
+    public static BufferedImage getBufferedImageByPictureByteArray(byte[] pictureByteArray) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(new ByteArrayInputStream(pictureByteArray));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return image;
     }
 }
