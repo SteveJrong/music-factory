@@ -1,18 +1,3 @@
-/**
- * Copyright 2021 Steve Jrong
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.stevejrong.music.factory.test;
 
 import com.google.common.collect.Lists;
@@ -31,11 +16,14 @@ import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IA
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.id3.AbstractTagFrame;
+import org.jaudiotagger.tag.id3.*;
 import org.jaudiotagger.tag.images.Artwork;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,10 +33,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -99,8 +88,8 @@ public class TestCase {
 
     @Test
     public void stringToLocalDateTest() {
-        String dateString = "2018-11 1";
-        Pattern pattern = Pattern.compile("\\d{4}[-]\\d{1,2}[-]\\d{1,2}");
+        String dateString = "2020-02-28"; // [0-9]{4}(0[1-9]$|^1[0-2])[0-9]{2}
+        Pattern pattern = Pattern.compile("(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)-02-29)");
         System.out.println(pattern.matcher(dateString).matches());
     }
 
@@ -276,14 +265,16 @@ public class TestCase {
 
     @Test
     public void persistSongInfoTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
-        AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/Paul Van Dyk、Adam Young - Eternity.flac"));
+        AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/4MINUTE - HUH.flac"));
 
         IAudioFileMetadataPersistResolver metadataPersistResolver = SpringBeanUtil.getBean("flacMetadataPersistResolver");
         metadataPersistResolver.setAudioFile(audioFile);
+        metadataPersistResolver.setIAudioFileMetadataQueryResolver(SpringBeanUtil.getBean("flacMetadataQueryResolver"));
+
         metadataPersistResolver.setSongTitle("新设置的标题");
         metadataPersistResolver.setSongArtist("新设置的艺术家");
         metadataPersistResolver.setAlbumName("新设置的专辑名称");
-        metadataPersistResolver.setAlbumPicture(FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/cover.jpeg"));
+        metadataPersistResolver.setAlbumPicture(FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/default_album_pic.png"));
         metadataPersistResolver.setSongLyrics("新设置的内嵌歌词");
         metadataPersistResolver.setAlbumArtist("新设置的专辑艺术家");
         metadataPersistResolver.setAlbumPublishDate(DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), "2000-12-31"));
@@ -324,5 +315,49 @@ public class TestCase {
     public void isDirectoryTest() {
         boolean result = Files.isDirectory().test(new File("/Users/stevejrong/Desktop/test/Adam Young、Orjan Nilsen - In The Air.flac"));
         System.out.println(result ? "是目录" : "不是目录");
+    }
+
+    @Test
+    public void dateFormatTest() {
+        String dateString = "2020-03-1";
+        Pattern DATE_PATTERN_OF_YYYYMMD_FORMAT = Pattern.compile("yyyy-MM-d");
+    }
+
+    @Test
+    public void ID3V1TagCreateTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException, CannotWriteException {
+        File file = new File("/Users/stevejrong/Desktop/test/Lady Gaga - Donatella (Instrumental).mp3");
+        AudioFile audioFile = AudioFileIO.read(file);
+        MP3File mp3File = (MP3File) audioFile;
+
+        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+
+        if (!mp3File.hasID3v1Tag()) {
+            id3v1Tag = new ID3v11Tag();
+            id3v1Tag.setTitle(new String("标题".getBytes(), StandardCharsets.ISO_8859_1));
+        }
+
+        mp3File.setID3v1Tag(id3v1Tag);
+        mp3File.commit();
+
+        Assert.assertNotNull(id3v1Tag);
+    }
+
+    @Test
+    public void ID3V2TagCreateTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException, CannotWriteException {
+        File file = new File("/Users/stevejrong/Desktop/test/Lady Gaga - Donatella (Instrumental).mp3");
+        AudioFile audioFile = AudioFileIO.read(file);
+        MP3File mp3File = (MP3File) audioFile;
+
+        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+
+        if (!mp3File.hasID3v2Tag()) {
+            id3v2Tag = new ID3v23Tag();
+            id3v2Tag.setField(FieldKey.TITLE, "标题");
+        }
+
+        mp3File.setID3v2Tag(id3v2Tag);
+        mp3File.commit();
+
+        Assert.assertNotNull(id3v2Tag);
     }
 }

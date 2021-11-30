@@ -2,7 +2,7 @@
 # 使用前，需要视实际情况进行修改
 musicFactory:
   base:
-    audioFileDirectory: '/Users/stevejrong/Desktop/test' # 原始音频文件的存放位置。
+    audioFileDirectory: '< 使用前，请先根据功能编号，自定义原始音频文件存放目录！>' # 原始音频文件的存放位置。
   filters:
     analyzingInfoForAudioFile:
       songLyricsFilter: true # 设置是否以歌曲内嵌歌词的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲内嵌歌词是否存在；false - 跳过验证歌曲内嵌歌词。

@@ -42,12 +42,13 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
         super.metadataQueryResolver = metadataQueryResolver;
     }
 
+
     @Override
     public void setSongTitle(String songTitle) {
         MP3File mp3File = (MP3File) getAudioFile();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag(mp3File);
+        ID3v1Tag id3v1Tag = Mp3Util.checkID3v1Tag(mp3File);
 
         // 先处理ID3v2标签
         String songTitleForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TIT2.getValue(), "Text", id3v2Tag);

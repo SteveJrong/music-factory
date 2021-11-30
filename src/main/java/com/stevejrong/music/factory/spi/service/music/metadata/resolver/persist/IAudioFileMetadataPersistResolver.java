@@ -1,15 +1,19 @@
 package com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist;
 
-import com.stevejrong.music.factory.common.util.StringUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
-import org.jaudiotagger.tag.FieldDataInvalidException;
+import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.id3.AbstractID3v1Tag;
+import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
+import org.jaudiotagger.tag.id3.ID3v23Tag;
 import org.jaudiotagger.tag.images.Artwork;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 /**
@@ -112,8 +116,13 @@ public interface IAudioFileMetadataPersistResolver {
     default void setFieldAndCommit(Tag tag, Artwork artwork, AudioFile audioFile) {
         try {
             tag.setField(artwork);
-            AudioFileIO.write(audioFile);
-        } catch (FieldDataInvalidException | CannotWriteException e) {
+
+            if (audioFile instanceof MP3File) {
+                ((MP3File) audioFile).save();
+            } else {
+                AudioFileIO.write(audioFile);
+            }
+        } catch (CannotWriteException | IOException | TagException e) {
             e.printStackTrace();
         }
     }
@@ -129,8 +138,25 @@ public interface IAudioFileMetadataPersistResolver {
     default void setFieldAndCommit(Tag tag, FieldKey fieldKey, String fieldValue, AudioFile audioFile) {
         try {
             tag.setField(fieldKey, fieldValue);
-            AudioFileIO.write(audioFile);
-        } catch (FieldDataInvalidException | CannotWriteException e) {
+
+            if (tag instanceof AbstractID3v2Tag && audioFile instanceof MP3File
+                    && !((MP3File) audioFile).hasID3v2Tag()) {
+
+                ((MP3File) audioFile).setID3v2Tag((ID3v23Tag) tag);
+                audioFile.commit();
+            } else if (tag instanceof AbstractID3v1Tag && audioFile instanceof MP3File
+                    && !((MP3File) audioFile).hasID3v1Tag()) {
+
+                ((MP3File) audioFile).setID3v1Tag(tag);
+                audioFile.commit();
+            }
+
+            if (audioFile instanceof MP3File) {
+                ((MP3File) audioFile).save();
+            } else {
+                AudioFileIO.write(audioFile);
+            }
+        } catch (TagException | CannotWriteException | IOException e) {
             e.printStackTrace();
         }
     }

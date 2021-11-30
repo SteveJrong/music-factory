@@ -2,7 +2,7 @@ package com.stevejrong.music.factory.provider.service.music.metadata.resolver.qu
 
 import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
-import com.stevejrong.music.factory.common.util.StringUtil;
+import com.stevejrong.music.factory.common.util.FlacUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * Flac音频文件的元数据解析器
@@ -29,7 +28,7 @@ public class FlacMetadataQueryResolver implements IAudioFileMetadataQueryResolve
 
     @Override
     public String getSongTitle(AudioFile audioFile) {
-        FlacTag flacTag = (FlacTag) audioFile.getTag();
+        FlacTag flacTag = FlacUtil.checkFlacTag(audioFile);
 
         TagField songTitleTagField = flacTag.getFirstField(FieldKey.TITLE);
         if (null != songTitleTagField && StringUtils.isNotBlank(((VorbisCommentTagField) songTitleTagField).getContent())) {

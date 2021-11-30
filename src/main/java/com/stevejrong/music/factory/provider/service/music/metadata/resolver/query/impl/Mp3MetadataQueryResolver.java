@@ -1,5 +1,6 @@
 package com.stevejrong.music.factory.provider.service.music.metadata.resolver.query.impl;
 
+import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.enums.ID3v2FramesForMP3Enum;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.common.util.Mp3Util;
@@ -20,7 +21,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * MP3音频文件的元数据解析器
@@ -122,30 +122,38 @@ public class Mp3MetadataQueryResolver implements IAudioFileMetadataQueryResolver
         AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
         ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
 
-        if (null == id3v2Tag) {
+        if (null != id3v2Tag) {
             // ID3v2标签中的发布时间，支持年月日
-            TyerTdatAggregatedFrame body = (TyerTdatAggregatedFrame) id3v2Tag.getFields(ID3v2FramesForMP3Enum.TYERTDAT.getValue()).get(0);
 
-            Optional<AbstractTagFrameBody> publishYearBody = body.getFrames().stream().map(AbstractTagFrame::getBody)
-                    .filter(item -> item instanceof FrameBodyTYER)
-                    .findFirst();
-            Optional<AbstractTagFrameBody> publishMonthAndDayBody = body.getFrames().stream().map(AbstractTagFrame::getBody)
-                    .filter(item -> item instanceof FrameBodyTDAT)
-                    .findFirst();
+            List<TagField> tagFieldList = Optional.ofNullable(
+                    id3v2Tag.getFields(ID3v2FramesForMP3Enum.TYERTDAT.getValue())).orElse(Lists.newArrayList());
+            TyerTdatAggregatedFrame body = null;
+            if (CollectionUtils.isNotEmpty(tagFieldList)) {
+                body = (TyerTdatAggregatedFrame) id3v2Tag.getFields(ID3v2FramesForMP3Enum.TYERTDAT.getValue()).get(0);
+            }
 
-            String albumPublishDate = publishYearBody.get().getObjectValue("Text").toString()
-                    + publishMonthAndDayBody.get().getObjectValue("Text").toString();
+            if (null != body) {
+                Optional<AbstractTagFrameBody> publishYearBody = body.getFrames().stream().map(AbstractTagFrame::getBody)
+                        .filter(item -> item instanceof FrameBodyTYER)
+                        .findFirst();
+                Optional<AbstractTagFrameBody> publishMonthAndDayBody = body.getFrames().stream().map(AbstractTagFrame::getBody)
+                        .filter(item -> item instanceof FrameBodyTDAT)
+                        .findFirst();
 
-            if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT.matcher(albumPublishDate).matches()) {
+                String albumPublishDate = publishYearBody.get().getObjectValue("Text").toString()
+                        + publishMonthAndDayBody.get().getObjectValue("Text").toString();
 
-                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(),
-                        publishYearBody.get().getObjectValue("Text").toString()
-                                + publishMonthAndDayBody.get().getObjectValue("Text").toString());
-            } else if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL.matcher(albumPublishDate).matches()) {
+                if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT.matcher(albumPublishDate).matches()) {
 
-                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
-                        publishYearBody.get().getObjectValue("Text").toString()
-                                + publishMonthAndDayBody.get().getObjectValue("Text").toString());
+                    return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(),
+                            publishYearBody.get().getObjectValue("Text").toString()
+                                    + publishMonthAndDayBody.get().getObjectValue("Text").toString());
+                } else if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL.matcher(albumPublishDate).matches()) {
+
+                    return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
+                            publishYearBody.get().getObjectValue("Text").toString()
+                                    + publishMonthAndDayBody.get().getObjectValue("Text").toString());
+                }
             }
         } else if (null != id3v1Tag
                 && CollectionUtils.isNotEmpty(id3v1Tag.getFields(FieldKey.YEAR))
@@ -216,12 +224,14 @@ public class Mp3MetadataQueryResolver implements IAudioFileMetadataQueryResolver
         MP3File mp3File = (MP3File) audioFile;
 
         AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        AbstractID3v2Frame frame;
+        AbstractID3v2Frame frame = null;
 
-        if (id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue()) instanceof ArrayList) {
-            frame = (AbstractID3v2Frame) ((List) id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue())).get(0);
-        } else {
-            frame = (AbstractID3v2Frame) id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue());
+        if (null != id3v2Tag) {
+            if (id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue()) instanceof ArrayList) {
+                frame = (AbstractID3v2Frame) ((List) id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue())).get(0);
+            } else {
+                frame = (AbstractID3v2Frame) id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue());
+            }
         }
 
         if (null != frame && null != frame.getBody() && ArrayUtils.isNotEmpty(((FrameBodyAPIC) frame.getBody()).getImageData())) {
