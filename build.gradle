@@ -24,8 +24,10 @@ buildscript {
 def jarBaseName = ext.project.projectName
 // Jar包版本号
 def jarVersion = ext.project.projectVersion
+// Jar包发布时间
+def releaseDateTime = getReleaseDateTime()
 // Jar包全名
-def jarFullName = jarBaseName + '-' + jarVersion + '-' + releaseTime()
+def jarFullName = jarBaseName + '-' + jarVersion + '-' + releaseDateTime
 // 主类
 def mainClassFullName = ext.project.mainClassFullName
 
@@ -54,7 +56,7 @@ sourceSets {
  *
  * @return 当前日期时间字符串
  */
-def releaseTime() {
+def getReleaseDateTime() {
     return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("GMT+08:00"))
 }
 
@@ -96,11 +98,10 @@ task releaseJar(type: Copy) {
     // 同时创建适用于Microsoft Windows和macOS、Linux操作系统下，可直接双击运行的脚本
     mkdir rootDir.toString() + '/distribution'
     file(rootDir.toString() + '/distribution/run.sh') withWriter { writer ->
-        writer.write('#!/bin/sh\n' +
-                'java -jar *.jar')
+        writer.write('#!/bin/sh\njava -jar ' + jarFullName + '-all.jar')
     }
     file(rootDir.toString() + '/distribution/run.bat') withWriter { writer ->
-        writer.write('java -jar *.jar')
+        writer.write('java -jar ' + jarFullName + '-all.jar')
     }
 
     // 设置任务间依赖关系

@@ -1,12 +1,10 @@
 package com.stevejrong.music.factory.provider.service.music.analyzing.partner.resolver.impl;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.common.util.HttpUtil;
 import com.stevejrong.music.factory.spi.music.bo.analyzing.datasource.PartnerSongInfoBo;
 import com.stevejrong.music.factory.spi.music.bo.partner.filter1.KuGouMusicPartnerSongInfoFilter_1Bo;
-import com.stevejrong.music.factory.spi.music.bo.partner.filter1.KuGouMusicPartnerSongInfoFilter_1DataBo;
 import com.stevejrong.music.factory.spi.music.bo.partner.filter1.KuGouMusicPartnerSongInfoFilter_1InfoBo;
 import com.stevejrong.music.factory.spi.music.bo.partner.filter2.KuGouMusicPartnerSongInfoFilter_2Bo;
 import com.stevejrong.music.factory.spi.music.bo.partner.filter2.KuGouMusicPartnerSongInfoFilter_2DataBo;
@@ -19,7 +17,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,7 +68,7 @@ public class KuGouPartnerSongInfoResolver implements IPartnerSongInfoResolver<Li
         }
 
         //  歌曲标题
-        String songTitle = null != filter1InfoBo ? filter1InfoBo.getSongname() : null;
+        String songTitle = Optional.ofNullable(filter1InfoBo).orElse(new KuGouMusicPartnerSongInfoFilter_1InfoBo()).getSongname();
 
         return new KuGouMusicPartnerSongInfoFilter1Bo(songTitle);
     }
@@ -84,20 +81,22 @@ public class KuGouPartnerSongInfoResolver implements IPartnerSongInfoResolver<Li
     private KuGouMusicPartnerSongInfoFilter2Bo executeWithKuGouMusicPartnerSongInfoFilter2(List<FiltratedResultBo> partnerSongInfo) {
         KuGouMusicPartnerSongInfoFilter_2DataBo filter2DataBo;
 
-        FiltratedResultBo filtratedResultOfFilter2Bo = partnerSongInfo
+        Optional<FiltratedResultBo> filtratedResultOfFilter2Bo = partnerSongInfo
                 .stream()
                 .filter(item -> item.getFiltratedResult().getData() instanceof KuGouMusicPartnerSongInfoFilter_2Bo)
-                .findAny().get();
+                .findAny();
 
-        filter2DataBo = Optional.ofNullable(
-                ((KuGouMusicPartnerSongInfoFilter_2Bo) filtratedResultOfFilter2Bo
+        filter2DataBo = filtratedResultOfFilter2Bo.isPresent() ?
+                Optional.ofNullable(((KuGouMusicPartnerSongInfoFilter_2Bo) filtratedResultOfFilter2Bo
+                        .get()
                         .getFiltratedResult()
                         .getData())
                         .getData()
-        ).orElse(new KuGouMusicPartnerSongInfoFilter_2DataBo());
+                ).orElse(new KuGouMusicPartnerSongInfoFilter_2DataBo())
+                : new KuGouMusicPartnerSongInfoFilter_2DataBo();
 
         // 歌曲内嵌歌词
-        String songLyrics = filter2DataBo.getLyrics();
+        String songLyrics = Optional.of(filter2DataBo).orElse(new KuGouMusicPartnerSongInfoFilter_2DataBo()).getLyrics();
 
         return new KuGouMusicPartnerSongInfoFilter2Bo(songLyrics);
     }
@@ -116,36 +115,55 @@ public class KuGouPartnerSongInfoResolver implements IPartnerSongInfoResolver<Li
         LocalDate albumPublishDate = null;
         KuGouMusicPartnerSongInfoFilter_3DataBo filter3DataBo = null;
 
-        FiltratedResultBo filtratedResultOfFilter3Bo = partnerSongInfo
+        Optional<FiltratedResultBo> filtratedResultOfFilter3Bo = partnerSongInfo
                 .stream()
                 .filter(item -> item.getFiltratedResult().getData() instanceof KuGouMusicPartnerSongInfoFilter_3Bo)
-                .findAny().get();
+                .findAny();
 
-        List<KuGouMusicPartnerSongInfoFilter_3DataBo> filter3DataBoList = Optional.ofNullable(
-                (((KuGouMusicPartnerSongInfoFilter_3Bo) filtratedResultOfFilter3Bo
-                        .getFiltratedResult()
-                        .getData())
-                        .getData()))
-                .orElse(Lists.newArrayList());
+        List<KuGouMusicPartnerSongInfoFilter_3DataBo> filter3DataBoList = filtratedResultOfFilter3Bo.isPresent()
+                ? Optional.ofNullable((((KuGouMusicPartnerSongInfoFilter_3Bo) filtratedResultOfFilter3Bo.get()
+                .getFiltratedResult()
+                .getData())
+                .getData()))
+                .orElse(Lists.newArrayList())
+                : Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(filter3DataBoList)) {
             filter3DataBo = filter3DataBoList.get(0);
         }
 
         // 歌曲艺术家
-        if (null != filter3DataBo && CollectionUtils.isNotEmpty(filter3DataBo.getAuthors())) {
+        List<KuGouMusicPartnerSongInfoFilter_3AuthorsBo> filter3AuthorsBoList = Optional.ofNullable(filter3DataBo)
+                .orElse(new KuGouMusicPartnerSongInfoFilter_3DataBo())
+                .getAuthors();
+        if (CollectionUtils.isNotEmpty(filter3AuthorsBoList)) {
             // 优先取Filter3接口返回的歌曲艺术家数据
-            songArtist = filter3DataBo.getAuthors().stream().map(KuGouMusicPartnerSongInfoFilter_3AuthorsBo::getAuthor_name).collect(Collectors.joining("&"));
+            songArtist = filter3AuthorsBoList
+                    .stream()
+                    .map(KuGouMusicPartnerSongInfoFilter_3AuthorsBo::getAuthor_name)
+                    .collect(Collectors.joining("&"));
         } else {
             // 如果Filter3接口没有返回歌曲艺术家数据，则取Filter1接口返回的歌曲艺术家数据
-            String singerName = ((KuGouMusicPartnerSongInfoFilter_1Bo) filtratedResultOfFilter1Bo
-                    .getFiltratedResult().getData()).getData().getInfo().get(0).getSingername();
+            List<KuGouMusicPartnerSongInfoFilter_1InfoBo> filter1InfoBoList = Optional.ofNullable(
+                    ((KuGouMusicPartnerSongInfoFilter_1Bo) filtratedResultOfFilter1Bo
+                            .getFiltratedResult()
+                            .getData())
+                            .getData()
+                            .getInfo())
+                    .orElse(Lists.newArrayList());
+
+            KuGouMusicPartnerSongInfoFilter_1InfoBo filter1InfoBo = null;
+            if (CollectionUtils.isNotEmpty(filter1InfoBoList)) {
+                filter1InfoBo = filter1InfoBoList.get(0);
+            }
+
+            String singerName = Optional.ofNullable(filter1InfoBo).orElse(new KuGouMusicPartnerSongInfoFilter_1InfoBo()).getSingername();
             if (StringUtils.isNotBlank(singerName)) {
                 songArtist = singerName.replaceAll("、", "&");
             }
         }
 
         // 歌曲所属的专辑名称
-        albumName = null != filter3DataBo ? filter3DataBo.getAlbum_name() : null;
+        albumName = Optional.ofNullable(filter3DataBo).orElse(new KuGouMusicPartnerSongInfoFilter_3DataBo()).getAlbum_name();
 
         // 歌曲所属的专辑封面
         if (null != filter3DataBo && StringUtils.isNotBlank(filter3DataBo.getSizable_cover())) {
@@ -156,19 +174,20 @@ public class KuGouPartnerSongInfoResolver implements IPartnerSongInfoResolver<Li
         albumArtist = songArtist;
 
         // 歌曲所属专辑的发布时间
-        if (null != filter3DataBo && StringUtils.isNotBlank(filter3DataBo.getPublish_date())
-                && !"0000-00-00".equals(filter3DataBo.getPublish_date())) {
-            albumPublishDate = DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), filter3DataBo.getPublish_date());
+        String publishDate = Optional.ofNullable(filter3DataBo).orElse(new KuGouMusicPartnerSongInfoFilter_3DataBo())
+                .getPublish_date();
+        if (StringUtils.isNotBlank(publishDate) && !"0000-00-00".equals(publishDate)) {
+            albumPublishDate = DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), publishDate);
         }
 
         // 歌曲所属专辑的描述
-        albumDescription = null != filter3DataBo ? filter3DataBo.getIntro() : null;
+        albumDescription = Optional.ofNullable(filter3DataBo).orElse(new KuGouMusicPartnerSongInfoFilter_3DataBo()).getIntro();
 
         // 歌曲所属专辑的语言类型
-        albumLanguage = null != filter3DataBo ? filter3DataBo.getLanguage() : null;
+        albumLanguage = Optional.ofNullable(filter3DataBo).orElse(new KuGouMusicPartnerSongInfoFilter_3DataBo()).getLanguage();
 
         // 歌曲所属专辑的版权信息
-        albumCopyright = null != filter3DataBo ? filter3DataBo.getPublish_company() : null;
+        albumCopyright = Optional.ofNullable(filter3DataBo).orElse(new KuGouMusicPartnerSongInfoFilter_3DataBo()).getPublish_company();
 
         return new KuGouMusicPartnerSongInfoFilter3Bo(songArtist, albumName, albumArtist, albumDescription, albumLanguage,
                 albumCopyright, albumPicture, albumPublishDate);

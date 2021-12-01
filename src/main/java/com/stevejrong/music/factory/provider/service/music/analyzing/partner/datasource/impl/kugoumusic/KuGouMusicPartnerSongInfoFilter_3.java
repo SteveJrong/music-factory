@@ -40,28 +40,35 @@ public class KuGouMusicPartnerSongInfoFilter_3
 
     @Override
     public FiltratedResultDataBo<KuGouMusicPartnerSongInfoFilter_3Bo> filtrate(KuGouMusicPartnerSongInfoFilterCriteriaBean criteriaBean) {
-        KuGouMusicPartnerSongInfoFilter3Bean filter3Bean = new KuGouMusicPartnerSongInfoFilter3Bean(
-                1,
-                RandomUtil.getRandomStringWithNumeric(10),
-                1,
-                Lists.newArrayList(new KuGouMusicPartnerSongInfoFilter3DataBean(
-                        ((KuGouMusicPartnerSongInfoFilter_2Bo) criteriaBean.getRedirectDataOnPreview()).getData().getAlbum_id()
-                ))
-        );
-        LOGGER.info(LoggerUtil.builder().append("kuGouMusicPartnerSongInfoFilter_3_filtrate", "执行酷狗音乐第三方音乐服务商过滤器3")
-                .append("criteriaBean", criteriaBean).append("filter3Bean", filter3Bean).toString());
+        Object filter2Data = criteriaBean.getRedirectDataOnPreview();
+        if (null != filter2Data) {
+            KuGouMusicPartnerSongInfoFilter3Bean filter3Bean = new KuGouMusicPartnerSongInfoFilter3Bean(
+                    1,
+                    RandomUtil.getRandomStringWithNumeric(10),
+                    1,
+                    Lists.newArrayList(new KuGouMusicPartnerSongInfoFilter3DataBean(
+                            ((KuGouMusicPartnerSongInfoFilter_2Bo) filter2Data).getData().getAlbum_id()
+                    ))
+            );
+            LOGGER.info(LoggerUtil.builder().append("kuGouMusicPartnerSongInfoFilter_3_filtrate", "执行酷狗音乐第三方音乐服务商过滤器3")
+                    .append("criteriaBean", criteriaBean).append("filter3Bean", filter3Bean).toString());
 
-        String response = HttpUtil.post(super.getRequestUrl(), BaseEnums.HttpRequestBodyDataType.APPLICATION_JSON, GsonUtil.beanToJsonString(filter3Bean));
-        LOGGER.info(LoggerUtil.builder().append("kuGouMusicPartnerSongInfoFilter_3_filtrate", "执行酷狗音乐第三方音乐服务商过滤器3结束")
-                .append("response", response).append("criteriaBean", criteriaBean).append("filter3Bean", filter3Bean)
-                .toString());
+            String response = HttpUtil.post(super.getRequestUrl(), BaseEnums.HttpRequestBodyDataType.APPLICATION_JSON, GsonUtil.beanToJsonString(filter3Bean));
+            LOGGER.info(LoggerUtil.builder().append("kuGouMusicPartnerSongInfoFilter_3_filtrate", "执行酷狗音乐第三方音乐服务商过滤器3结束")
+                    .append("response", response).append("criteriaBean", criteriaBean).append("filter3Bean", filter3Bean)
+                    .toString());
 
-        KuGouMusicPartnerSongInfoFilter_3Vo filter_3Vo = GsonUtil.jsonStringToBean(response, KuGouMusicPartnerSongInfoFilter_3Vo.class);
-        KuGouMusicPartnerSongInfoFilter_3Bo filter_3Bo = BeanMapperUtil.copy(filter_3Vo, KuGouMusicPartnerSongInfoFilter_3Bo.class);
+            KuGouMusicPartnerSongInfoFilter_3Vo filter_3Vo = GsonUtil.jsonStringToBean(response, KuGouMusicPartnerSongInfoFilter_3Vo.class);
+            KuGouMusicPartnerSongInfoFilter_3Bo filter_3Bo = BeanMapperUtil.copy(filter_3Vo, KuGouMusicPartnerSongInfoFilter_3Bo.class);
 
-        return new FiltratedResultDataBo
-                .Builder<KuGouMusicPartnerSongInfoFilter_3Bo>(true)
-                .data(filter_3Bo)
-                .build();
+            return new FiltratedResultDataBo
+                    .Builder<KuGouMusicPartnerSongInfoFilter_3Bo>(true)
+                    .data(filter_3Bo)
+                    .build();
+        } else {
+            return new FiltratedResultDataBo
+                    .Builder<KuGouMusicPartnerSongInfoFilter_3Bo>(false)
+                    .build();
+        }
     }
 }

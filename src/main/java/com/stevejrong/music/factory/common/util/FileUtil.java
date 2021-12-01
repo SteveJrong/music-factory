@@ -100,7 +100,8 @@ public final class FileUtil {
         String keyword1 = fileName.substring(0, fileName.lastIndexOf("-")).trim();
         String keyword2 = fileName.substring(fileName.lastIndexOf("-") + 1).trim();
 
-        return keyword1 + " " + keyword2;
+        return StringUtil.removeSpecialChars(keyword1)
+                + " " + StringUtil.removeSpecialChars(keyword2);
     }
 
     /**

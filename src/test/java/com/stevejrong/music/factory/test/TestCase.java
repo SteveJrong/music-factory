@@ -33,10 +33,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -359,5 +359,14 @@ public class TestCase {
         mp3File.commit();
 
         Assert.assertNotNull(id3v2Tag);
+    }
+
+    @Test
+    public void replaceCharactersTest() {
+        String sourceString = "Trademark/Cash Cash/Clean Bandit/The Chainsmokers/Jess Glynne/SirenXX";
+        String regEx = "[\\n`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+        System.out.println(">>>>>>>>>>>>>>>>>" + sourceString.replaceAll(regEx, " "));
+
+        System.out.println("*****************"+StringUtil.removeSpecialChars(sourceString));
     }
 }

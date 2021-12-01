@@ -59,7 +59,7 @@ public class BaseFilterChain {
         if (CollectionUtils.isNotEmpty(filters)) {
             for (AbstractFilter filter : filters) {
                 FiltratedResultDataBo resultDataBo = (FiltratedResultDataBo) filter.filtrate(criteriaBean);
-                criteriaBean.setRedirectDataOnPreview(Optional.ofNullable(resultDataBo.getData()).orElse(""));
+                criteriaBean.setRedirectDataOnPreview(Optional.ofNullable(resultDataBo.getData()).orElse(null));
 
                 validateResultList.add(new FiltratedResultBo(filter.getClass(), resultDataBo));
             }

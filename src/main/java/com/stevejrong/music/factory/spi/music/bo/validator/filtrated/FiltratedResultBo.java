@@ -51,4 +51,7 @@ public class FiltratedResultBo implements Serializable {
         this.filterClass = filterClass;
         this.filtratedResult = filtratedResult;
     }
+
+    public FiltratedResultBo() {
+    }
 }

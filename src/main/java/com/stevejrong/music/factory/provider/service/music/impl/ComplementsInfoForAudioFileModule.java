@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.common.util.SpringBeanUtil;
+import com.stevejrong.music.factory.common.util.StringUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
 import com.stevejrong.music.factory.spi.music.bean.partner.AbstractPartnerSongInfoFilterCriteriaBean;
@@ -184,7 +185,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             // 歌曲艺术家
             String songArtist = metadataQueryResolver.getSongArtist(audioFile);
 
-            partnerSongInfoFilterCriteriaBean.setSearchKeywords(songTitle + " " + songArtist);
+            partnerSongInfoFilterCriteriaBean.setSearchKeywords(StringUtil.removeSpecialChars(songTitle)
+                    + " " + StringUtil.removeSpecialChars(songArtist));
 
             LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_getMetadata")
                     .append("根据音频文件元数据获取搜索关键字").append("searchSongKeywords", partnerSongInfoFilterCriteriaBean.getSearchKeywords())
