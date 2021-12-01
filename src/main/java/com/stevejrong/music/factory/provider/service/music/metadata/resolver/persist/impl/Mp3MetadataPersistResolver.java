@@ -45,10 +45,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
     @Override
     public void setSongTitle(String songTitle) {
-        MP3File mp3File = (MP3File) getAudioFile();
-
-        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag(mp3File);
-        ID3v1Tag id3v1Tag = Mp3Util.checkID3v1Tag(mp3File);
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
+        ID3v1Tag id3v1Tag = Mp3Util.checkID3v1Tag((MP3File) getAudioFile());
 
         // 先处理ID3v2标签
         String songTitleForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TIT2.getValue(), "Text", id3v2Tag);
@@ -67,10 +65,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
     @Override
     public void setSongArtist(String songArtist) {
-        MP3File mp3File = (MP3File) getAudioFile();
-
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
+        ID3v1Tag id3v1Tag = Mp3Util.checkID3v1Tag((MP3File) getAudioFile());
 
         // 先处理ID3v2标签
         String songArtistForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TPE1.getValue(), "Text", id3v2Tag);
@@ -91,8 +87,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
     public void setAlbumName(String albumName) {
         MP3File mp3File = (MP3File) getAudioFile();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
+        ID3v1Tag id3v1Tag = Mp3Util.checkID3v1Tag((MP3File) getAudioFile());
 
         // 先处理ID3v2标签
         String albumNameForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TALB.getValue(), "Text", id3v2Tag);
@@ -112,7 +108,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
     @Override
     public void setAlbumPicture(byte[] albumPictureByteArray) {
         // 专辑封面不支持ID3v1标签
-        AbstractID3v2Tag id3v2Tag = ((MP3File) getAudioFile()).getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
+
 
         if (ArrayUtils.isEmpty(albumPictureByteArray)) {
             // 若第三方在线音乐服务平台中都没有查询到专辑图片，则使用默认专辑图片
@@ -140,10 +137,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
     @Override
     public void setSongLyrics(String songLyrics) {
-        MP3File mp3File = (MP3File) getAudioFile();
-
         // 歌曲内嵌歌词不支持ID3v1标签
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
 
         String songLyricsForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.USLT.getValue(), "Lyrics", id3v2Tag);
         if (StringUtils.isNotBlank(songLyrics) && StringUtils.isBlank(songLyricsForID3v2Tag)) {
@@ -154,10 +149,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
     @Override
     public void setAlbumArtist(String albumArtist) {
-        MP3File mp3File = (MP3File) getAudioFile();
-
         // 歌曲所属专辑的艺术家不支持ID3v1标签
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
 
         String albumArtistForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TPE2.getValue(), "Text", id3v2Tag);
         if (StringUtils.isNotBlank(albumArtist) && StringUtils.isBlank(albumArtistForID3v2Tag)) {
@@ -170,8 +163,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
     public void setAlbumPublishDate(LocalDate albumPublishDate) {
         MP3File mp3File = (MP3File) getAudioFile();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
+        ID3v1Tag id3v1Tag = Mp3Util.checkID3v1Tag((MP3File) getAudioFile());
 
         // 先处理ID3v2标签
         // ID3v2标签中的发布时间，支持年月日
@@ -210,10 +203,7 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
     @Override
     public void setAlbumDescription(String albumDescription) {
-        MP3File mp3File = (MP3File) getAudioFile();
-
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
 
         // 先处理ID3v2标签
         String albumNameForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.COMM.getValue(), "Text", id3v2Tag);
@@ -233,10 +223,8 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
     @Override
     public void setAlbumLanguage(String albumLanguage) {
-        MP3File mp3File = (MP3File) getAudioFile();
-
         // 歌曲所属专辑的语言类型不支持ID3v1标签
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
 
         String albumLanguageForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TLAN.getValue(), "Text", id3v2Tag);
         if (StringUtils.isNotBlank(albumLanguage) && StringUtils.isBlank(albumLanguageForID3v2Tag)) {
@@ -250,7 +238,7 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
         MP3File mp3File = (MP3File) getAudioFile();
 
         // 歌曲所属专辑的版权信息不支持ID3v1标签
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
 
         String albumCopyrightForID3v2Tag = Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TCOP.getValue(), "Text", id3v2Tag);
         if (StringUtils.isNotBlank(albumCopyright) && StringUtils.isBlank(albumCopyrightForID3v2Tag)) {

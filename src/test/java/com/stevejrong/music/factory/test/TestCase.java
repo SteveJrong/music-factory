@@ -367,6 +367,16 @@ public class TestCase {
         String regEx = "[\\n`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         System.out.println(">>>>>>>>>>>>>>>>>" + sourceString.replaceAll(regEx, " "));
 
-        System.out.println("*****************"+StringUtil.removeSpecialChars(sourceString));
+        System.out.println("*****************" + StringUtil.removeSpecialChars(sourceString));
+    }
+
+    @Test
+    public void imageFileReadTest() throws IOException {
+        for (int i = 0; i < ImageIO.getReaderFormatNames().length; i++) {
+            System.out.println((i + 1) + ":" + ImageIO.getReaderFormatNames()[i]);
+        }
+
+        BufferedImage image = ImageIO.read(new File("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
+        Assert.assertNotNull(image);
     }
 }

@@ -3,9 +3,9 @@
  */
 ext {
     project = [
-            groupName     : "com.stevejrong",
-            projectName   : "music-factory",
-            projectVersion: "2.0.4-SNAPSHOT",
+            groupName        : "com.stevejrong",
+            projectName      : "music-factory",
+            projectVersion   : "2.0.4-SNAPSHOT",
             mainClassFullName: "com.stevejrong.music.factory.boot.MusicFactoryApplication"
     ]
 
@@ -15,6 +15,7 @@ ext {
 
             jAudioTaggerVersion       : '3.0.1',
             ffmpegVersion             : '0.6.2',
+            imageioJpegVersion        : '3.7.0',
 
             okHttpVersion             : '3.10.0',
             gsonVersion               : '1.7',

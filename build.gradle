@@ -124,6 +124,7 @@ dependencies {
 
     compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
     compile("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
+    compile("com.twelvemonkeys.imageio:imageio-jpeg:$rootProject.ext.dependencies.imageioJpegVersion")
 
     compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
     compile("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")
