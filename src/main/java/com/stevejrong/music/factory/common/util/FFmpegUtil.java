@@ -23,13 +23,15 @@ public final class FFmpegUtil {
 
     public static FFmpeg FFMPEG = null;
     public static FFprobe FFPROBE = null;
+    private static FFmpegExecutor FFMPEG_EXECUTOR = null;
+    private static FFmpegProbeResult FFMPEG_PROBE_RESULT = null;
 
     /**
      * 获取FFmpeg实例
      *
      * @return FFmpeg对象
      */
-    public static FFmpeg getFfmpegInstanceByOSType() {
+    private static FFmpeg getFfmpegInstanceByOSType() {
         if (null == FFMPEG) {
             SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
             Map<SupportOSForFFmpegEnum, String> ffmpegPathsByOSTypeMaps = systemConfig
@@ -43,7 +45,8 @@ public final class FFmpegUtil {
             try {
                 FFMPEG = new FFmpeg(ffmpegFile.getPath());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(LoggerUtil.builder().append("fFmpegUtil_getFfmpegInstanceByOSType")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }
 
@@ -55,7 +58,7 @@ public final class FFmpegUtil {
      *
      * @return FFprobe对象
      */
-    public static FFprobe getFfprobeInstanceByOSType() {
+    private static FFprobe getFfprobeInstanceByOSType() {
         if (null == FFPROBE) {
             SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
             Map<SupportOSForFFmpegEnum, String> ffprobePathsByOSTypeMaps = systemConfig
@@ -69,7 +72,8 @@ public final class FFmpegUtil {
             try {
                 FFPROBE = new FFprobe(ffprobeFile.getPath());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(LoggerUtil.builder().append("fFmpegUtil_getFfprobeInstanceByOSType")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }
 
@@ -77,23 +81,49 @@ public final class FFmpegUtil {
     }
 
     /**
-     * 将受支持的音频文件转换为FLAC音频文件
+     * 获取Ffmpeg 执行者的实例
      *
-     * @param sourceFilePath                  原始音频文件位置
-     * @param targetFilePath                  目标音频文件位置
+     * @param fFmpegInstacnce Ffmpeg对象
+     * @param ffprobeInstance Ffmpeg Probe对象
+     * @return FFmpegExecutor对象
      */
-    public static void convertToFlac(String sourceFilePath, String targetFilePath) {
-        FFmpegExecutor executor = null;
-        FFmpegProbeResult in = null;
-        try {
-            executor = new FFmpegExecutor(getFfmpegInstanceByOSType(), getFfprobeInstanceByOSType());
-            in = getFfprobeInstanceByOSType().probe(sourceFilePath);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static FFmpegExecutor getFfmpegExecutorInstance(FFmpeg fFmpegInstacnce, FFprobe ffprobeInstance) {
+        if (null == FFMPEG_EXECUTOR) {
+            FFMPEG_EXECUTOR = new FFmpegExecutor(fFmpegInstacnce, ffprobeInstance);
         }
 
+        return FFMPEG_EXECUTOR;
+    }
+
+    /**
+     * 获取Ffmpeg Probe结果的实例
+     *
+     * @param ffprobeInstance Ffmpeg Probe对象
+     * @param sourceFilePath  原始音频文件位置
+     * @return FFmpegProbeResult对象
+     */
+    private static FFmpegProbeResult getFfmpegProbeResultInstance(FFprobe ffprobeInstance, String sourceFilePath) {
+        if (null == FFMPEG_PROBE_RESULT) {
+            try {
+                FFMPEG_PROBE_RESULT = ffprobeInstance.probe(sourceFilePath);
+            } catch (IOException e) {
+                LOGGER.error(LoggerUtil.builder().append("fFmpegUtil_getFfmpegProbeResultInstance")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+            }
+        }
+
+        return FFMPEG_PROBE_RESULT;
+    }
+
+    /**
+     * 将受支持的音频文件转换为FLAC音频文件
+     *
+     * @param sourceFilePath 原始音频文件位置
+     * @param targetFilePath 目标音频文件位置
+     */
+    public static void convertToFlac(String sourceFilePath, String targetFilePath) {
         FFmpegBuilder builder = new FFmpegBuilder()
-                .setInput(in)
+                .setInput(getFfmpegProbeResultInstance(getFfprobeInstanceByOSType(), sourceFilePath))
                 .overrideOutputFiles(true)
                 .addOutput(targetFilePath)
                 .setFormat(BaseConstants.MUSIC_ENCODE_FLAC)
@@ -101,6 +131,8 @@ public final class FFmpegUtil {
                 .setStrict(FFmpegBuilder.Strict.NORMAL)
                 .done();
 
-        executor.createJob(builder).run();
+        getFfmpegExecutorInstance(getFfmpegInstanceByOSType(), getFfprobeInstanceByOSType())
+                .createJob(builder)
+                .run();
     }
 }

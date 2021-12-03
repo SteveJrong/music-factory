@@ -384,15 +384,6 @@ public class TestCase {
     }
 
     @Test
-    public void operatingSystemTest() {
-        FFmpeg fFmpeg = FFmpegUtil.getFfmpegInstanceByOSType();
-        Assert.assertNotNull(fFmpeg);
-
-        FFprobe fFprobe = FFmpegUtil.getFfprobeInstanceByOSType();
-        Assert.assertNotNull(fFprobe);
-    }
-
-    @Test
     public void formatConversionTest() {
         AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
         formatConversionModule.doAction();
