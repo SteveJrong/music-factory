@@ -4,6 +4,7 @@ import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.common.util.SpringBeanUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
+import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.music.bo.ComplementedMetadataAudioFileBo;
@@ -17,7 +18,6 @@ import java.util.Scanner;
  * 程序入口
  */
 public class MusicFactoryApplication {
-
     public static void main(String[] args) {
         SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
 
@@ -47,7 +47,6 @@ public class MusicFactoryApplication {
                     } else {
                         System.err.println("设置原始音频文件目录位置失败！请填写存在且正确的原始音频文件目录位置。\n\n");
                     }
-
                     break;
 
                 case "2":
@@ -86,9 +85,28 @@ public class MusicFactoryApplication {
                     break;
 
                 case "3":
-                    System.out.println("功能即将开放，尽请期待！\n\n");
-                    // MusicFormatConvertModule musicFormatConvertModule = (MusicFormatConvertModule) context.getBean("musicFormatConvertModule");
-                    // musicFormatConvertModule.doAction();
+                    String defaultConvertedAudioFileDirectory = systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory();
+                    System.out.println(systemConfig.getBaseConfig().getCustomConvertedAudioFileDirectoryMessage()
+                            .replace("{{defaultConvertedAudioFileDirectory}}", defaultConvertedAudioFileDirectory));
+
+                    Scanner scanner4 = new Scanner(System.in);
+                    String input4 = scanner4.next();
+
+                    if (FileUtil.checkIsDirectory(input4)) {
+                        systemConfig.getAudioFileFormatConversionConfig().setConvertedAudioFileDirectory(input4);
+
+                        String newConvertedAudioFileDirectory = systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory();
+                        System.out.println(systemConfig.getBaseConfig().getCustomConvertedAudioFileDirectorySuccessMessage()
+                                .replace("{{oldConvertedAudioFileDirectory}}", defaultConvertedAudioFileDirectory)
+                                .replace("{{newConvertedAudioFileDirectory}}", newConvertedAudioFileDirectory));
+                    } else {
+                        System.err.println("设置原始音频文件目录位置失败！请填写存在且正确的原始音频文件目录位置。\n\n");
+                    }
+                    break;
+
+                case "4":
+                    AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+                    formatConversionModule.doAction();
                     break;
 
                 case "0":
@@ -114,7 +132,8 @@ public class MusicFactoryApplication {
                 .findAny().get();
 
         StringBuilder sb = new StringBuilder("* 原始音频文件存放目录:\t"
-                + systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()+"\n");
+                + systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory() + "\n");
+        sb.append("* 转换格式后的音频文件存放目录:\t").append(systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory()).append("\n");
 
         for (AbstractFilter filter : filterGroupsConfig.getFilters()) {
             sb.append("* ").append(SpringBeanUtil.getBeanNameByType(filter.getClass()))

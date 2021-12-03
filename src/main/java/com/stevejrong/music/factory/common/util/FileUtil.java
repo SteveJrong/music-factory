@@ -1,5 +1,6 @@
 package com.stevejrong.music.factory.common.util;
 
+import com.stevejrong.music.factory.common.enums.ResourcesFileEnum;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -18,23 +19,65 @@ public final class FileUtil {
     private static byte[] DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = null;
 
     /**
+     * 获取资源文件位置
+     *
+     * @param resourcesFileEnum 资源文件枚举
+     * @return
+     */
+    private static String getResourceFilePath(ResourcesFileEnum resourcesFileEnum) {
+        return resourcesFileEnum.getValue();
+    }
+
+    /**
+     * 获取资源文件
+     *
+     * @param resourcesFileEnum 资源文件枚举
+     * @return 资源文件
+     */
+    public static File getResourceFile(ResourcesFileEnum resourcesFileEnum) {
+        InputStream inputStream = FileUtil.class.getClassLoader()
+                .getResourceAsStream(getResourceFilePath(resourcesFileEnum));
+
+        File resourceFile = null;
+        try {
+            resourceFile = File.createTempFile(resourcesFileEnum.getValue(), "temp");
+            FileUtils.copyInputStreamToFile(inputStream, resourceFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return resourceFile;
+    }
+
+    /**
+     * 获取资源文件
+     *
+     * @param resourcesFilePath 资源文件位置
+     * @return 资源文件
+     */
+    public static File getResourceFile(String resourcesFilePath) {
+        InputStream inputStream = FileUtil.class.getClassLoader()
+                .getResourceAsStream(resourcesFilePath);
+
+        File resourceFile = null;
+        try {
+            resourceFile = File.createTempFile(resourcesFilePath, "temp");
+            FileUtils.copyInputStreamToFile(inputStream, resourceFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return resourceFile;
+    }
+
+    /**
      * 获取默认专辑封面图片字节数组
      *
      * @return
      */
     public static byte[] getDefaultAlbumPictureByteArray() {
         if (ArrayUtils.isEmpty(DEFAULT_ALBUM_PICTURE_BYTE_ARRAY)) {
-            InputStream inputStream = FileUtil.class.getClassLoader()
-                    .getResourceAsStream("img/default_album_pic.png");
-            File defaultAlbumPictureFile = null;
-            try {
-                defaultAlbumPictureFile = File.createTempFile("music_factory_default_album_pic", "temp");
-                FileUtils.copyInputStreamToFile(inputStream, defaultAlbumPictureFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = imageFileToByteArray(defaultAlbumPictureFile.getPath());
+            DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = imageFileToByteArray(getResourceFile(ResourcesFileEnum.DEFAULT_ALBUM_PICTURE).getPath());
         }
 
         return DEFAULT_ALBUM_PICTURE_BYTE_ARRAY;
@@ -195,5 +238,15 @@ public final class FileUtil {
         }
 
         return image;
+    }
+
+    /**
+     * 获取文件后缀名
+     *
+     * @param filePath 文件位置
+     * @return 文件后缀名
+     */
+    public static String getFileSuffix(String filePath) {
+        return filePath.substring(filePath.lastIndexOf(".") + 1);
     }
 }

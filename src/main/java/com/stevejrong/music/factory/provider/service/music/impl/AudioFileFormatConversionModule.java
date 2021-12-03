@@ -1,15 +1,14 @@
 package com.stevejrong.music.factory.provider.service.music.impl;
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
-import com.stevejrong.music.factory.common.enums.MusicFormatEnums;
-import com.stevejrong.music.factory.common.exception.MusicConverterNotFoundException;
-import com.stevejrong.music.factory.config.SystemConfig;
+import com.stevejrong.music.factory.common.util.FileUtil;
+import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.spi.music.bo.MusicFormatConvertModuleBo;
 import com.stevejrong.music.factory.spi.service.music.AbstractMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IMusicFileConverter;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +23,7 @@ import java.util.Map;
  * 作用：将音频文件转换为另一指定格式
  */
 public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<MusicFormatConvertModuleBo>> {
-
-    /**
-     * 系统配置
-     */
-    private SystemConfig systemConfig;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudioFileFormatConversionModule.class);
 
     /**
      * 某一种受支持的音频格式，转换为FLAC音频格式，其音频转换器的使用规则
@@ -36,14 +31,6 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
      * 元素的value值表示原始音频文件转换为FLAC格式需要用到的音频转换器名称，此值对应音频转换器Bean的ID
      */
     private Map<String, String> rulesByMusicConverter;
-
-    public SystemConfig getSystemConfig() {
-        return systemConfig;
-    }
-
-    public void setSystemConfig(SystemConfig systemConfig) {
-        this.systemConfig = systemConfig;
-    }
 
     public Map<String, String> getRulesByMusicConverter() {
         return rulesByMusicConverter;
@@ -55,53 +42,45 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
 
     @Override
     public List<MusicFormatConvertModuleBo> doAction() {
-        ApplicationContext context = new ClassPathXmlApplicationContext(systemConfig.getBaseConfig().getSpringConfigurationFileName());
-
         try {
-            /**
+            /*
              * 读取原始文件目录下的所有音频文件，依次进行转换
              * 读取时，排除文件后缀是FLAC的文件，以跳过转换
              */
-            Files.newDirectoryStream(Paths.get(systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
+            Files.newDirectoryStream(Paths.get(getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
                     path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_M4A)
                             || path.toString().endsWith(BaseConstants.FILE_SUFFIX_WAV)
                             || path.toString().endsWith(BaseConstants.FILE_SUFFIX_APE))
                     .forEach(file -> {
                         // 遍历处理每个需要转换为FLAC格式的文件
 
+
                         // 根据音频文件后缀名查找到对应的编码格式
-                        String encodeFormat = MusicFormatEnums.getEncodeFormatByFileSuffix(
-                                file.getFileName().toString().substring(file.getFileName().toString().lastIndexOf(".")));
+                        String audioFormat = FileUtil.getFileSuffix(file.toAbsolutePath().toString());
+
+                        LOGGER.info(LoggerUtil.builder().append("audioFileFormatConversionModule_doAction", "开始音频转换")
+                                .append("filePath", file.toAbsolutePath()).toString());
 
                         // 再根据编码格式查找到对应的音频转换器Bean名称
-                        String sourceFormat;
-                        IMusicFileConverter musicFileConverter = null;
-                        for (Map.Entry<String, String> item : rulesByMusicConverter.entrySet()) {
-                            sourceFormat = item.getKey();
+                        IAudioFileConverter audioFileConverter = getSystemConfig().getAudioFileFormatConversionConfig().getAudioFileConverters()
+                                .get(audioFormat);
 
-                            if (sourceFormat.equals(encodeFormat)) {
-                                musicFileConverter = (IMusicFileConverter) context.getBean(item.getValue());
-                                break;
-                            }
-                        }
-
-                        if (null == musicFileConverter) {
-                            throw new MusicConverterNotFoundException();
-                        }
-
-                        // 验证环境
-                        musicFileConverter.validateFFmpegCodecEnvironment();
                         // 执行转换
-                        musicFileConverter.convert(systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory(),
-                                systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory(),
-                                systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory() + File.separator + file.getFileName().toString().substring(0, file.getFileName().toString().lastIndexOf(".")),
-                                systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory() + File.separator + file.getFileName().toString().substring(0, file.getFileName().toString().lastIndexOf(".")),
+                        audioFileConverter.convert(getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory(),
+                                getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory(),
+                                getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory() + File.separator + file.getFileName().toString().substring(0, file.getFileName().toString().lastIndexOf(".")),
+                                getSystemConfig().getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory() + File.separator + file.getFileName().toString().substring(0, file.getFileName().toString().lastIndexOf(".")),
                                 file.getFileName().toString().substring(file.getFileName().toString().lastIndexOf(".")),
                                 BaseConstants.FILE_SUFFIX_FLAC);
+
+                        LOGGER.info(LoggerUtil.builder().append("audioFileFormatConversionModule_doAction", "音频转换结束")
+                                .append("filePath", file.toAbsolutePath()).toString());
                     });
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("audioFileFormatConversionModule_doAction", "音频转换")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
+
         return null;
     }
 }

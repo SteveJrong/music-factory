@@ -8,11 +8,14 @@ import com.stevejrong.music.factory.bean.TestBean1;
 import com.stevejrong.music.factory.bean.TestBean2;
 import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.config.SystemConfig;
+import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
+import net.bramp.ffmpeg.FFmpeg;
+import net.bramp.ffmpeg.FFprobe;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -378,5 +381,25 @@ public class TestCase {
 
         BufferedImage image = ImageIO.read(new File("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
         Assert.assertNotNull(image);
+    }
+
+    @Test
+    public void operatingSystemTest() {
+        FFmpeg fFmpeg = FFmpegUtil.getFfmpegInstanceByOSType();
+        Assert.assertNotNull(fFmpeg);
+
+        FFprobe fFprobe = FFmpegUtil.getFfprobeInstanceByOSType();
+        Assert.assertNotNull(fFprobe);
+    }
+
+    @Test
+    public void formatConversionTest() {
+        AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+        formatConversionModule.doAction();
+    }
+
+    @Test
+    public void getFileSuffixTest(){
+        System.out.println(FileUtil.getFileSuffix("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
     }
 }

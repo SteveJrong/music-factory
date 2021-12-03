@@ -1,5 +1,9 @@
 package com.stevejrong.music.factory.config.sub;
 
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+
+import java.util.Map;
+
 /**
  * 音频文件转换配置类
  */
@@ -11,14 +15,16 @@ public class AudioFileFormatConversionConfig {
     private String convertedAudioFileDirectory;
 
     /**
-     * FFmpeg组件中，ffmpeg文件的位置
+     * FFmpeg组件配置
      */
-    private String ffmpegFileDirectory;
+    private FfmpegComponentConfig ffmpegComponentConfig;
 
     /**
-     * FFmpeg组件中，ffprobe文件的位置
+     * 音频文件格式和转换器对应关系Map集合
+     * <p>
+     * Key - 音频文件编码类型（如mp3、flac等）；Value - 格式转换器
      */
-    private String ffprobeFileDirectory;
+    private Map<String, IAudioFileConverter> audioFileConverters;
 
     public String getConvertedAudioFileDirectory() {
         return convertedAudioFileDirectory;
@@ -28,19 +34,19 @@ public class AudioFileFormatConversionConfig {
         this.convertedAudioFileDirectory = convertedAudioFileDirectory;
     }
 
-    public String getFfmpegFileDirectory() {
-        return ffmpegFileDirectory;
+    public FfmpegComponentConfig getFfmpegComponentConfig() {
+        return ffmpegComponentConfig;
     }
 
-    public void setFfmpegFileDirectory(String ffmpegFileDirectory) {
-        this.ffmpegFileDirectory = ffmpegFileDirectory;
+    public void setFfmpegComponentConfig(FfmpegComponentConfig ffmpegComponentConfig) {
+        this.ffmpegComponentConfig = ffmpegComponentConfig;
     }
 
-    public String getFfprobeFileDirectory() {
-        return ffprobeFileDirectory;
+    public Map<String, IAudioFileConverter> getAudioFileConverters() {
+        return audioFileConverters;
     }
 
-    public void setFfprobeFileDirectory(String ffprobeFileDirectory) {
-        this.ffprobeFileDirectory = ffprobeFileDirectory;
+    public void setAudioFileConverters(Map<String, IAudioFileConverter> audioFileConverters) {
+        this.audioFileConverters = audioFileConverters;
     }
 }

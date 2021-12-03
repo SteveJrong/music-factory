@@ -17,3 +17,13 @@ musicFactory:
                   requestUrl: 'https://wwwapi.kugou.com/yy/index.php'
                 kuGouMusicPartnerSongInfoFilter_3:
                   requestUrl: 'http://kmrserviceretry.kugou.com/container/v1/album'
+  convert:
+    ffmpegComponents:
+      ffmpeg:
+        forAppleMacOSPath: components/ffmpeg/macOS/ffmpeg
+        forLinuxPath: components/ffmpeg/Linux/ffmpeg
+        forMicrosoftWindowsNTPath: components/ffmpeg/WindowsNT/ffmpeg.exe
+      ffprobe:
+        forAppleMacOSPath: components/ffmpeg/macOS/ffprobe
+        forLinuxPath: components/ffmpeg/Linux/ffprobe
+        forMicrosoftWindowsNTPath: components/ffmpeg/WindowsNT/ffprobe.exe

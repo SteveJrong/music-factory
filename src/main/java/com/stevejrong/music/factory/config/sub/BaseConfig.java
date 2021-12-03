@@ -33,9 +33,19 @@ public class BaseConfig {
     private String customAudioFileDirectoryMessage;
 
     /**
+     * 自定义转换格式后的音频文件存放目录提示信息
+     */
+    private String customConvertedAudioFileDirectoryMessage;
+
+    /**
      * 自定义音频文件存放目录成功的提示信息
      */
     private String customAudioFileDirectorySuccessMessage;
+
+    /**
+     * 自定义转换格式后的音频文件存放目录成功的提示信息
+     */
+    private String customConvertedAudioFileDirectorySuccessMessage;
 
     public String getSpringConfigurationFileName() {
         return springConfigurationFileName;
@@ -83,5 +93,21 @@ public class BaseConfig {
 
     public void setCustomAudioFileDirectorySuccessMessage(String customAudioFileDirectorySuccessMessage) {
         this.customAudioFileDirectorySuccessMessage = customAudioFileDirectorySuccessMessage;
+    }
+
+    public String getCustomConvertedAudioFileDirectoryMessage() {
+        return customConvertedAudioFileDirectoryMessage;
+    }
+
+    public void setCustomConvertedAudioFileDirectoryMessage(String customConvertedAudioFileDirectoryMessage) {
+        this.customConvertedAudioFileDirectoryMessage = customConvertedAudioFileDirectoryMessage;
+    }
+
+    public String getCustomConvertedAudioFileDirectorySuccessMessage() {
+        return customConvertedAudioFileDirectorySuccessMessage;
+    }
+
+    public void setCustomConvertedAudioFileDirectorySuccessMessage(String customConvertedAudioFileDirectorySuccessMessage) {
+        this.customConvertedAudioFileDirectorySuccessMessage = customConvertedAudioFileDirectorySuccessMessage;
     }
 }

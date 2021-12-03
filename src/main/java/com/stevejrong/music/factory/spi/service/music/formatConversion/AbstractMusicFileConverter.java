@@ -1,16 +1,16 @@
 package com.stevejrong.music.factory.spi.service.music.formatConversion;
 
-import com.stevejrong.music.factory.common.exception.FFmpegNotInstallException;
-import com.stevejrong.music.factory.common.util.CommandUtil;
+import com.stevejrong.music.factory.config.SystemConfig;
 
-public abstract class AbstractMusicFileConverter implements IMusicFileConverter {
+public abstract class AbstractMusicFileConverter implements IAudioFileConverter {
 
-    @Override
-    public void validateFFmpegCodecEnvironment() {
-        String executeResult = CommandUtil.execute("ffmpeg", "-version", "/c", "dir");
+    private SystemConfig systemConfig;
 
-        if (!executeResult.contains("ffmpeg version")) {
-            throw new FFmpegNotInstallException();
-        }
+    public SystemConfig getSystemConfig() {
+        return systemConfig;
+    }
+
+    public void setSystemConfig(SystemConfig systemConfig) {
+        this.systemConfig = systemConfig;
     }
 }

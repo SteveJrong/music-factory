@@ -3,6 +3,8 @@
 musicFactory:
   base:
     audioFileDirectory: '< 使用前，请先根据功能编号，自定义原始音频文件存放目录！>' # 原始音频文件的存放位置。
+    convert:
+      convertedAudioFileDirectory: '< 使用前，请先根据功能编号，自定义转换格式后的音频文件存放目录！>' # 转换格式后的音频文件存放位置。
   filters:
     analyzingInfoForAudioFile:
       songLyricsFilter: true # 设置是否以歌曲内嵌歌词的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲内嵌歌词是否存在；false - 跳过验证歌曲内嵌歌词。
@@ -11,7 +13,3 @@ musicFactory:
       albumDescriptionFilter: true # 设置是否以歌曲所属专辑的描述的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的描述是否存在；false - 跳过验证歌曲所属专辑的描述。
       albumLanguageFilter: true # 设置是否以歌曲所属专辑的语言类型的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的语言类型是否存在；false - 跳过验证歌曲所属专辑的语言类型。
       albumCopyrightFilter: true # 设置是否以歌曲所属专辑的版权信息的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲所属专辑的版权信息是否存在；false - 跳过验证歌曲所属专辑的版权信息。
-  convert:
-    convertedAudioFileDirectory: '/Users/stevejrong/Desktop/converted' # 转换格式后的音频文件存放位置。
-    ffmpegFileDirectory: '/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffmpeg' # FFmpeg组件中，ffmpeg文件的位置。
-    ffprobeFileDirectory: '/Users/stevejrong/Softwares/ffmpeg-4.1-macos64-static/bin/ffprobe' # FFmpeg组件中，ffprobe文件的位置。

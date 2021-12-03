@@ -1,8 +1,8 @@
 package com.stevejrong.music.factory.provider.service.music.formatConversion.impl;
 
-import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractMusicFileConverter;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IMusicFileConverter;
 import com.stevejrong.music.factory.common.util.CommandUtil;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractMusicFileConverter;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 
 import java.io.File;
 
@@ -11,7 +11,7 @@ import java.io.File;
  * 此转换器已弃用
  */
 @Deprecated
-public class FlacToM4aAlacConverter extends AbstractMusicFileConverter implements IMusicFileConverter {
+public class FlacToM4aAlacConverter extends AbstractMusicFileConverter implements IAudioFileConverter {
 
     @Override
     public String convert(String sourceDirectory, String targetDirectory, String sourceFileName, String targetFileName, String sourceFileFormat, String targetFileFormat) {
@@ -22,7 +22,6 @@ public class FlacToM4aAlacConverter extends AbstractMusicFileConverter implement
                 + sourceFilePath
                 + "-c:a alac -c:v copy "
                 + targetFilePath);
-
         return null;
     }
 }

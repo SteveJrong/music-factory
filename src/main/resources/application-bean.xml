@@ -18,7 +18,8 @@
 当前用户配置信息：&#x000A;{{currentCustomConfigInfo}}&#x000A;
 [1] 自定义原始音频文件的存放位置。&#x000A;
 [2] 分析指定目录下的音频文件，并补全音频文件元数据信息。&#x000A;
-[3] 批量转换指定目录下的音频文件格式。&#x000A;
+[3] 自定义转换格式后的音频文件存放位置。&#x000A;
+[4] 批量转换指定目录下的音频文件格式。&#x000A;
 [0] 退出程序。&#x000A;&#x000A;
 输入上述数字序号来执行任务：_"/>
 
@@ -32,6 +33,17 @@
 &#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
 =============================== 自定义原始音频文件存放目录成功 =============================== &#x000A;
 原始音频文件的存放目录，已由{{oldAudioFileDirectory}}成功地更改为了{{newAudioFileDirectory}}。&#x000A;"/>
+
+        <property name="customConvertedAudioFileDirectoryMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义转换格式后的音频文件存放目录 =============================== &#x000A;
+当前转换格式后的音频文件存放目录为：{{defaultConvertedAudioFileDirectory}}。&#x000A;
+将转换格式后的音频文件文件夹直接拖动或从地址栏粘贴至此处，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="customConvertedAudioFileDirectorySuccessMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义转换格式后的音频文件存放目录成功 =============================== &#x000A;
+转换格式后的音频文件存放目录，已由{{oldConvertedAudioFileDirectory}}成功地更改为了{{newConvertedAudioFileDirectory}}。&#x000A;"/>
 
         <property name="analyzingCompletedForAudioFileMessage" value="
 &#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
@@ -70,11 +82,43 @@
     </bean>
     <bean id="audioFileFormatConversionConfig" class="com.stevejrong.music.factory.config.sub.AudioFileFormatConversionConfig">
         <!-- 转换后的音频文件存放目录 -->
-        <property name="convertedAudioFileDirectory" value="${musicFactory.convert.convertedAudioFileDirectory}"/>
-        <!-- FFmpeg组件中，ffmpeg文件的位置 -->
-        <property name="ffmpegFileDirectory" value="${musicFactory.convert.ffmpegFileDirectory}"/>
-        <!-- FFmpeg组件中，ffprobe文件的位置 -->
-        <property name="ffprobeFileDirectory" value="${musicFactory.convert.ffprobeFileDirectory}"/>
+        <property name="convertedAudioFileDirectory" value="${musicFactory.base.convert.convertedAudioFileDirectory}"/>
+        <!-- FFmpeg组件配置 -->
+        <property name="ffmpegComponentConfig" ref="ffmpegComponentConfig"/>
+        <property name="audioFileConverters">
+            <map key-type="java.lang.String" value-type="com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter">
+                <entry key="m4a" value-ref="m4aAacToFlacConverter"/>
+                <entry key="ape" value-ref="apeToFlacConverter"/>
+                <entry key="wav" value-ref="wavToFlacConverter"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="linuxOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.LINUX"/>
+    </bean>
+    <bean id="microsoftWindowsNTOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.MICROSOFT_WINDOWS_NT"/>
+    </bean>
+    <bean id="appleMacOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.APPLE_MAC_OS"/>
+    </bean>
+
+    <bean id="ffmpegComponentConfig" class="com.stevejrong.music.factory.config.sub.FfmpegComponentConfig">
+        <property name="ffmpegPathsByOSType">
+            <map>
+                <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linuxOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forLinuxPath}"/>
+                <entry key-ref="appleMacOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forAppleMacOSPath}"/>
+            </map>
+        </property>
+        <property name="ffmprobePathsByOSType">
+            <map>
+                <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linuxOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forLinuxPath}"/>
+                <entry key-ref="appleMacOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forAppleMacOSPath}"/>
+            </map>
+        </property>
     </bean>
     <!-- 系统配置 -->
     <bean id="systemConfig" class="com.stevejrong.music.factory.config.SystemConfig">
