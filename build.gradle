@@ -16,7 +16,7 @@ buildscript {
 
     // 设置引用在构建项目时的插件
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
     }
 }
 
@@ -119,24 +119,24 @@ repositories {
 
 // 项目依赖包
 dependencies {
-    compile("org.springframework:spring-context:$rootProject.ext.dependencies.springContextVersion")
-    compile("org.springframework:spring-test:$rootProject.ext.dependencies.springTestVersion")
+    implementation("org.springframework:spring-context:$rootProject.ext.dependencies.springContextVersion")
+    implementation("org.springframework:spring-test:$rootProject.ext.dependencies.springTestVersion")
 
-    compile("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
-    compile("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
-    compile("com.twelvemonkeys.imageio:imageio-jpeg:$rootProject.ext.dependencies.imageioJpegVersion")
+    implementation("net.jthink:jaudiotagger:$rootProject.ext.dependencies.jAudioTaggerVersion")
+    implementation("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
+    implementation("com.twelvemonkeys.imageio:imageio-jpeg:$rootProject.ext.dependencies.imageioJpegVersion")
 
-    compile("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
-    compile("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")
-    compile("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
-    compile("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
-    compile("org.apache.commons:commons-collections4:$rootProject.ext.dependencies.commonsCollections4Version")
-    compile("net.sf.dozer:dozer:$rootProject.ext.dependencies.dozerVersion")
-    compile("org.yaml:snakeyaml:$rootProject.ext.dependencies.snakeyamlVersion")
-    compile("org.slf4j:slf4j-api:$rootProject.ext.dependencies.slf4jApiVersion")
-    compile("ch.qos.logback:logback-core:$rootProject.ext.dependencies.logbackCoreVersion")
-    compile("ch.qos.logback:logback-classic:$rootProject.ext.dependencies.logbackClassicVersion")
+    implementation("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
+    implementation("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")
+    implementation("com.google.guava:guava:$rootProject.ext.dependencies.guavaVersion")
+    implementation("org.apache.commons:commons-lang3:$rootProject.ext.dependencies.commonsLang3Version")
+    implementation("org.apache.commons:commons-collections4:$rootProject.ext.dependencies.commonsCollections4Version")
+    implementation("net.sf.dozer:dozer:$rootProject.ext.dependencies.dozerVersion")
+    implementation("org.yaml:snakeyaml:$rootProject.ext.dependencies.snakeyamlVersion")
+    implementation("org.slf4j:slf4j-api:$rootProject.ext.dependencies.slf4jApiVersion")
+    implementation("ch.qos.logback:logback-core:$rootProject.ext.dependencies.logbackCoreVersion")
+    implementation("ch.qos.logback:logback-classic:$rootProject.ext.dependencies.logbackClassicVersion")
 
-    testCompile("junit:junit:$rootProject.ext.dependencies.junitVersion")
-    testCompile("org.hamcrest:hamcrest-core:$rootProject.ext.dependencies.hamcrestCoreVersion")
+    testImplementation("junit:junit:$rootProject.ext.dependencies.junitVersion")
+    testImplementation("org.hamcrest:hamcrest-core:$rootProject.ext.dependencies.hamcrestCoreVersion")
 }
