@@ -1,3 +1,21 @@
+/*
+ *             Copyright (C) 2022 Steve Jrong
+ * 
+ * 	   GitHub Homepage: https://www.github.com/SteveJrong
+ *      Gitee Homepage: https://gitee.com/stevejrong1024
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.stevejrong.music.factory.test;
 
 import com.google.common.collect.Lists;
@@ -28,6 +46,7 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.id3.*;
 import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +80,7 @@ public class TestCase {
     }
 
     @Test
-    public void ComplementsInfoForAudioFile() {
+    public void complementsInfoForAudioFile() {
         IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> analyzingInfoForAudioFileModule = SpringBeanUtil.getBean("analyzingInfoForAudioFileModule");
         List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = analyzingInfoForAudioFileModule.doAction();
 
@@ -71,7 +90,7 @@ public class TestCase {
     }
 
     @Test
-    public void ComplementsInfoForAudioFileManual() {
+    public void complementsInfoForAudioFileManual() {
         String audioFilePath = "/Users/stevejrong/Desktop/test/Aanysa-Snakehips - Burn Break Crash.mp3";
         String songTitle = "Burn Break Crash", songArtist = "Aanysa-Snakehips";
         List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = Lists
@@ -392,5 +411,23 @@ public class TestCase {
     @Test
     public void getFileSuffixTest(){
         System.out.println(FileUtil.getFileSuffix("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
+    }
+    
+    @Test
+    public void oggVorbisFileReadTest() throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+		File file = new File("/Users/stevejrong/Desktop/test/Taylor Swift - Style.ogg");
+		AudioFile audioFile = AudioFileIO.read(file);
+		VorbisCommentTag vorbisTag = (VorbisCommentTag) audioFile.getTag();
+
+		String songTitle = audioFile.getTag().getFirstField(FieldKey.TITLE).toString();
+		String songArtist = audioFile.getTag().getFirstField(FieldKey.ARTIST).toString();
+		String songLyrics = audioFile.getTag().getFirstField(FieldKey.LYRICS).toString();
+		String albumName = audioFile.getTag().getFirstField(FieldKey.ALBUM).toString();
+		String albumArtist = audioFile.getTag().getFirstField(FieldKey.ALBUM_ARTIST).toString();
+		String albumPublishDate = audioFile.getTag().getFirst("DATE").toString();
+		String albumDescription = audioFile.getTag().getFirstField(FieldKey.COMMENT).toString();
+		String albumLanguage = audioFile.getTag().getFirstField(FieldKey.LANGUAGE).toString();
+		String albumCopyright = audioFile.getTag().getFirstField(FieldKey.COPYRIGHT).toString();
+		byte[] albumPicture = audioFile.getTag().getFirstArtwork().getBinaryData();
     }
 }

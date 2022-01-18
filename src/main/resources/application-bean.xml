@@ -77,6 +77,13 @@
                         <ref bean="flacMetadataPersistResolver"/>
                     </list>
                 </entry>
+                
+                <entry key="ogg">
+                    <list>
+                        <ref bean="oggVorbisMetadataQueryResolver"/>
+                        <ref bean="oggVorbisMetadataPersistResolver"/>
+                    </list>
+                </entry>
             </map>
         </property>
     </bean>
@@ -172,6 +179,8 @@
     <bean id="flacMetadataQueryResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.query.impl.FlacMetadataQueryResolver"/>
     <!--MP3格式的音频文件，元数据解析器-->
     <bean id="mp3MetadataQueryResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.query.impl.Mp3MetadataQueryResolver"/>
+    <!--Ogg Vorbis格式的音频文件，元数据解析器-->
+    <bean id="oggVorbisMetadataQueryResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.query.impl.OggVorbisMetadataQueryResolver"/>
 
     <!--酷狗音乐第三方音频服务平台，音频元数据解析器-->
     <bean id="kuGouPartnerSongInfoResolver" class="com.stevejrong.music.factory.provider.service.music.analyzing.partner.resolver.impl.KuGouPartnerSongInfoResolver"/>
@@ -180,7 +189,9 @@
     <bean id="flacMetadataPersistResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.persist.impl.FlacMetadataPersistResolver"/>
     <!--MP3格式的音频文件，元数据存储器-->
     <bean id="mp3MetadataPersistResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.persist.impl.Mp3MetadataPersistResolver"/>
-
+	<!--Ogg Vorbis格式的音频文件，元数据存储器-->
+    <bean id="oggVorbisMetadataPersistResolver" class="com.stevejrong.music.factory.provider.service.music.metadata.resolver.persist.impl.OggVorbisMetadataPersistResolver"/>
+    
     <!--酷狗音乐第三方音频服务平台音频元数据API请求Bean-->
     <bean id="kuGouMusicPartnerSongInfoFilter_1" class="com.stevejrong.music.factory.provider.service.music.analyzing.partner.datasource.impl.kugoumusic.KuGouMusicPartnerSongInfoFilter_1">
         <property name="order" value="1"/>
