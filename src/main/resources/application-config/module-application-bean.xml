@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--系统模块配置文件-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--业务模块：音频文件信息分析-->
+    <bean id="analyzingInfoForAudioFileModule" class="com.stevejrong.music.factory.provider.service.music.impl.AnalyzingInfoForAudioFileModule">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+
+    <!--业务模块：补全音乐元数据信息-->
+    <bean id="complementsInfoForAudioFileModule" class="com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule">
+        <property name="systemConfig" ref="systemConfig"/>
+        <property name="partnerSongInfoDataSourceActiveConfigName" value="${musicFactory.base.partner.songinfo.datasource.filterGroup.activeConfig}"/>
+    </bean>
+
+    <!--业务模块：音频文件格式转换-->
+    <bean id="audioFileFormatConversionModule" class="com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+</beans>

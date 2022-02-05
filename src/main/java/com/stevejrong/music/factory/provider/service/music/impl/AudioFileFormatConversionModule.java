@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -20,8 +20,11 @@ package com.stevejrong.music.factory.provider.service.music.impl;
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.util.FileUtil;
+import com.stevejrong.music.factory.common.util.HardwareUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
+import com.stevejrong.music.factory.provider.service.music.formatConversion.parallel.FormatConvertMaster;
 import com.stevejrong.music.factory.spi.music.bo.MusicFormatConvertModuleBo;
+import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
 import com.stevejrong.music.factory.spi.service.music.AbstractMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
@@ -43,53 +46,43 @@ import java.util.Map;
 public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<MusicFormatConvertModuleBo>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioFileFormatConversionModule.class);
 
-    /**
-     * 某一种受支持的音频格式，转换为FLAC音频格式，其音频转换器的使用规则
-     * <map>标签中，元素的key表示原始音频文件的编码格式，此值对应MusicFormatEnums枚举中getEncodeFormat()方法中返回的编码格式值
-     * 元素的value值表示原始音频文件转换为FLAC格式需要用到的音频转换器名称，此值对应音频转换器Bean的ID
-     */
-    private Map<String, String> rulesByMusicConverter;
-
-    public Map<String, String> getRulesByMusicConverter() {
-        return rulesByMusicConverter;
-    }
-
-    public void setRulesByMusicConverter(Map<String, String> rulesByMusicConverter) {
-        this.rulesByMusicConverter = rulesByMusicConverter;
-    }
-
     @Override
     public List<MusicFormatConvertModuleBo> doAction() {
+        // 创建多线程格式转换的Master类对象
+        FormatConvertMaster formatConvertMaster = new FormatConvertMaster(HardwareUtil.getAllCoresCountByCpu());
+
         try {
             /*
              * 读取原始文件目录下的所有音频文件，依次进行转换
              * 读取时，排除文件后缀是FLAC的文件，以跳过转换
              */
             Files.newDirectoryStream(Paths.get(getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
-                    path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_M4A)
-                            || path.toString().endsWith(BaseConstants.FILE_SUFFIX_WAV)
-                            || path.toString().endsWith(BaseConstants.FILE_SUFFIX_APE))
+                            path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_M4A)
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_WAV)
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_APE)
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC))
                     .forEach(file -> {
-                        // 遍历处理每个需要转换为FLAC格式的文件
+                        // 依次遍历目录下的每个音频文件
 
+                        for (int i = 0; i < 10; i++) {
+                            // 循环创建10个Task任务
+                            FormatConvertTaskBo formatConvertTask = new FormatConvertTaskBo(i, "任务-" + (i + 1));
 
-                        // 根据音频文件后缀名查找到对应的编码格式
-                        String audioFormat = FileUtil.getFileSuffix(file.toAbsolutePath().toString());
+                            // 然后像Master提交任务，以使得Worker执行任务
+                            formatConvertMaster.submit(formatConvertTask);
+                        }
 
-                        LOGGER.info(LoggerUtil.builder().append("audioFileFormatConversionModule_doAction", "开始音频转换")
-                                .append("filePath", file.toAbsolutePath()).toString());
+                        long start = System.currentTimeMillis();
+                        // 使Master开启任务。依次以多线程的方式启动Worker子任务集合中实现创建好的Worker子任务对象。
+                        formatConvertMaster.start();
 
-                        // 再根据编码格式查找到对应的音频转换器Bean名称
-                        IAudioFileConverter audioFileConverter = getSystemConfig().getAudioFileFormatConversionConfig().getAudioFileConverters()
-                                .get(audioFormat);
-
-                        // 执行转换
-                        audioFileConverter.convert(getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory(),
-                                getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory(),
-                                getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory() + File.separator + file.getFileName().toString().substring(0, file.getFileName().toString().lastIndexOf(".")),
-                                getSystemConfig().getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory() + File.separator + file.getFileName().toString().substring(0, file.getFileName().toString().lastIndexOf(".")),
-                                file.getFileName().toString().substring(file.getFileName().toString().lastIndexOf(".")),
-                                BaseConstants.FILE_SUFFIX_FLAC);
+                        while (true) {
+                            if (formatConvertMaster.hasComplete()) {
+                                System.out.println(String.format("执行结果合计：%d。耗时总计：%d毫秒。", formatConvertMaster.getSumResult(),
+                                        (System.currentTimeMillis() - start)));
+                                break;
+                            }
+                        }
 
                         LOGGER.info(LoggerUtil.builder().append("audioFileFormatConversionModule_doAction", "音频转换结束")
                                 .append("filePath", file.toAbsolutePath()).toString());

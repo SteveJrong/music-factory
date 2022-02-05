@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -30,6 +30,7 @@ import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatC
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import net.bramp.ffmpeg.FFmpeg;
@@ -405,29 +406,50 @@ public class TestCase {
     @Test
     public void formatConversionTest() {
         AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+
+        SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
+        systemConfig.getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/old");
+        systemConfig.getAudioFileFormatConversionConfig().setConvertedAudioFileDirectory("/Users/stevejrong/Desktop/new");
+        formatConversionModule.setSystemConfig(systemConfig);
+
         formatConversionModule.doAction();
     }
 
     @Test
-    public void getFileSuffixTest(){
+    public void getFileSuffixTest() {
         System.out.println(FileUtil.getFileSuffix("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
     }
-    
+
     @Test
     public void oggVorbisFileReadTest() throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
-		File file = new File("/Users/stevejrong/Desktop/test/Taylor Swift - Style.ogg");
-		AudioFile audioFile = AudioFileIO.read(file);
-		VorbisCommentTag vorbisTag = (VorbisCommentTag) audioFile.getTag();
+        File file = new File("/Users/stevejrong/Desktop/test/Taylor Swift - Style.ogg");
+        AudioFile audioFile = AudioFileIO.read(file);
+        VorbisCommentTag vorbisTag = (VorbisCommentTag) audioFile.getTag();
 
-		String songTitle = audioFile.getTag().getFirstField(FieldKey.TITLE).toString();
-		String songArtist = audioFile.getTag().getFirstField(FieldKey.ARTIST).toString();
-		String songLyrics = audioFile.getTag().getFirstField(FieldKey.LYRICS).toString();
-		String albumName = audioFile.getTag().getFirstField(FieldKey.ALBUM).toString();
-		String albumArtist = audioFile.getTag().getFirstField(FieldKey.ALBUM_ARTIST).toString();
-		String albumPublishDate = audioFile.getTag().getFirst("DATE").toString();
-		String albumDescription = audioFile.getTag().getFirstField(FieldKey.COMMENT).toString();
-		String albumLanguage = audioFile.getTag().getFirstField(FieldKey.LANGUAGE).toString();
-		String albumCopyright = audioFile.getTag().getFirstField(FieldKey.COPYRIGHT).toString();
-		byte[] albumPicture = audioFile.getTag().getFirstArtwork().getBinaryData();
+        String songTitle = audioFile.getTag().getFirstField(FieldKey.TITLE).toString();
+        String songArtist = audioFile.getTag().getFirstField(FieldKey.ARTIST).toString();
+        String songLyrics = audioFile.getTag().getFirstField(FieldKey.LYRICS).toString();
+        String albumName = audioFile.getTag().getFirstField(FieldKey.ALBUM).toString();
+        String albumArtist = audioFile.getTag().getFirstField(FieldKey.ALBUM_ARTIST).toString();
+        String albumPublishDate = audioFile.getTag().getFirst("DATE").toString();
+        String albumDescription = audioFile.getTag().getFirstField(FieldKey.COMMENT).toString();
+        String albumLanguage = audioFile.getTag().getFirstField(FieldKey.LANGUAGE).toString();
+        String albumCopyright = audioFile.getTag().getFirstField(FieldKey.COPYRIGHT).toString();
+        byte[] albumPicture = audioFile.getTag().getFirstArtwork().getBinaryData();
+    }
+
+    @Test
+    public void getCpus() {
+        int cpuCoreCount = Runtime.getRuntime().availableProcessors();
+        System.out.println(cpuCoreCount);
+    }
+
+    @Test
+    public void ffmpegFormatConversionTest() {
+        IAudioFileConverter audioFileConverter = SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter");
+        FFmpegUtil.convert(
+                "/Users/stevejrong/Desktop/old/183Club - 一把伞.flac",
+                "/Users/stevejrong/Desktop/new/183Club - 一把伞.ogg",
+                audioFileConverter);
     }
 }

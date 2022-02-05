@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -21,16 +21,39 @@ package com.stevejrong.music.factory.spi.service.music.formatConversion;
 public interface IAudioFileConverter {
 
     /**
-     * 转换音频文件
+     * 音频文件格式转换器序号
      *
-     * @param sourceDirectory  待转换文件的路径
-     * @param targetDirectory  转换后保存文件的路径
-     * @param sourceFileName   音频文件的原始名称
-     * @param targetFileName   音频文件的目标名称
-     * @param sourceFileFormat 音频文件的原始格式
-     * @param targetFileFormat 音频文件的目标格式
      * @return
      */
-    String convert(String sourceDirectory, String targetDirectory, String sourceFileName, String targetFileName,
-                   String sourceFileFormat, String targetFileFormat);
+    int converterNum();
+
+    /**
+     * 源音频文件的编码格式
+     *
+     * @return
+     */
+    String sourceEncodeName();
+
+    /**
+     * 目标音频文件的编码格式
+     *
+     * @return
+     */
+    String targetEncodeName();
+
+    /**
+     * 目标音频文件的文件后缀名
+     *
+     * @return
+     */
+    String targetFileSuffix();
+
+    /**
+     * 转换音频文件
+     *
+     * @param sourcePath 源音频文件位置
+     * @param targetPath 目标音频文件位置
+     * @return 转换结果。true - 转换成功；false - 转换失败
+     */
+    boolean convert(String sourcePath, String targetPath);
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--音频格式转换配置文件-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="audioFileFormatConversionConfig" class="com.stevejrong.music.factory.config.sub.AudioFileFormatConversionConfig">
+        <!-- 转换后的音频文件存放目录 -->
+        <property name="convertedAudioFileDirectory" value="${musicFactory.base.convert.convertedAudioFileDirectory}"/>
+        <!-- FFmpeg组件配置 -->
+        <property name="ffmpegComponentConfig" ref="ffmpegComponentConfig"/>
+        <property name="audioFileConverters">
+            <list value-type="com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter">
+                <ref bean="AAC_to_FLAC_Converter"/>
+                <ref bean="APE_to_FLAC_Converter"/>
+                <ref bean="WAV_to_FLAC_Converter"/>
+                <ref bean="FLAC_to_OGG_VORBIS_Converter"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- M4A（AAC）音频格式转换为FLAC音频文件格式转换器 -->
+    <bean id="AAC_to_FLAC_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.AAC_to_FLAC_Converter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+    <!-- APE音频格式转换为FLAC音频格式转换器 -->
+    <bean id="APE_to_FLAC_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.APE_to_FLAC_Converter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+    <!-- WAV音频格式转换为FLAC音频格式转换器 -->
+    <bean id="WAV_to_FLAC_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.WAV_to_FLAC_Converter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+    <!-- FLAC音频格式转换为Ogg Vorbis音频格式转换器 -->
+    <bean id="FLAC_to_OGG_VORBIS_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.FLAC_to_OGG_VORBIS_Converter">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+
+    <bean id="linuxOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.LINUX"/>
+    </bean>
+    <bean id="microsoftWindowsNTOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.MICROSOFT_WINDOWS_NT"/>
+    </bean>
+    <bean id="appleMacOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.APPLE_MAC_OS"/>
+    </bean>
+
+    <bean id="ffmpegComponentConfig" class="com.stevejrong.music.factory.config.sub.FfmpegComponentConfig">
+        <property name="ffmpegPathsByOSType">
+            <map>
+                <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linuxOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forLinuxPath}"/>
+                <entry key-ref="appleMacOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forAppleMacOSPath}"/>
+            </map>
+        </property>
+        <property name="ffmprobePathsByOSType">
+            <map>
+                <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linuxOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forLinuxPath}"/>
+                <entry key-ref="appleMacOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forAppleMacOSPath}"/>
+            </map>
+        </property>
+    </bean>
+</beans>

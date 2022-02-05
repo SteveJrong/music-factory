@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,8 +18,8 @@
  */
 package com.stevejrong.music.factory.boot;
 
-import com.stevejrong.music.factory.common.util.FileUtil;
-import com.stevejrong.music.factory.common.util.SpringBeanUtil;
+import com.google.common.base.Splitter;
+import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
 import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
@@ -28,9 +28,13 @@ import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.music.bo.ComplementedMetadataAudioFileBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-import java.util.Scanner;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 程序入口
@@ -40,9 +44,16 @@ public class MusicFactoryApplication {
         SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
 
         while (true) {
+            FilterGroupsConfig filterGroupsConfig = systemConfig.getFilterGroupsConfig().stream()
+                    .filter(filterGroup -> "analyzingInfoForAudioFileFilterConfig".equals(filterGroup.getFilterGroupTag()))
+                    .findAny().get();
+
             System.out.println(systemConfig.getBaseConfig().getWelcomeMessage()
                     .replace("{{defaultAudioFileDirectory}}", systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory())
-                    .replace("{{currentCustomConfigInfo}}", buildCurrentCustomConfigInfo(systemConfig)));
+                    .replace("{{currentDirectoryConfigInfo}}", buildCurrentDirectoryConfigInfo(systemConfig, filterGroupsConfig))
+                    .replace("{{currentAnalysingAndComplementsFilterConfigInfo}}", buildCurrentAnalysingAndComplementsFilterConfigInfo(filterGroupsConfig))
+                    .replace("{{currentFormatConverterConfigInfo}}", buildCurrentFormatConverterConfigInfo(systemConfig))
+                    .replace("{{supportConvertFormatsInfoByFormatConversion}}", buildSupportConvertFormatsInfoByFormatConversion(systemConfig)));
             Scanner scanner1 = new Scanner(System.in);
             String input1 = scanner1.next();
 
@@ -123,8 +134,38 @@ public class MusicFactoryApplication {
                     break;
 
                 case "4":
-                    AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
-                    formatConversionModule.doAction();
+                    System.out.println(systemConfig.getBaseConfig().getSelectFormatConverterMessage());
+
+                    while (true) {
+                        Scanner scanner5 = new Scanner(System.in);
+                        String input5 = scanner5.next().toLowerCase().trim();
+
+                        if ("n".equals(input5)) {
+                            break;
+                        }
+
+                        if (!StringUtils.isNumeric(input5)) {
+                            System.err.println("您的输入的音频格式转换器编号格式非法，请重新输入！");
+                            continue;
+                        }
+
+                        IAudioFileConverter selectAudioFileConverter = FormatConverterUtil.getAudioFileConverterByConverterNum(Integer.parseInt(input5), systemConfig);
+                        if (null == selectAudioFileConverter) {
+                            System.err.println("您的输入的音频格式转换器编号不存在，请重新输入！");
+                            continue;
+                        }
+
+                        systemConfig.getAudioFileFormatConversionConfig().setCurrentAudioFileConverter(selectAudioFileConverter);
+                        System.out.println("选择音频文件格式转换器成功。");
+                        break;
+                    }
+
+                    break;
+
+                case "5":
+//                    AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+//                    formatConversionModule.doAction();
+                    //System.out.println(buildSupportConvertFormatsInfoByFormatConversion(systemConfig));
                     break;
 
                 case "0":
@@ -139,23 +180,79 @@ public class MusicFactoryApplication {
     }
 
     /**
-     * 构建当前用户配置的提示信息
+     * 构建当前当前目录配置提示信息
      *
      * @param systemConfig
      * @return
      */
-    private static String buildCurrentCustomConfigInfo(SystemConfig systemConfig) {
-        FilterGroupsConfig filterGroupsConfig = systemConfig.getFilterGroupsConfig().stream()
-                .filter(filterGroup -> "analyzingInfoForAudioFileFilterConfig".equals(filterGroup.getFilterGroupTag()))
-                .findAny().get();
-
-        StringBuilder sb = new StringBuilder("* 原始音频文件存放目录:\t"
+    private static String buildCurrentDirectoryConfigInfo(SystemConfig systemConfig, FilterGroupsConfig filterGroupsConfig) {
+        StringBuilder sb = new StringBuilder("● 原始音频文件存放目录:\t"
                 + systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory() + "\n");
-        sb.append("* 转换格式后的音频文件存放目录:\t").append(systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory()).append("\n");
+        sb.append("● 转换格式后的音频文件存放目录:\t").append(systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory()).append("\n");
 
+        return sb.toString();
+    }
+
+    /**
+     * 构建分析和补全音乐信息过滤器配置提示信息
+     *
+     * @param filterGroupsConfig
+     * @return
+     */
+    private static String buildCurrentAnalysingAndComplementsFilterConfigInfo(FilterGroupsConfig filterGroupsConfig) {
+        StringBuilder sb = new StringBuilder();
         for (AbstractFilter filter : filterGroupsConfig.getFilters()) {
-            sb.append("* ").append(SpringBeanUtil.getBeanNameByType(filter.getClass()))
+            sb.append("● ").append(SpringBeanUtil.getBeanNameByType(filter.getClass()))
                     .append(":\t").append(filter.isStatus() ? "已开启" : "已关闭").append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private static String buildCurrentFormatConverterConfigInfo(SystemConfig systemConfig) {
+        StringBuilder sb = new StringBuilder("当前已选择的音频文件格式转换器：\n");
+
+        IAudioFileConverter currentAudioFileConverter = systemConfig.getAudioFileFormatConversionConfig().getCurrentAudioFileConverter();
+        if (null != currentAudioFileConverter) {
+            sb.append("● ")
+                    .append(currentAudioFileConverter.converterNum())
+                    .append(". ")
+                    .append("[")
+                    .append(currentAudioFileConverter.sourceEncodeName())
+                    .append("]")
+                    .append(" 转换到 >>> ")
+                    .append("[")
+                    .append(currentAudioFileConverter.targetEncodeName())
+                    .append("]");
+        } else {
+            sb.append("< 未选择音频文件格式转换器！请输入对应功能编号来设置！ >");
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 构建受支持的音频格式转换器提示信息
+     *
+     * @return
+     */
+    private static String buildSupportConvertFormatsInfoByFormatConversion(SystemConfig systemConfig) {
+        List<IAudioFileConverter> audioFileConverters = systemConfig.getAudioFileFormatConversionConfig().getAudioFileConverters();
+        StringBuilder sb = new StringBuilder();
+
+        for (IAudioFileConverter audioFileConverter : audioFileConverters) {
+            int converterNum = ReflectionUtil.getMethodValueByReflect("converterNum", audioFileConverter, null);
+            String converterSourceName = ReflectionUtil.getMethodValueByReflect("sourceName", audioFileConverter, null);
+            String converterTargetName = ReflectionUtil.getMethodValueByReflect("targetName", audioFileConverter, null);
+
+            sb.append("● ")
+                    .append(converterNum)
+                    .append(". [")
+                    .append(converterSourceName)
+                    .append("] 转换到 > [")
+                    .append(converterTargetName)
+                    .append("]")
+                    .append("\n");
         }
 
         return sb.toString();

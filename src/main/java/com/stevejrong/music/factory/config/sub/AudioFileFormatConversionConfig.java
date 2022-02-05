@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -20,6 +20,7 @@ package com.stevejrong.music.factory.config.sub;
 
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,11 +39,14 @@ public class AudioFileFormatConversionConfig {
     private FfmpegComponentConfig ffmpegComponentConfig;
 
     /**
-     * 音频文件格式和转换器对应关系Map集合
-     * <p>
-     * Key - 音频文件编码类型（如mp3、flac等）；Value - 格式转换器
+     * 音频文件格式转换器集合
      */
-    private Map<String, IAudioFileConverter> audioFileConverters;
+    private List<IAudioFileConverter> audioFileConverters;
+
+    /**
+     * 用户选择的音频文件格式转换器对象
+     */
+    private IAudioFileConverter currentAudioFileConverter;
 
     public String getConvertedAudioFileDirectory() {
         return convertedAudioFileDirectory;
@@ -60,11 +64,19 @@ public class AudioFileFormatConversionConfig {
         this.ffmpegComponentConfig = ffmpegComponentConfig;
     }
 
-    public Map<String, IAudioFileConverter> getAudioFileConverters() {
+    public List<IAudioFileConverter> getAudioFileConverters() {
         return audioFileConverters;
     }
 
-    public void setAudioFileConverters(Map<String, IAudioFileConverter> audioFileConverters) {
+    public void setAudioFileConverters(List<IAudioFileConverter> audioFileConverters) {
         this.audioFileConverters = audioFileConverters;
+    }
+
+    public IAudioFileConverter getCurrentAudioFileConverter() {
+        return currentAudioFileConverter;
+    }
+
+    public void setCurrentAudioFileConverter(IAudioFileConverter currentAudioFileConverter) {
+        this.currentAudioFileConverter = currentAudioFileConverter;
     }
 }

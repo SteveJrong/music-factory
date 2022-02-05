@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Spring基础配置文件-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:property-placeholder local-override="true" properties-ref="yamlProperties"/>
+    <context:component-scan base-package="com.stevejrong.music.factory.config,com.stevejrong.music.factory.provider.service"/>
+
+    <bean id="springBeanUtil" class="com.stevejrong.music.factory.common.util.SpringBeanUtil"/>
+
+    <!-- 系统基础配置 -->
+    <bean id="baseConfig" class="com.stevejrong.music.factory.config.sub.BaseConfig" lazy-init="false">
+        <!-- Spring配置文件的文件名称 -->
+        <property name="springConfigurationFileName" value="application-bean.xml"/>
+        <property name="welcomeMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+------------------------------- 当前目录配置信息 ------------------------------- &#x000A;{{currentDirectoryConfigInfo}}&#x000A;
+------------------------------- 当前分析和补全音乐信息过滤器配置信息 ------------------------------- &#x000A;{{currentAnalysingAndComplementsFilterConfigInfo}}&#x000A;
+------------------------------- 当前音频文件格式转换器配置信息 ------------------------------- &#x000A;{{currentFormatConverterConfigInfo}}&#x000A;
+------------------------------- 受支持的音频格式转换器列表 ------------------------------- &#x000A;{{supportConvertFormatsInfoByFormatConversion}}&#x000A;
+[1] 自定义原始音频文件的存放位置。&#x000A;
+[2] 分析指定目录下的音频文件，并补全音频文件元数据信息。&#x000A;
+[3] 自定义转换格式后的音频文件存放位置。&#x000A;
+[4] 选择音频文件格式转换器。&#x000A;
+[5] 批量转换指定目录下的音频文件。&#x000A;
+[0] 退出程序。&#x000A;&#x000A;
+输入上述数字序号来执行任务：_"/>
+
+        <property name="customAudioFileDirectoryMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义原始音频文件存放目录 =============================== &#x000A;
+当前原始音频文件存放目录为：{{defaultAudioFileDirectory}}。&#x000A;
+将原始音频文件的根文件夹直接拖动或从地址栏粘贴至此处，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="customAudioFileDirectorySuccessMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义原始音频文件存放目录成功 =============================== &#x000A;
+原始音频文件的存放目录，已由{{oldAudioFileDirectory}}成功地更改为了{{newAudioFileDirectory}}。&#x000A;"/>
+
+        <property name="customConvertedAudioFileDirectoryMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义转换格式后的音频文件存放目录 =============================== &#x000A;
+当前转换格式后的音频文件存放目录为：{{defaultConvertedAudioFileDirectory}}。&#x000A;
+将转换格式后的音频文件文件夹直接拖动或从地址栏粘贴至此处，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="customConvertedAudioFileDirectorySuccessMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义转换格式后的音频文件存放目录成功 =============================== &#x000A;
+转换格式后的音频文件存放目录，已由{{oldConvertedAudioFileDirectory}}成功地更改为了{{newConvertedAudioFileDirectory}}。&#x000A;"/>
+
+        <property name="analyzingCompletedForAudioFileMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 您的音频文件全部分析完成 =============================== &#x000A;
+您有{{audioFileCountForNeedComplements}}个音频文件需要补全元数据信息。&#x000A;
+输入[Y]或[y]以补全缺失的音频文件元数据信息，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="metadataInfoCompletedForAudioFileMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 您的音频文件元数据全部补全完成 =============================== &#x000A;
+此次共补全{{audioFileTotalCountForMetadataInfoCompleted}}个音频文件的元数据信息：&#x000A;
+√ 已成功补全{{audioFileCountForMetadataInfoCompletedSuccess}}个音频文件的元数据信息。&#x000A;
+× 未成功补全{{audioFileCountForMetadataInfoCompletedFailure}}个音频文件的元数据信息。"/>
+
+        <property name="selectFormatConverterMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 选择音频文件格式转换器 =============================== &#x000A;
+根据[受支持的音频格式转换器列表]，输入对应的音频文件格式转换器编号，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+    </bean>
+
+    <!-- 系统配置 -->
+    <bean id="systemConfig" class="com.stevejrong.music.factory.config.SystemConfig">
+        <property name="baseConfig" ref="baseConfig"/>
+        <property name="filterGroupsConfig">
+            <list>
+                <ref bean="${musicFactory.base.partner.songinfo.analyzingInfo.filterGroup.activeConfig}"/>
+                <ref bean="${musicFactory.base.partner.songinfo.datasource.filterGroup.activeConfig}"/>
+            </list>
+        </property>
+        <property name="analysingAndComplementsForAudioFileConfig" ref="analysingAndComplementsForAudioFileConfig"/>
+        <property name="audioFileFormatConversionConfig" ref="audioFileFormatConversionConfig"/>
+    </bean>
+
+    <!-- 用于支持项目读取Yml/Yaml配置文件 -->
+    <bean id="yamlProperties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
+        <property name="resources">
+            <array>
+                <value>classpath:custom-config.yml</value>
+                <value>classpath:base-config.yml</value>
+            </array>
+        </property>
+    </bean>
+</beans>

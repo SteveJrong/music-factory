@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -65,6 +65,11 @@ public class BaseConfig {
      */
     private String customConvertedAudioFileDirectorySuccessMessage;
 
+    /**
+     * 选择音频文件格式转换器的提示信息
+     */
+    private String selectFormatConverterMessage;
+
     public String getSpringConfigurationFileName() {
         return springConfigurationFileName;
     }
@@ -127,5 +132,13 @@ public class BaseConfig {
 
     public void setCustomConvertedAudioFileDirectorySuccessMessage(String customConvertedAudioFileDirectorySuccessMessage) {
         this.customConvertedAudioFileDirectorySuccessMessage = customConvertedAudioFileDirectorySuccessMessage;
+    }
+
+    public String getSelectFormatConverterMessage() {
+        return selectFormatConverterMessage;
+    }
+
+    public void setSelectFormatConverterMessage(String selectFormatConverterMessage) {
+        this.selectFormatConverterMessage = selectFormatConverterMessage;
     }
 }

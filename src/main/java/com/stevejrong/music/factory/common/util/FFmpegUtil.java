@@ -21,6 +21,7 @@ package com.stevejrong.music.factory.common.util;
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum;
 import com.stevejrong.music.factory.config.SystemConfig;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
@@ -139,13 +140,13 @@ public final class FFmpegUtil {
      * @param sourceFilePath 原始音频文件位置
      * @param targetFilePath 目标音频文件位置
      */
-    public static void convertToFlac(String sourceFilePath, String targetFilePath) {
+    public static void convert(String sourceFilePath, String targetFilePath, IAudioFileConverter audioFileConverter) {
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(getFfmpegProbeResultInstance(getFfprobeInstanceByOSType(), sourceFilePath))
                 .overrideOutputFiles(true)
                 .addOutput(targetFilePath)
-                .setFormat(BaseConstants.MUSIC_ENCODE_FLAC)
-                .setAudioCodec(BaseConstants.MUSIC_ENCODE_FLAC)
+                .setFormat(audioFileConverter.targetEncodeName())
+                .setAudioCodec(audioFileConverter.targetEncodeName())
                 .setStrict(FFmpegBuilder.Strict.NORMAL)
                 .done();
 
