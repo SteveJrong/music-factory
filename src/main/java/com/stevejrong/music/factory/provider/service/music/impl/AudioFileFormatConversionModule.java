@@ -22,6 +22,7 @@ import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.common.util.HardwareUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
+import com.stevejrong.music.factory.common.util.RandomUtil;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.parallel.FormatConvertMaster;
 import com.stevejrong.music.factory.spi.music.bo.MusicFormatConvertModuleBo;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
@@ -47,7 +48,6 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
         // 创建多线程格式转换的Master类对象
         FormatConvertMaster formatConvertMaster = new FormatConvertMaster(HardwareUtil.getAllCoresCountByCpu());
 
-        int i = 1;
         try {
             // 读取原始文件目录下的所有音频文件，依次进行转换
             Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
@@ -59,7 +59,7 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
                         String targetDirectory = super.getSystemConfig().getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory();
 
                         FormatConvertTaskBo formatConvertTask = new FormatConvertTaskBo(
-                                i,
+                                RandomUtil.getARandomNumeric(1, Integer.MAX_VALUE),
                                 "转换 [" + file.getFileName().toString() + "] 使用 [" + super.getSystemConfig().getAudioFileFormatConversionConfig().getCurrentAudioFileConverter().getClass().getSimpleName() + "] 转换器",
                                 sourcePath,
                                 targetDirectory,
