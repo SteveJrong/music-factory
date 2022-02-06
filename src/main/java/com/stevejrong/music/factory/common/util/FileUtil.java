@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,6 +18,7 @@
  */
 package com.stevejrong.music.factory.common.util;
 
+import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.ResourcesFileEnum;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -266,5 +267,15 @@ public final class FileUtil {
      */
     public static String getFileSuffix(String filePath) {
         return filePath.substring(filePath.lastIndexOf(".") + 1);
+    }
+
+    /**
+     * 获取文件名称（不含文件后缀名）
+     *
+     * @param filePath
+     * @return
+     */
+    public static String getFileNameWithoutSuffix(String filePath) {
+        return filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1, filePath.lastIndexOf(BaseConstants.POINT_CHAR));
     }
 }

@@ -18,11 +18,6 @@
  */
 package com.stevejrong.music.factory.common.constants;
 
-import com.stevejrong.music.factory.common.util.DateTimeUtil;
-import com.stevejrong.music.factory.common.util.FileUtil;
-
-import java.io.File;
-
 public final class BaseConstants {
 
     /**
@@ -68,5 +63,5 @@ public final class BaseConstants {
     public static final String AUDIO_ENCODE_AAC = "aac";
     public static final String AUDIO_ENCODE_APE = "ape";
     public static final String AUDIO_ENCODE_WAV = "wav";
-    public static final String AUDIO_ENCODE_OGG_VORBIS = "ogg";
+    public static final String AUDIO_ENCODE_OGG_VORBIS = "libvorbis";
 }

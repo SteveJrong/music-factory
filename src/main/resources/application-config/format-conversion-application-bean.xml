@@ -11,26 +11,11 @@
         <property name="ffmpegComponentConfig" ref="ffmpegComponentConfig"/>
         <property name="audioFileConverters">
             <list value-type="com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter">
-                <ref bean="AAC_to_FLAC_Converter"/>
-                <ref bean="APE_to_FLAC_Converter"/>
-                <ref bean="WAV_to_FLAC_Converter"/>
                 <ref bean="FLAC_to_OGG_VORBIS_Converter"/>
             </list>
         </property>
     </bean>
 
-    <!-- M4A（AAC）音频格式转换为FLAC音频文件格式转换器 -->
-    <bean id="AAC_to_FLAC_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.AAC_to_FLAC_Converter">
-        <property name="systemConfig" ref="systemConfig"/>
-    </bean>
-    <!-- APE音频格式转换为FLAC音频格式转换器 -->
-    <bean id="APE_to_FLAC_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.APE_to_FLAC_Converter">
-        <property name="systemConfig" ref="systemConfig"/>
-    </bean>
-    <!-- WAV音频格式转换为FLAC音频格式转换器 -->
-    <bean id="WAV_to_FLAC_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.WAV_to_FLAC_Converter">
-        <property name="systemConfig" ref="systemConfig"/>
-    </bean>
     <!-- FLAC音频格式转换为Ogg Vorbis音频格式转换器 -->
     <bean id="FLAC_to_OGG_VORBIS_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.FLAC_to_OGG_VORBIS_Converter">
         <property name="systemConfig" ref="systemConfig"/>

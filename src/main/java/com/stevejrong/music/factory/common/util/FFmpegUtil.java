@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,10 +18,8 @@
  */
 package com.stevejrong.music.factory.common.util;
 
-import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum;
 import com.stevejrong.music.factory.config.SystemConfig;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
@@ -40,9 +38,9 @@ import java.util.Map;
 public final class FFmpegUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FFmpegUtil.class);
 
-    public static FFmpeg FFMPEG = null;
-    public static FFprobe FFPROBE = null;
-    private static FFmpegExecutor FFMPEG_EXECUTOR = null;
+    public static volatile FFmpeg FFMPEG = null;
+    public static volatile FFprobe FFPROBE = null;
+    private static volatile FFmpegExecutor FFMPEG_EXECUTOR = null;
     private static FFmpegProbeResult FFMPEG_PROBE_RESULT = null;
 
     /**
@@ -50,7 +48,7 @@ public final class FFmpegUtil {
      *
      * @return FFmpeg对象
      */
-    private static FFmpeg getFfmpegInstanceByOSType() {
+    private static synchronized FFmpeg getFfmpegInstanceByOSType() {
         if (null == FFMPEG) {
             SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
             Map<SupportOSForFFmpegEnum, String> ffmpegPathsByOSTypeMaps = systemConfig
@@ -58,9 +56,9 @@ public final class FFmpegUtil {
 
             SupportOSForFFmpegEnum operatingSystemEnum = PlatformUtil.getOperatingSystemType();
 
-            File ffmpegFile = FileUtil.getResourceFile(
-                    ffmpegPathsByOSTypeMaps.get(operatingSystemEnum));
+            File ffmpegFile = FileUtil.getResourceFile(ffmpegPathsByOSTypeMaps.get(operatingSystemEnum));
             ffmpegFile.setExecutable(true);
+
             try {
                 FFMPEG = new FFmpeg(ffmpegFile.getPath());
             } catch (IOException e) {
@@ -77,7 +75,7 @@ public final class FFmpegUtil {
      *
      * @return FFprobe对象
      */
-    private static FFprobe getFfprobeInstanceByOSType() {
+    private static synchronized FFprobe getFfprobeInstanceByOSType() {
         if (null == FFPROBE) {
             SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
             Map<SupportOSForFFmpegEnum, String> ffprobePathsByOSTypeMaps = systemConfig
@@ -85,9 +83,9 @@ public final class FFmpegUtil {
 
             SupportOSForFFmpegEnum operatingSystemEnum = PlatformUtil.getOperatingSystemType();
 
-            File ffprobeFile = FileUtil.getResourceFile(
-                    ffprobePathsByOSTypeMaps.get(operatingSystemEnum));
+            File ffprobeFile = FileUtil.getResourceFile(ffprobePathsByOSTypeMaps.get(operatingSystemEnum));
             ffprobeFile.setExecutable(true);
+
             try {
                 FFPROBE = new FFprobe(ffprobeFile.getPath());
             } catch (IOException e) {
@@ -106,7 +104,7 @@ public final class FFmpegUtil {
      * @param ffprobeInstance Ffmpeg Probe对象
      * @return FFmpegExecutor对象
      */
-    private static FFmpegExecutor getFfmpegExecutorInstance(FFmpeg fFmpegInstacnce, FFprobe ffprobeInstance) {
+    private static synchronized FFmpegExecutor getFfmpegExecutorInstance(FFmpeg fFmpegInstacnce, FFprobe ffprobeInstance) {
         if (null == FFMPEG_EXECUTOR) {
             FFMPEG_EXECUTOR = new FFmpegExecutor(fFmpegInstacnce, ffprobeInstance);
         }
@@ -137,21 +135,11 @@ public final class FFmpegUtil {
     /**
      * 将受支持的音频文件转换为FLAC音频文件
      *
-     * @param sourceFilePath 原始音频文件位置
-     * @param targetFilePath 目标音频文件位置
+     * @param ffmpegBuilder FFmpegBuilder对象
      */
-    public static void convert(String sourceFilePath, String targetFilePath, IAudioFileConverter audioFileConverter) {
-        FFmpegBuilder builder = new FFmpegBuilder()
-                .setInput(getFfmpegProbeResultInstance(getFfprobeInstanceByOSType(), sourceFilePath))
-                .overrideOutputFiles(true)
-                .addOutput(targetFilePath)
-                .setFormat(audioFileConverter.targetEncodeName())
-                .setAudioCodec(audioFileConverter.targetEncodeName())
-                .setStrict(FFmpegBuilder.Strict.NORMAL)
-                .done();
-
+    public static void convert(FFmpegBuilder ffmpegBuilder) {
         getFfmpegExecutorInstance(getFfmpegInstanceByOSType(), getFfprobeInstanceByOSType())
-                .createJob(builder)
+                .createJob(ffmpegBuilder)
                 .run();
     }
 }

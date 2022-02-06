@@ -18,6 +18,9 @@
  */
 package com.stevejrong.music.factory.spi.music.bo.formatConversion;
 
+import com.stevejrong.music.factory.common.util.FileUtil;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+
 /**
  * 格式转换任务类
  *
@@ -36,15 +39,38 @@ public final class FormatConvertTaskBo {
     private String taskName;
 
     /**
+     * 源音频文件位置
+     */
+    private String sourcePath;
+
+    /**
+     * 源音频文件文件名（不含后缀名）
+     */
+    private String sourceFileName;
+
+    /**
+     * 目标音频文件目录
+     */
+    private String targetDirectory;
+
+    /**
+     * 已选择的音频文件转换器
+     */
+    private IAudioFileConverter selectAudioFileConverter;
+
+    /**
      * Task任务构造方法。
      * 以自定义的任务ID和自定义的任务名称，来创建一个Task任务。
      *
      * @param taskId   自定义的任务ID
      * @param taskName 自定义的任务名称
      */
-    public FormatConvertTaskBo(long taskId, String taskName) {
+    public FormatConvertTaskBo(long taskId, String taskName, String sourcePath, String targetDirectory, IAudioFileConverter selectAudioFileConverter) {
         this.taskId = taskId;
         this.taskName = taskName;
+        this.sourcePath = sourcePath;
+        this.targetDirectory = targetDirectory;
+        this.selectAudioFileConverter = selectAudioFileConverter;
     }
 
     public long getTaskId() {
@@ -61,5 +87,33 @@ public final class FormatConvertTaskBo {
 
     public void setTaskName(String taskName) {
         this.taskName = taskName;
+    }
+
+    public String getSourcePath() {
+        return sourcePath;
+    }
+
+    public void setSourcePath(String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
+    public String getSourceFileName() {
+        return FileUtil.getFileNameWithoutSuffix(sourcePath);
+    }
+
+    public String getTargetDirectory() {
+        return targetDirectory;
+    }
+
+    public void setTargetDirectory(String targetDirectory) {
+        this.targetDirectory = targetDirectory;
+    }
+
+    public IAudioFileConverter getSelectAudioFileConverter() {
+        return selectAudioFileConverter;
+    }
+
+    public void setSelectAudioFileConverter(IAudioFileConverter selectAudioFileConverter) {
+        this.selectAudioFileConverter = selectAudioFileConverter;
     }
 }

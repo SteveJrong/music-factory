@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -19,9 +19,9 @@
 package com.stevejrong.music.factory.spi.service.music.formatConversion;
 
 import com.stevejrong.music.factory.config.SystemConfig;
+import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
 public abstract class AbstractMusicFileConverter implements IAudioFileConverter {
-
     private SystemConfig systemConfig;
 
     public SystemConfig getSystemConfig() {
@@ -31,4 +31,30 @@ public abstract class AbstractMusicFileConverter implements IAudioFileConverter 
     public void setSystemConfig(SystemConfig systemConfig) {
         this.systemConfig = systemConfig;
     }
+
+    /**
+     * 创建默认的FFmpegBuilder对象
+     *
+     * @param sourcePath
+     * @return
+     */
+    protected FFmpegBuilder createDefaultFFmpegBuilder(String sourcePath) {
+        FFmpegBuilder ffmpegBuilder = new FFmpegBuilder()
+                .overrideOutputFiles(true)
+                .setInput(sourcePath);
+
+        return ffmpegBuilder;
+    }
+
+    /**
+     * 设置格式转换时的特殊个性化参数到FFmpegBuilder构建对象中
+     * <p>
+     * 只要进行格式转换，则FFmpeg组件的参数一定要设置，故必须强制自类重写此方法。
+     *
+     * @param targetDirectory
+     * @param targetFileName
+     * @param ffmpegBuilder
+     * @return
+     */
+    public abstract FFmpegBuilder setFFmpegBuilder(String targetDirectory, String targetFileName, FFmpegBuilder ffmpegBuilder);
 }

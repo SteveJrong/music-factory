@@ -18,7 +18,11 @@
  */
 package com.stevejrong.music.factory.provider.service.music.formatConversion.parallel;
 
+import com.stevejrong.music.factory.common.util.DateTimeUtil;
+import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -30,6 +34,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @since 1.0
  */
 public final class FormatConvertWorker implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FormatConvertWorker.class);
+
     /**
      * 自定义处理者（Worker）的ID
      */
@@ -110,8 +116,11 @@ public final class FormatConvertWorker implements Runnable {
             // 将处理后的结果数据存入结果集合中
             this.parallelExecuteResults.put(formatConvertTask.getTaskId(), result);
 
-            System.out.println(String.format("【%s】处理【%s】成功！处理结果：%b，耗时：%d毫秒。", this.workerName, formatConvertTask.getTaskName(),
-                    result, (System.currentTimeMillis() - start)));
+            System.out.println();
+
+            LOGGER.info(LoggerUtil.builder().append("FormatConvertWorker_run", "音频文件格式转换处理者（Worker）")
+                    .append("executeMsg", String.format("【%s】→【%s】成功！处理结果：%b，耗时：%s。", this.workerName, formatConvertTask.getTaskName(),
+                            result, DateTimeUtil.milliSecondToHHMMssString((System.currentTimeMillis() - start)))).toString());
         }
     }
 
@@ -122,7 +131,11 @@ public final class FormatConvertWorker implements Runnable {
      * @return
      */
     private boolean execute(FormatConvertTaskBo formatConvertTask) {
-        // TODO
+        try {
+            formatConvertTask.getSelectAudioFileConverter().convert(formatConvertTask.getSourcePath(), formatConvertTask.getTargetDirectory(), formatConvertTask.getSourceFileName());
+        } catch (Exception e) {
+            return false;
+        }
 
         return true;
     }

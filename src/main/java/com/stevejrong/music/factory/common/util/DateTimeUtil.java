@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -191,5 +191,47 @@ public final class DateTimeUtil {
      */
     public static LocalDate stringToLocalDate(String datePattern, String date) {
         return LocalDate.parse(date, DateTimeFormatter.ofPattern(datePattern));
+    }
+
+    /**
+     * 毫秒数转换为时分秒字符串
+     *
+     * @param ms 毫秒数
+     * @return 时分秒字符串
+     */
+    public static String milliSecondToHHMMssString(long ms) {
+        int ss = 1000;
+        int mi = ss * 60;
+        int hh = mi * 60;
+        int dd = hh * 24;
+
+        long day = ms / dd;
+        long hour = (ms - day * dd) / hh;
+        long minute = (ms - day * dd - hour * hh) / mi;
+        long second = (ms - day * dd - hour * hh - minute * mi) / ss;
+        long milliSecond = ms - day * dd - hour * hh - minute * mi - second * ss;
+
+        StringBuilder sb = new StringBuilder();
+        if (day > 0) {
+            sb.append(day).append("天");
+        }
+
+        if (hour > 0) {
+            sb.append(hour).append("时");
+        }
+
+        if (minute > 0) {
+            sb.append(minute).append("分");
+        }
+
+        if (second > 0) {
+            sb.append(second).append("秒");
+        }
+
+        if (milliSecond > 0) {
+            sb.append(milliSecond).append("毫秒");
+        }
+
+        return sb.toString();
     }
 }

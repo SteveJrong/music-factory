@@ -68,7 +68,7 @@ public class FormatConvertMaster {
         for (int i = 0; i < createWorkerCount; i++) {
 
             // 创建Worker子任务。以便由Master分配Worker去进行多线程处理任务。
-            FormatConvertWorker formatConvertWorker = new FormatConvertWorker(i, "Worker子任务-" + i);
+            FormatConvertWorker formatConvertWorker = new FormatConvertWorker(i, "处理者（Worker）-" + i);
             // 设置Worker子任务执行完后的结果集合对象。用于保存每个Worker执行完后的结果数据。
             formatConvertWorker.setParallelExecuteResults(this.parallelExecuteResults);
             // 设置任务队列集合对象

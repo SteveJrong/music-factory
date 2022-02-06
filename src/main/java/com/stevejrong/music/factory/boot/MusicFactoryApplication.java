@@ -18,8 +18,10 @@
  */
 package com.stevejrong.music.factory.boot;
 
-import com.google.common.base.Splitter;
-import com.stevejrong.music.factory.common.util.*;
+import com.stevejrong.music.factory.common.util.FileUtil;
+import com.stevejrong.music.factory.common.util.FormatConverterUtil;
+import com.stevejrong.music.factory.common.util.ReflectionUtil;
+import com.stevejrong.music.factory.common.util.SpringBeanUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
 import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
@@ -31,10 +33,8 @@ import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * 程序入口
@@ -163,9 +163,8 @@ public class MusicFactoryApplication {
                     break;
 
                 case "5":
-//                    AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
-//                    formatConversionModule.doAction();
-                    //System.out.println(buildSupportConvertFormatsInfoByFormatConversion(systemConfig));
+                    AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+                    formatConversionModule.doAction();
                     break;
 
                 case "0":
@@ -218,11 +217,7 @@ public class MusicFactoryApplication {
                     .append(currentAudioFileConverter.converterNum())
                     .append(". ")
                     .append("[")
-                    .append(currentAudioFileConverter.sourceEncodeName())
-                    .append("]")
-                    .append(" 转换到 >>> ")
-                    .append("[")
-                    .append(currentAudioFileConverter.targetEncodeName())
+                    .append(currentAudioFileConverter.getClass().getSimpleName())
                     .append("]");
         } else {
             sb.append("< 未选择音频文件格式转换器！请输入对应功能编号来设置！ >");
@@ -241,16 +236,12 @@ public class MusicFactoryApplication {
         StringBuilder sb = new StringBuilder();
 
         for (IAudioFileConverter audioFileConverter : audioFileConverters) {
-            int converterNum = ReflectionUtil.getMethodValueByReflect("converterNum", audioFileConverter, null);
-            String converterSourceName = ReflectionUtil.getMethodValueByReflect("sourceName", audioFileConverter, null);
-            String converterTargetName = ReflectionUtil.getMethodValueByReflect("targetName", audioFileConverter, null);
+            int converterNum = ReflectionUtil.getMethodValueByReflect("converterNum", audioFileConverter);
 
             sb.append("● ")
                     .append(converterNum)
                     .append(". [")
-                    .append(converterSourceName)
-                    .append("] 转换到 > [")
-                    .append(converterTargetName)
+                    .append(audioFileConverter.getClass().getSimpleName())
                     .append("]")
                     .append("\n");
         }

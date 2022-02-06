@@ -28,20 +28,6 @@ public interface IAudioFileConverter {
     int converterNum();
 
     /**
-     * 源音频文件的编码格式
-     *
-     * @return
-     */
-    String sourceEncodeName();
-
-    /**
-     * 目标音频文件的编码格式
-     *
-     * @return
-     */
-    String targetEncodeName();
-
-    /**
      * 目标音频文件的文件后缀名
      *
      * @return
@@ -49,11 +35,11 @@ public interface IAudioFileConverter {
     String targetFileSuffix();
 
     /**
-     * 转换音频文件
+     * 音频文件格式转换
      *
-     * @param sourcePath 源音频文件位置
-     * @param targetPath 目标音频文件位置
-     * @return 转换结果。true - 转换成功；false - 转换失败
+     * @param sourcePath    源文件位置
+     * @param targetPath    目标文件位置
+     * @return 音频文件格式转换结果。true - 音频文件格式转换成功; false - 音频文件格式转换失败。
      */
-    boolean convert(String sourcePath, String targetPath);
+    boolean convert(String sourcePath, String targetDirectory, String targetFileName);
 }

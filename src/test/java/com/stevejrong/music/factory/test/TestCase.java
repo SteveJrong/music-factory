@@ -410,6 +410,7 @@ public class TestCase {
         SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
         systemConfig.getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/old");
         systemConfig.getAudioFileFormatConversionConfig().setConvertedAudioFileDirectory("/Users/stevejrong/Desktop/new");
+        systemConfig.getAudioFileFormatConversionConfig().setCurrentAudioFileConverter(SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter"));
         formatConversionModule.setSystemConfig(systemConfig);
 
         formatConversionModule.doAction();
@@ -447,9 +448,15 @@ public class TestCase {
     @Test
     public void ffmpegFormatConversionTest() {
         IAudioFileConverter audioFileConverter = SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter");
-        FFmpegUtil.convert(
-                "/Users/stevejrong/Desktop/old/183Club - 一把伞.flac",
-                "/Users/stevejrong/Desktop/new/183Club - 一把伞.ogg",
-                audioFileConverter);
+        audioFileConverter.convert(
+                "/Users/stevejrong/Desktop/old/Taylor Swift - Style.flac",
+                "/Users/stevejrong/Desktop/new",
+                "Taylor Swift - Style.ogg");
+    }
+
+    @Test
+    public void fileUtilTest() {
+        String fileNameWithoutSuffix = FileUtil.getFileNameWithoutSuffix("/Users/stevejrong/Desktop/new/Taylor Swift - Style.ogg");
+        System.out.println(fileNameWithoutSuffix);
     }
 }
