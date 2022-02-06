@@ -46,7 +46,7 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
     @Override
     public List<MusicFormatConvertModuleBo> doAction() {
         // 创建多线程格式转换的Master类对象
-        FormatConvertMaster formatConvertMaster = new FormatConvertMaster(HardwareUtil.getAllCoresCountByCpu());
+        FormatConvertMaster formatConvertMaster = new FormatConvertMaster(HardwareUtil.getAllCoresCountByCpu() * 2);
 
         try {
             // 读取原始文件目录下的所有音频文件，依次进行转换

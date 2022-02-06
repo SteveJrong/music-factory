@@ -62,7 +62,7 @@ public class FormatConvertMaster {
      *
      * @param createWorkerCount 指定创建处理任务的处理者（Worker）的数量。
      *                          此参数值将决定创建任务处理者（Worker）的数量。即当多线程处理任务时，有几个线程同时并行执行处理。
-     *                          建议设置为主机的核心数值（含超线程核心数）。
+     *                          建议设置为主机核心数值（含超线程核心数）的两倍。
      */
     public FormatConvertMaster(int createWorkerCount) {
         for (int i = 0; i < createWorkerCount; i++) {
