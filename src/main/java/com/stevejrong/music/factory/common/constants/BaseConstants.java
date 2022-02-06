@@ -18,6 +18,13 @@
  */
 package com.stevejrong.music.factory.common.constants;
 
+
+/**
+ * 公共常量类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public final class BaseConstants {
 
     /**

@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Util - MP3音频文件工具类
+ * MP3音频文件工具类
  *
  * @author Steve Jrong
- * create date: 2021-11-15 10:11 PM
  * @since 1.0
  */
 public final class Mp3Util {

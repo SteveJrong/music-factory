@@ -21,6 +21,10 @@ package com.stevejrong.music.factory.spi.music.bo;
 import java.io.File;
 import java.io.Serializable;
 
+/**
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class AnalyzingForAudioFileModuleBo implements Serializable {
     private static final long serialVersionUID = -1591136590926715426L;
 

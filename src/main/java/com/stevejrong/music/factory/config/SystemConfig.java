@@ -24,6 +24,9 @@ import java.util.List;
 
 /**
  * 系统配置类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class SystemConfig {
 

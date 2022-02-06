@@ -23,7 +23,6 @@ import java.util.List;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-20 10:11 AM
  * @since 1.0
  */
 public class KuGouMusicPartnerSongInfoFilter3Bean implements Serializable {

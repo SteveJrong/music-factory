@@ -28,7 +28,10 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
- * Util - 日期时间工具类
+ * 日期时间工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public final class DateTimeUtil {
     public static final Pattern DATE_PATTERN_OF_YYYY_FORMAT = Pattern.compile(DatePattern.YYYY_FORMAT.getDesc());

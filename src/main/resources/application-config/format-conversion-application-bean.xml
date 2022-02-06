@@ -31,7 +31,7 @@
         <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.APPLE_MAC_OS"/>
     </bean>
 
-    <bean id="ffmpegComponentConfig" class="com.stevejrong.music.factory.config.sub.FfmpegComponentConfig">
+    <bean id="ffmpegComponentConfig" class="com.stevejrong.music.factory.config.sub.FFmpegComponentConfig">
         <property name="ffmpegPathsByOSType">
             <map>
                 <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forMicrosoftWindowsNTPath}"/>

@@ -38,6 +38,9 @@ import java.util.Scanner;
 
 /**
  * 程序入口
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class MusicFactoryApplication {
     public static void main(String[] args) {
@@ -209,7 +212,7 @@ public class MusicFactoryApplication {
     }
 
     private static String buildCurrentFormatConverterConfigInfo(SystemConfig systemConfig) {
-        StringBuilder sb = new StringBuilder("当前已选择的音频文件格式转换器：\n");
+        StringBuilder sb = new StringBuilder("当前已选择的音频文件格式转换器：");
 
         IAudioFileConverter currentAudioFileConverter = systemConfig.getAudioFileFormatConversionConfig().getCurrentAudioFileConverter();
         if (null != currentAudioFileConverter) {

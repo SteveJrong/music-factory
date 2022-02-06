@@ -21,6 +21,12 @@ package com.stevejrong.music.factory.common.util;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.tag.flac.FlacTag;
 
+/**
+ * FLAC音频文件工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public final class FlacUtil {
 
     /**

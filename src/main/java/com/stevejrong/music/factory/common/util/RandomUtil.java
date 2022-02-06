@@ -19,8 +19,9 @@
 package com.stevejrong.music.factory.common.util;
 
 /**
+ * 随机数工具类
+ *
  * @author Steve Jrong
- * create date: 2021-11-20 12:16 AM
  * @since 1.0
  */
 public final class RandomUtil {

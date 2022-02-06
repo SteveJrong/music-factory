@@ -22,7 +22,6 @@ import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-18 12:18 AM
  * @since 1.0
  */
 public abstract class AbstractPartnerSongInfoFilter<T, E> extends AbstractFilter<T, E> {

@@ -29,10 +29,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
- * Validator - 音频文件信息中歌曲所属的专辑封面过滤器
+ * 音频文件信息中歌曲所属的专辑封面过滤器
  *
  * @author Steve Jrong
- * create date: 2021-11-14 9:45 AM
  * @since 1.0
  */
 public class AlbumPictureFilter extends AbstractFilter<MusicInfoByFilterBean, FiltratedResultDataBo<Boolean>> {

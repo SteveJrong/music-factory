@@ -39,7 +39,6 @@ import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IA
  * Ogg Vorbis音频文件的元数据存储器
  *
  * @author Steve Jrong
- * @create date: 2022 Jan 18, 2022 10:53:25 AM
  * @since 1.0
  */
 public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataPersistResolver

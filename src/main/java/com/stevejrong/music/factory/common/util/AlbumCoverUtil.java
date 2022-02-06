@@ -23,8 +23,9 @@ import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockDataPicture;
 import java.awt.image.BufferedImage;
 
 /**
+ * 音频文件的专辑封面图片工具类
+ *
  * @author Steve Jrong
- * create date: 2021-11-22 11:41 AM
  * @since 1.0
  */
 public final class AlbumCoverUtil {

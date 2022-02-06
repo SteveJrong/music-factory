@@ -21,6 +21,10 @@ package com.stevejrong.music.factory.spi.music.vo.analyzing.partner.datasource.q
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class QQMusicInfoSongVo implements Serializable {
     private static final long serialVersionUID = -5075105483046176264L;
 

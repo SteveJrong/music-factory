@@ -21,6 +21,12 @@ package com.stevejrong.music.factory.common.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * 泛型工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public final class GenericsUtil {
     /**
      * 通过反射获取定义Class时，声明的父类的范型参数的类型

@@ -24,7 +24,6 @@ import java.io.Serializable;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-14 3:46 PM
  * @since 1.0
  */
 public class KuGouMusicPartnerSongInfoFilterCriteriaBean extends AbstractPartnerSongInfoFilterCriteriaBean implements Serializable {

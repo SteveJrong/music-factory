@@ -39,6 +39,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * 第三方音乐服务提供商（酷狗）解析器
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class KuGouPartnerSongInfoResolver implements IPartnerSongInfoResolver<List<FiltratedResultBo>> {
 
     @Override

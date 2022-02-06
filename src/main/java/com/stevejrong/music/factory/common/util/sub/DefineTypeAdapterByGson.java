@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -24,6 +24,13 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
+/**
+ * Gson适配器类
+ *
+ * @param <T>
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class DefineTypeAdapterByGson<T> extends TypeAdapter<T> {
 
     @Override

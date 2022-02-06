@@ -22,7 +22,6 @@ package com.stevejrong.music.factory.common.enums;
  * Enum - MP3音频文件的ID3v2标签帧类型枚举
  *
  * @author Steve Jrong
- * create date: 2021-11-15 10:07 PM
  * @since 1.0
  */
 public enum ID3v2FramesForMP3Enum implements AbstractEnum {

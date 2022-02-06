@@ -18,6 +18,12 @@
  */
 package com.stevejrong.music.factory.common.enums;
 
+/**
+ * 操作系统支持枚举类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public enum SupportOSForFFmpegEnum implements AbstractEnum {
     MICROSOFT_WINDOWS_NT {},
     LINUX {},

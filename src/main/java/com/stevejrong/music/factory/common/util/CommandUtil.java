@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -24,13 +24,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Util - 命令行工具类
+ * 命令行工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
+@Deprecated
 public final class CommandUtil {
 
     /**
      * 执行CMD/Shell命令
-     *
+     * <p>
      * 对于格式转换功能来说，此方法因稳定性及可操作性较差，故已不再使用命令行的方式进行格式转换
      *
      * @param commands 多个命令参数

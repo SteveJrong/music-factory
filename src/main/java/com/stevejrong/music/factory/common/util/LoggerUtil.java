@@ -23,6 +23,12 @@ import com.stevejrong.music.factory.common.util.sub.LogBuilder;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * 日志工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public final class LoggerUtil {
     public static String format(Map<String, ?> map) {
         return (new LogBuilder(map)).toString();

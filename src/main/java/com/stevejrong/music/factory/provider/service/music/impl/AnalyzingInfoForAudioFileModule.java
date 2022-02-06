@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -51,9 +51,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service Implements - 音频文件信息分析
+ * 音频文件信息分析
  * <p>
- * 作用：判断哪些音频文件需要进行数据补全
+ * 判断哪些音频文件需要进行数据补全
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzingInfoForAudioFileModule.class);
@@ -65,9 +68,9 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
 
         try {
             Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
-                    path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC) 
-                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_MP3)
-                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_OGG))
+                            path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC)
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_MP3)
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_OGG))
                     .forEach(file -> {
                         AudioFile audioFile = null;
                         try {

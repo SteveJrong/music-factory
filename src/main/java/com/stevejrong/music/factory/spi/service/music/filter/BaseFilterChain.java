@@ -42,8 +42,7 @@ import java.util.stream.Collectors;
  * <p>
  * Spring启动时加载所有校验器到Map里，运行时根据选择来决定要执行部分或全部的过滤器
  *
- * @author wangjing
- * create date: 2019-11-11 23:26
+ * @author Steve Jrong
  * @since 1.0
  */
 public class BaseFilterChain {

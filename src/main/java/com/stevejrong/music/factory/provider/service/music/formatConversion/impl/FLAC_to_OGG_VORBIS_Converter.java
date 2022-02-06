@@ -20,7 +20,7 @@ package com.stevejrong.music.factory.provider.service.music.formatConversion.imp
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.util.FFmpegUtil;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractMusicFileConverter;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractAudioFileConverter;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
@@ -32,7 +32,7 @@ import java.io.File;
  * @author Steve Jrong
  * @since 1.0
  */
-public class FLAC_to_OGG_VORBIS_Converter extends AbstractMusicFileConverter implements IAudioFileConverter {
+public class FLAC_to_OGG_VORBIS_Converter extends AbstractAudioFileConverter implements IAudioFileConverter {
     @Override
     public int converterNum() {
         return 1;

@@ -39,8 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * 第三方音乐服务提供商（酷狗）过滤器2
+ *
  * @author Steve Jrong
- * create date: 2021-11-17 2:41 AM
  * @since 1.0
  */
 public class KuGouMusicPartnerSongInfoFilter_2

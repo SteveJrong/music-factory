@@ -24,7 +24,6 @@ import java.io.Serializable;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-14 11:39 AM
  * @since 1.0
  */
 public class FiltratedResultBo implements Serializable {

@@ -18,6 +18,12 @@
  */
 package com.stevejrong.music.factory.spi.service.music.formatConversion;
 
+/**
+ * 音频文件格式转换器接口
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public interface IAudioFileConverter {
 
     /**

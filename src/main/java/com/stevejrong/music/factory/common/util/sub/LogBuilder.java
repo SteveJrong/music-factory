@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -33,6 +33,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * 日志构建类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public final class LogBuilder {
     private static final String SQUARE_BRACKETS_LEFT = "[";
     private static final String SQUARE_BRACKETS_RIGHT = "]";

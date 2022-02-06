@@ -20,6 +20,12 @@ package com.stevejrong.music.factory.common.enums;
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 
+/**
+ * 基础枚举类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class BaseEnums {
 
     /**

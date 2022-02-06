@@ -23,10 +23,9 @@ import com.stevejrong.music.factory.spi.music.bo.validator.filtrated.FiltratedRe
 import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 
 /**
- * Validator - 音频文件信息中歌曲所属专辑的发布时间过滤器
+ * 音频文件信息中歌曲所属专辑的发布时间过滤器
  *
  * @author Steve Jrong
- * create date: 2021-11-14 9:46 AM
  * @since 1.0
  */
 public class AlbumPublishDateFilter extends AbstractFilter<MusicInfoByFilterBean, FiltratedResultDataBo<Boolean>> {

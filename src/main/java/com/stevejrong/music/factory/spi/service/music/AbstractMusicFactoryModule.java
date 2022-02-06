@@ -22,6 +22,9 @@ import com.stevejrong.music.factory.config.SystemConfig;
 
 /**
  * 业务模块抽象类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public abstract class AbstractMusicFactoryModule {
 

@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -40,6 +40,12 @@ import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 
+/**
+ * Ogg Vorbis音频文件的元数据解析器
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class OggVorbisMetadataQueryResolver implements IAudioFileMetadataQueryResolver {
 
 	@Override

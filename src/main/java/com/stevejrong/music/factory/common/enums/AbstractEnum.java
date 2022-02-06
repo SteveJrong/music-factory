@@ -18,6 +18,12 @@
  */
 package com.stevejrong.music.factory.common.enums;
 
+/**
+ * 公共抽象枚举类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public interface AbstractEnum {
 
     /**

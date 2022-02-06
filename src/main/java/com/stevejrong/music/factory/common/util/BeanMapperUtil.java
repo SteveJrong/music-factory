@@ -27,13 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Util - Bean映射转换工具类
+ * Bean映射转换工具类
  *
  * @author wangjing
- * create date: 2018年08月25日 上午11:19
  * @since 1.0
  */
-public class BeanMapperUtil {
+public final class BeanMapperUtil {
     private static DozerBeanMapper dozer = new DozerBeanMapper();
 
     private BeanMapperUtil() {

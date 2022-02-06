@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-14 9:04 PM
  * @since 1.0
  */
 public class FiltratedResultDataBo<T> implements Serializable {

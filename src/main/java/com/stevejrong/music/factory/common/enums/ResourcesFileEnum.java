@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,6 +18,12 @@
  */
 package com.stevejrong.music.factory.common.enums;
 
+/**
+ * 资源文件枚举类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public enum ResourcesFileEnum implements AbstractEnum {
 
     DEFAULT_ALBUM_PICTURE {

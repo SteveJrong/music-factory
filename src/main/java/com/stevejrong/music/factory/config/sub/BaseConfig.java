@@ -18,10 +18,11 @@
  */
 package com.stevejrong.music.factory.config.sub;
 
-import com.stevejrong.music.factory.common.util.StringUtil;
-
 /**
  * 系统基础配置类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class BaseConfig {
 

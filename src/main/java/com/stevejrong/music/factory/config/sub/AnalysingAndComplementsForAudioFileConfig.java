@@ -23,6 +23,9 @@ import java.util.Map;
 
 /**
  * 分析和补全音乐信息配置类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class AnalysingAndComplementsForAudioFileConfig {
 

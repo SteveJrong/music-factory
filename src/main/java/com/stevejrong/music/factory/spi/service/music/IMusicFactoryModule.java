@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -19,9 +19,11 @@
 package com.stevejrong.music.factory.spi.service.music;
 
 /**
- * Service - 通用业务模块接口
+ * 通用业务模块接口
  *
  * @param <T>
+ * @author Steve Jrong
+ * @since 1.0
  */
 public interface IMusicFactoryModule<T> {
 

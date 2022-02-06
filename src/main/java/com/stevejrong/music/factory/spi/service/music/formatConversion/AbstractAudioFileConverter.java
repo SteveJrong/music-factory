@@ -32,8 +32,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public abstract class AbstractMusicFileConverter implements IAudioFileConverter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMusicFileConverter.class);
+/**
+ * 抽象音频文件转换器类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
+public abstract class AbstractAudioFileConverter implements IAudioFileConverter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAudioFileConverter.class);
 
     private SystemConfig systemConfig;
 

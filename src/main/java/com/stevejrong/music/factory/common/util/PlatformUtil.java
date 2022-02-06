@@ -20,6 +20,12 @@ package com.stevejrong.music.factory.common.util;
 
 import com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum;
 
+/**
+ * 操作系统/系统平台工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public final class PlatformUtil {
 
     /**

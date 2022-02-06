@@ -22,7 +22,6 @@ import com.stevejrong.music.factory.spi.music.bean.AbstractFilterBean;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-17 3:55 PM
  * @since 1.0
  */
 public class AbstractPartnerSongInfoFilterCriteriaBean extends AbstractFilterBean {

@@ -42,6 +42,9 @@ import java.util.Optional;
 
 /**
  * MP3音频文件的元数据解析器
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class Mp3MetadataQueryResolver implements IAudioFileMetadataQueryResolver {
 

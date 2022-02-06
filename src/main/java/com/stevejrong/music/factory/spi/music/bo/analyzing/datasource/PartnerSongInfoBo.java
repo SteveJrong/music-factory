@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -21,6 +21,10 @@ package com.stevejrong.music.factory.spi.music.bo.analyzing.datasource;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class PartnerSongInfoBo implements Serializable {
     private static final long serialVersionUID = 2000901512499577020L;
 

@@ -32,7 +32,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Util - 文件操作工具类
+ * 文件操作工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public final class FileUtil {
     private static byte[] DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = null;

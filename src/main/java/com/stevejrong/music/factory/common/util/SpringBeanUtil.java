@@ -26,10 +26,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.ResolvableType;
 
 /**
- * Util - Spring Bean工具类
+ * Spring Bean工具类
  *
  * @author Steve Jrong
- * create date: 2021-05-15 8:23 PM
  * @since 1.0
  */
 public final class SpringBeanUtil {

@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -19,8 +19,11 @@
 package com.stevejrong.music.factory.spi.music.bean;
 
 /**
+ * 过滤器抽象Bean
+ * <p>
+ * 用于过滤器数据转发的载体
+ *
  * @author Steve Jrong
- * create date: 2021-11-17 1:57 AM
  * @since 1.0
  */
 public abstract class AbstractFilterBean {

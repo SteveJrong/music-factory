@@ -24,10 +24,9 @@ import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Validator - 音频文件信息中歌曲所属的专辑名称过滤器
+ * 音频文件信息中歌曲所属的专辑名称过滤器
  *
  * @author Steve Jrong
- * create date: 2021-11-14 9:44 AM
  * @since 1.0
  */
 public class AlbumNameFilter extends AbstractFilter<MusicInfoByFilterBean, FiltratedResultDataBo<Boolean>> {

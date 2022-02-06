@@ -34,6 +34,9 @@ import java.util.Map;
 
 /**
  * FFmpeg工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public final class FFmpegUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FFmpegUtil.class);

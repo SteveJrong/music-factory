@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -52,9 +52,12 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Service Implements - 音频文件信息补全
+ * 音频文件信息补全
  * <p>
- * 作用：对元数据信息缺失的音频文件进行信息填充补全
+ * 对元数据信息缺失的音频文件进行信息填充补全
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComplementsInfoForAudioFileModule.class);

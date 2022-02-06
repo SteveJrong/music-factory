@@ -22,7 +22,13 @@ import com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum;
 
 import java.util.Map;
 
-public final class FfmpegComponentConfig {
+/**
+ * FFmpeg组件配置类
+ *
+ * @author Steve Jrong
+ * @since 1.0
+ */
+public final class FFmpegComponentConfig {
 
     /**
      * ffmpeg文件对于不同操作系统，存储的文件位置

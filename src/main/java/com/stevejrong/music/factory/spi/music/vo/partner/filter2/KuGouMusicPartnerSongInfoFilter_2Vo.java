@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 /**
  * @author Steve Jrong
- * create date: 2021-11-20 12:25 AM
  * @since 1.0
  */
 public class KuGouMusicPartnerSongInfoFilter_2Vo implements Serializable {

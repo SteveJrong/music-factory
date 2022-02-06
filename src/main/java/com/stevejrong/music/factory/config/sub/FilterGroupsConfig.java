@@ -25,8 +25,9 @@ import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 import java.util.List;
 
 /**
+ * 过滤器组配置类
+ *
  * @author Steve Jrong
- * create date: 2021-11-14 5:41 PM
  * @since 1.0
  */
 public class FilterGroupsConfig {

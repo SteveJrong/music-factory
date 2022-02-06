@@ -20,6 +20,10 @@ package com.stevejrong.music.factory.spi.music.bo;
 
 import java.io.Serializable;
 
+/**
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class ComplementedMetadataAudioFileBo implements Serializable {
     private static final long serialVersionUID = -423525799905277471L;
 

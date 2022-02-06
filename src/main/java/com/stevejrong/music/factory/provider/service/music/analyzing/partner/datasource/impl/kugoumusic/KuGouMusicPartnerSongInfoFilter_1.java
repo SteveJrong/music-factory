@@ -34,8 +34,9 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 
 /**
+ * 第三方音乐服务提供商（酷狗）过滤器1
+ *
  * @author Steve Jrong
- * create date: 2021-11-17 1:46 AM
  * @since 1.0
  */
 public class KuGouMusicPartnerSongInfoFilter_1

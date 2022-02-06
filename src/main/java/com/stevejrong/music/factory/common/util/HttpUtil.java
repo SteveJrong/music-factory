@@ -26,7 +26,10 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Util - HTTP请求工具类
+ * HTTP工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public final class HttpUtil {
     private static final ThreadLocal<OkHttpClient> httpClientThreadLocal = new ThreadLocal<OkHttpClient>();

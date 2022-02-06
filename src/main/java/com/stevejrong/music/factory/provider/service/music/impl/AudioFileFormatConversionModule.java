@@ -35,9 +35,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * Service Implements - 音频文件格式转换
+ * 音频文件格式转换
  * <p>
- * 作用：将音频文件转换为另一指定格式
+ * 将音频文件转换为另一指定格式
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<AudioFileFormatConversionModuleBo>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioFileFormatConversionModule.class);

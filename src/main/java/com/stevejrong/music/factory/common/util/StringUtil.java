@@ -23,7 +23,10 @@ import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
 /**
- * Util - 字符串操作工具类
+ * 字符串工具类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public final class StringUtil {
     public static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile(

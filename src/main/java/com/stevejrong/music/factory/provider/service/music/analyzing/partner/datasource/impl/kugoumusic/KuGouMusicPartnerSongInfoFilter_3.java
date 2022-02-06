@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -33,8 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 第三方音乐服务提供商（酷狗）过滤器3
+ *
  * @author Steve Jrong
- * create date: 2021-11-17 2:41 AM
  * @since 1.0
  */
 public class KuGouMusicPartnerSongInfoFilter_3

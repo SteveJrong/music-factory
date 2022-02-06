@@ -25,8 +25,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ * 数组工具类
+ *
  * @author Steve Jrong
- * create date: 2021-11-21 10:54 AM
  * @since 1.0
  */
 public final class ArrayUtil {

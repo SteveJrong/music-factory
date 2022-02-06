@@ -24,6 +24,8 @@ import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFil
 import java.util.List;
 
 /**
+ * 音频文件格式转换器工具类
+ *
  * @author Steve Jrong
  * @since 1.0
  */

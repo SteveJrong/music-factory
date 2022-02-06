@@ -36,6 +36,9 @@ import java.time.LocalDate;
 
 /**
  * Flac音频文件的元数据存储器
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class FlacMetadataPersistResolver extends AbstractAudioFileMetadataPersistResolver implements IAudioFileMetadataPersistResolver {
 

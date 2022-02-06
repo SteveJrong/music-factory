@@ -25,6 +25,9 @@ import java.util.Map;
 
 /**
  * 音频文件转换配置类
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public class AudioFileFormatConversionConfig {
 
@@ -36,7 +39,7 @@ public class AudioFileFormatConversionConfig {
     /**
      * FFmpeg组件配置
      */
-    private FfmpegComponentConfig ffmpegComponentConfig;
+    private FFmpegComponentConfig ffmpegComponentConfig;
 
     /**
      * 音频文件格式转换器集合
@@ -56,11 +59,11 @@ public class AudioFileFormatConversionConfig {
         this.convertedAudioFileDirectory = convertedAudioFileDirectory;
     }
 
-    public FfmpegComponentConfig getFfmpegComponentConfig() {
+    public FFmpegComponentConfig getFfmpegComponentConfig() {
         return ffmpegComponentConfig;
     }
 
-    public void setFfmpegComponentConfig(FfmpegComponentConfig ffmpegComponentConfig) {
+    public void setFfmpegComponentConfig(FFmpegComponentConfig ffmpegComponentConfig) {
         this.ffmpegComponentConfig = ffmpegComponentConfig;
     }
 

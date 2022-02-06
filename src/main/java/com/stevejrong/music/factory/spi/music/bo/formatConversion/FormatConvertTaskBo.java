@@ -22,7 +22,7 @@ import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 
 /**
- * 格式转换任务类
+ * 格式转换任务Bo
  *
  * @author Steve Jrong
  * @since 1.0

@@ -24,6 +24,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
+ * 反射工具类
+ *
  * @author Steve Jrong
  * @since 1.0
  */

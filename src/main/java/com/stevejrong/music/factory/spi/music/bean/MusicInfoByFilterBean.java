@@ -22,6 +22,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
 
+/**
+ * @author Steve Jrong
+ * @since 1.0
+ */
 public class MusicInfoByFilterBean extends AbstractFilterBean implements Serializable {
     private static final long serialVersionUID = -4925180047338035848L;
 

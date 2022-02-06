@@ -22,6 +22,9 @@ import com.stevejrong.music.factory.spi.music.bo.analyzing.datasource.PartnerSon
 
 /**
  * 第三方音乐信息解析器接口
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public interface IPartnerSongInfoResolver<T> {
 

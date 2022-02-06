@@ -23,8 +23,9 @@ import com.google.gson.GsonBuilder;
 import com.stevejrong.music.factory.common.util.sub.DefineTypeAdapterByGson;
 
 /**
+ * Gson工具类
+ *
  * @author Steve Jrong
- * create date: 2021-11-19 5:06 PM
  * @since 1.0
  */
 public final class GsonUtil {

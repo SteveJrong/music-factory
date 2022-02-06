@@ -23,8 +23,7 @@ package com.stevejrong.music.factory.spi.service.music.filter;
  * <p>
  * 用于规范过滤器的行为
  *
- * @author wangjing
- * create date: 2019-11-11 23:13
+ * @author Steve Jrong
  * @since 1.0
  */
 public abstract class AbstractFilter<T, E> {
