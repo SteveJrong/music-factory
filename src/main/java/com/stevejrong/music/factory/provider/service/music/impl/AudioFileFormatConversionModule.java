@@ -51,9 +51,7 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
         try {
             // 读取原始文件目录下的所有音频文件，依次进行转换
             Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
-                            path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC)
-                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_MP3)
-                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_OGG))
+                            path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC))
                     .forEach(file -> {
                         String sourcePath = file.toAbsolutePath().toString();
                         String targetDirectory = super.getSystemConfig().getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory();
