@@ -175,7 +175,7 @@ public class OggVorbisMetadataQueryResolver implements IAudioFileMetadataQueryRe
 	}
 
 	@Override
-	public byte[] getAlbumPicture(AudioFile audioFile) {
+	public byte[] getAlbumPicture(AudioFile audioFile, boolean sizeLimit) {
 		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
 
 		byte[] originalAlbumPictureData;
@@ -187,16 +187,19 @@ public class OggVorbisMetadataQueryResolver implements IAudioFileMetadataQueryRe
 			try {
 				image = ImageIO.read(new ByteArrayInputStream(originalAlbumPictureData));
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 
-			if (image.getWidth() * image.getHeight() >= 500 * 500) {
-				// 当专辑封面存在且符合尺寸时，才返回专辑图片的字节数组
+			if (sizeLimit && (image.getWidth() * image.getHeight() >= 500 * 500)) {
+
+				// 当开启专辑封面尺寸限定、专辑封面存在且符合尺寸时，才返回专辑图片的字节数组
+				return originalAlbumPictureData;
+			} else if (!sizeLimit) {
+
+				// 若专辑封面尺寸限定已关闭，则表明无需限制尺寸，直接返回图片数组
 				return originalAlbumPictureData;
 			}
 		}
 
 		return null;
 	}
-
 }

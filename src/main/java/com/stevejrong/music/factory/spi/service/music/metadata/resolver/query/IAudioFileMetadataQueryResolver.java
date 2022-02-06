@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -105,7 +105,8 @@ public interface IAudioFileMetadataQueryResolver {
      * 获取音频文件元数据中歌曲所属的专辑封面
      *
      * @param audioFile
+     * @param sizeLimit 是否开启专辑封面尺寸限定。true - 开启专辑封面尺寸限定；false - 关闭专辑封面尺寸限定。
      * @return
      */
-    byte[] getAlbumPicture(AudioFile audioFile);
+    byte[] getAlbumPicture(AudioFile audioFile, boolean sizeLimit);
 }

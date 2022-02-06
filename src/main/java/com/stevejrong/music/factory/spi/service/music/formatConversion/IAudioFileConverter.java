@@ -23,14 +23,21 @@ public interface IAudioFileConverter {
     /**
      * 音频文件格式转换器序号
      *
-     * @return
+     * @return 音频文件格式转换器序号
      */
     int converterNum();
 
     /**
+     * 源音频文件的文件后缀名
+     *
+     * @return 源音频文件的文件后缀名
+     */
+    String sourceFileSuffix();
+
+    /**
      * 目标音频文件的文件后缀名
      *
-     * @return
+     * @return 目标音频文件的文件后缀名
      */
     String targetFileSuffix();
 

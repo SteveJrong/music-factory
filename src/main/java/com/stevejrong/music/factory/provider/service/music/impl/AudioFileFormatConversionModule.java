@@ -18,13 +18,12 @@
  */
 package com.stevejrong.music.factory.provider.service.music.impl;
 
-import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.common.util.HardwareUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.common.util.RandomUtil;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.parallel.FormatConvertMaster;
-import com.stevejrong.music.factory.spi.music.bo.MusicFormatConvertModuleBo;
+import com.stevejrong.music.factory.spi.music.bo.AudioFileFormatConversionModuleBo;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
 import com.stevejrong.music.factory.spi.service.music.AbstractMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
@@ -40,18 +39,18 @@ import java.util.List;
  * <p>
  * 作用：将音频文件转换为另一指定格式
  */
-public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<MusicFormatConvertModuleBo>> {
+public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule implements IMusicFactoryModule<List<AudioFileFormatConversionModuleBo>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AudioFileFormatConversionModule.class);
 
     @Override
-    public List<MusicFormatConvertModuleBo> doAction() {
-        // 创建多线程格式转换的Master类对象
+    public List<AudioFileFormatConversionModuleBo> doAction() {
+        // 创建Master类对象
         FormatConvertMaster formatConvertMaster = new FormatConvertMaster(HardwareUtil.getAllCoresCountByCpu() * 2);
 
         try {
             // 读取原始文件目录下的所有音频文件，依次进行转换
             Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
-                            path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC))
+                            path -> path.toString().endsWith(super.getSystemConfig().getAudioFileFormatConversionConfig().getCurrentAudioFileConverter().sourceFileSuffix()))
                     .forEach(file -> {
                         String sourcePath = file.toAbsolutePath().toString();
                         String targetDirectory = super.getSystemConfig().getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory();
@@ -62,7 +61,8 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
                                 sourcePath,
                                 targetDirectory,
                                 super.getSystemConfig().getAudioFileFormatConversionConfig().getCurrentAudioFileConverter());
-                        // 然后像Master提交任务，以使得Worker执行任务
+
+                        // 向Master提交任务，以使得Worker执行任务
                         formatConvertMaster.submit(formatConvertTask);
                     });
 

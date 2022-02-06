@@ -116,9 +116,7 @@ public final class FormatConvertWorker implements Runnable {
             // 将处理后的结果数据存入结果集合中
             this.parallelExecuteResults.put(formatConvertTask.getTaskId(), result);
 
-            System.out.println();
-
-            LOGGER.info(LoggerUtil.builder().append("FormatConvertWorker_run", "音频文件格式转换处理者（Worker）")
+            LOGGER.info(LoggerUtil.builder().append("formatConvertWorker_run", "音频文件格式转换处理者（Worker）")
                     .append("executeMsg", String.format("【%s】→【%s】成功！处理结果：%b，耗时：%s。", this.workerName, formatConvertTask.getTaskName(),
                             result, DateTimeUtil.milliSecondToHHMMssString((System.currentTimeMillis() - start)))).toString());
         }
@@ -128,7 +126,7 @@ public final class FormatConvertWorker implements Runnable {
      * 音频格式转换任务
      *
      * @param formatConvertTask
-     * @return
+     * @return 音频文件格式转换结果。true - 音频文件格式转换成功; false - 音频文件格式转换失败。
      */
     private boolean execute(FormatConvertTaskBo formatConvertTask) {
         try {

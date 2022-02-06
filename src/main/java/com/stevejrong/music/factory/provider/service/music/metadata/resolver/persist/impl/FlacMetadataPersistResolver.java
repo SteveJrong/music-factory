@@ -91,7 +91,7 @@ public class FlacMetadataPersistResolver extends AbstractAudioFileMetadataPersis
             albumPictureByteArray = FileUtil.getDefaultAlbumPictureByteArray();
         }
 
-        byte[] originalAlbumPictureByteArray = super.getMetadataQueryResolver().getAlbumPicture(getAudioFile());
+        byte[] originalAlbumPictureByteArray = super.getMetadataQueryResolver().getAlbumPicture(getAudioFile(), true);
 
         if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
             // 先删除专辑封面属性

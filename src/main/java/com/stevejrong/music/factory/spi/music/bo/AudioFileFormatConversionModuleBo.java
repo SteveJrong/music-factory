@@ -20,7 +20,7 @@ package com.stevejrong.music.factory.spi.music.bo;
 
 import java.io.Serializable;
 
-public class MusicFormatConvertModuleBo implements Serializable {
+public class AudioFileFormatConversionModuleBo implements Serializable {
     private static final long serialVersionUID = -7561630163510737142L;
 
     /**
@@ -101,10 +101,10 @@ public class MusicFormatConvertModuleBo implements Serializable {
         this.encoder = encoder;
     }
 
-    public MusicFormatConvertModuleBo() {
+    public AudioFileFormatConversionModuleBo() {
     }
 
-    public MusicFormatConvertModuleBo(String fileAbsolutePath, String songName, String singerName, String encodingType, String bitRate, boolean encoder) {
+    public AudioFileFormatConversionModuleBo(String fileAbsolutePath, String songName, String singerName, String encodingType, String bitRate, boolean encoder) {
         this.fileAbsolutePath = fileAbsolutePath;
         this.songName = songName;
         this.singerName = singerName;

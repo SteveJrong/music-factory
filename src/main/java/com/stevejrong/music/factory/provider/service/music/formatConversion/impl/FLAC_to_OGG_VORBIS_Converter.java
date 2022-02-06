@@ -33,10 +33,14 @@ import java.io.File;
  * @since 1.0
  */
 public class FLAC_to_OGG_VORBIS_Converter extends AbstractMusicFileConverter implements IAudioFileConverter {
-
     @Override
     public int converterNum() {
-        return 3;
+        return 1;
+    }
+
+    @Override
+    public String sourceFileSuffix() {
+        return BaseConstants.POINT_CHAR + BaseConstants.FILE_SUFFIX_FLAC;
     }
 
     @Override
@@ -60,6 +64,7 @@ public class FLAC_to_OGG_VORBIS_Converter extends AbstractMusicFileConverter imp
     public boolean convert(String sourcePath, String targetDirectory, String targetFileName) {
         try {
             FFmpegUtil.convert(this.setFFmpegBuilder(targetDirectory, targetFileName, super.createDefaultFFmpegBuilder(sourcePath)));
+            copyAlbumPicture(sourcePath, targetDirectory + File.separatorChar + targetFileName + this.targetFileSuffix());
         } catch (Exception e) {
             return false;
         }

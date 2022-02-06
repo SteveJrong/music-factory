@@ -104,7 +104,7 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                         // 歌曲所属专辑的版权信息
                         String albumCopyright = metadataQueryResolver.getAlbumCopyright(audioFile);
                         // 歌曲所属的专辑封面
-                        byte[] albumPicture = metadataQueryResolver.getAlbumPicture(audioFile);
+                        byte[] albumPicture = metadataQueryResolver.getAlbumPicture(audioFile, true);
 
                         BaseFilterChain filterChain = SpringBeanUtil.getBean("baseFilterChain");
 

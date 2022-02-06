@@ -238,7 +238,7 @@ public class Mp3MetadataQueryResolver implements IAudioFileMetadataQueryResolver
     }
 
     @Override
-    public byte[] getAlbumPicture(AudioFile audioFile) {
+    public byte[] getAlbumPicture(AudioFile audioFile, boolean sizeLimit) {
         MP3File mp3File = (MP3File) audioFile;
 
         AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
