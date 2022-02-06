@@ -37,8 +37,9 @@ public interface IAudioFileConverter {
     /**
      * 音频文件格式转换
      *
-     * @param sourcePath    源文件位置
-     * @param targetPath    目标文件位置
+     * @param sourcePath      源文件位置
+     * @param targetDirectory 目标文件目录
+     * @param targetFileName  目标文件名称
      * @return 音频文件格式转换结果。true - 音频文件格式转换成功; false - 音频文件格式转换失败。
      */
     boolean convert(String sourcePath, String targetDirectory, String targetFileName);

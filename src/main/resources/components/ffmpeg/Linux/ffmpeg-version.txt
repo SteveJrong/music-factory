@@ -1,0 +1,11 @@
+ffmpeg version N-103899-g855014ff83 Copyright (c) 2000-2021 the FFmpeg developers
+built with gcc 7 (Ubuntu 7.5.0-3ubuntu1~18.04)
+configuration: --prefix=/usr --libdir=/usr/lib64 --shlibdir=/usr/lib64 --mandir=/usr/share/man --incdir=/usr/include --pkg-config-flags=--static --extra-ldexeflags=-static --extra-cflags='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic -fPIC' --enable-avfilter --enable-gpl --enable-static --enable-nonfree --enable-postproc --enable-pthreads --enable-swscale --enable-version3 --enable-libtheora --enable-libvorbis --disable-vdpau --disable-avisynth --disable-x86asm --disable-shared
+libavutil      57.  7.100 / 57.  7.100
+libavcodec     59.  9.101 / 59.  9.101
+libavformat    59.  5.100 / 59.  5.100
+libavdevice    59.  0.101 / 59.  0.101
+libavfilter     8.  9.100 /  8.  9.100
+libswscale      6.  1.100 /  6.  1.100
+libswresample   4.  0.100 /  4.  0.100
+libpostproc    56.  0.100 / 56.  0.100
