@@ -33,8 +33,10 @@ import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
-import net.bramp.ffmpeg.FFmpeg;
-import net.bramp.ffmpeg.FFprobe;
+import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -53,6 +55,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -238,7 +241,7 @@ public class TestCase {
 
     @Test
     public void imageForUrlToByteArrayTest() throws IOException {
-        FileUtil.byteArrayToFile(HttpUtil.getImage("http://imge.kugou.com/stdmusic/20161109/20161109000208518738.jpg", null), "/Users/stevejrong/Desktop/demo.jpg");
+        ArrayUtil.byteArrayToFile(HttpUtil.getImage("http://imge.kugou.com/stdmusic/20161109/20161109000208518738.jpg", null), "/Users/stevejrong/Desktop/demo.jpg");
     }
 
     @Test
@@ -254,7 +257,7 @@ public class TestCase {
     @Test
     public void setAlbumPictureTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
         AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/Aanysa-Snakehips - Burn Break Crash.mp3"));
-        byte[] bytesOfPicture = FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/demo500500.jpg");
+        byte[] bytesOfPicture = ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/demo500500.jpg");
 
         IAudioFileMetadataPersistResolver persistResolver = SpringBeanUtil.getBean("mp3MetadataPersistResolver");
         persistResolver.setAudioFile(audioFile);
@@ -276,7 +279,7 @@ public class TestCase {
 
     @Test
     public void getPictureInfoByBufferedImage() throws IOException {
-        byte[] byteArrayForImage = FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/demo.jpg");
+        byte[] byteArrayForImage = ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/demo.jpg");
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayForImage);
         BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
@@ -298,7 +301,7 @@ public class TestCase {
         metadataPersistResolver.setSongTitle("新设置的标题");
         metadataPersistResolver.setSongArtist("新设置的艺术家");
         metadataPersistResolver.setAlbumName("新设置的专辑名称");
-        metadataPersistResolver.setAlbumPicture(FileUtil.imageFileToByteArray("/Users/stevejrong/Desktop/default_album_pic.png"));
+        metadataPersistResolver.setAlbumPicture(ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/default_album_pic.png"));
         metadataPersistResolver.setSongLyrics("新设置的内嵌歌词");
         metadataPersistResolver.setAlbumArtist("新设置的专辑艺术家");
         metadataPersistResolver.setAlbumPublishDate(DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), "2000-12-31"));
@@ -450,14 +453,55 @@ public class TestCase {
     public void ffmpegFormatConversionTest() {
         IAudioFileConverter audioFileConverter = SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter");
         audioFileConverter.convert(
-                "/Users/stevejrong/Desktop/old/Taylor Swift - Style.flac",
+                "/Users/stevejrong/Desktop/old/Basixx;Ella Faye - We Came to Party.flac",
                 "/Users/stevejrong/Desktop/new",
-                "Taylor Swift - Style.ogg");
+                "Basixx;Ella Faye - We Came to Party");
     }
 
     @Test
     public void fileUtilTest() {
         String fileNameWithoutSuffix = FileUtil.getFileNameWithoutSuffix("/Users/stevejrong/Desktop/new/Taylor Swift - Style.ogg");
         System.out.println(fileNameWithoutSuffix);
+    }
+
+    @Test
+    public void generateBase64StringForAudioFileMetadataBlockPictureTest() throws DecoderException {
+        String albumCoverPicturePath = "/Users/stevejrong/Desktop/old/2.png";
+
+        int albumCoverType = 3;
+        String albumCoverMimeType = "image/jpeg";
+        int albumCoverMimeTypeLength = albumCoverMimeType.length();
+        String albumCoverDescription = "Cover (front)";
+        int albumCoverDescriptionLength = albumCoverDescription.length();
+
+        StringBuffer sb = new StringBuffer(StringUtil.numberToHexString(albumCoverType, 4));
+        sb.append(StringUtil.numberToHexString(albumCoverMimeTypeLength, 4))
+                .append(StringUtil.stringToHexString(albumCoverMimeType))
+                .append(StringUtil.numberToHexString(albumCoverDescriptionLength, 4))
+                .append(StringUtil.stringToHexString(albumCoverDescription));
+
+        for (int i = 0; i < 4; i++) {
+            sb.append(StringUtil.numberToHexString(0, 4));
+        }
+
+        sb.append(StringUtil.numberToHexString(FileUtil.getFileSize(albumCoverPicturePath), 4));
+
+        byte[] byteArray = ImageUtil.imageFileToByteArray(albumCoverPicturePath);
+        sb.append(StringUtil.byteArrayToHexString(byteArray));
+
+        byte[] resultBytes1 = Hex.decodeHex(sb.toString());
+        String result1 = new BASE64Encoder().encode(resultBytes1);
+
+        String result2 = new String(Base64.encodeBase64(Hex.decodeHex(sb.toString())));
+        System.out.println(result2);
+    }
+
+    @Test
+    public void pictureCompressTest() throws IOException {
+        BufferedImage bufferedImage = ArrayUtil.getBufferedImageByPictureByteArray(
+                ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/old/3.jpeg"));
+
+        BufferedImage newBufferedImage = Thumbnails.of(bufferedImage).size(400, 400).asBufferedImage();
+        ImageIO.write(newBufferedImage, "jpeg", new File("/Users/stevejrong/Desktop/old/3_compressed.jpeg"));
     }
 }

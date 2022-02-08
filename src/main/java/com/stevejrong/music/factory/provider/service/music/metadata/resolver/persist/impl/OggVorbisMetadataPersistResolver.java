@@ -18,8 +18,12 @@
  */
 package com.stevejrong.music.factory.provider.service.music.metadata.resolver.persist.impl;
 
-import java.time.LocalDate;
-
+import com.stevejrong.music.factory.common.util.AlbumPictureUtil;
+import com.stevejrong.music.factory.common.util.DateTimeUtil;
+import com.stevejrong.music.factory.common.util.FileUtil;
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
@@ -28,12 +32,7 @@ import org.jaudiotagger.tag.images.Artwork;
 import org.jaudiotagger.tag.images.ArtworkFactory;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag;
 
-import com.stevejrong.music.factory.common.util.AlbumCoverUtil;
-import com.stevejrong.music.factory.common.util.DateTimeUtil;
-import com.stevejrong.music.factory.common.util.FileUtil;
-import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
-import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
-import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
+import java.time.LocalDate;
 
 /**
  * Ogg Vorbis音频文件的元数据存储器
@@ -104,7 +103,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
 
             // 再设置新的专辑封面图片
             Artwork artwork = ArtworkFactory.createArtworkFromMetadataBlockDataPicture(
-                    AlbumCoverUtil.buildMetadataBlockDataPicture(albumPictureByteArray));
+                    AlbumPictureUtil.buildMetadataBlockDataPicture(albumPictureByteArray));
             setFieldAndCommit(vorbisCommentTag, artwork, getAudioFile());
         }
     }

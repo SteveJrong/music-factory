@@ -19,18 +19,20 @@
 package com.stevejrong.music.factory.spi.service.music.formatConversion;
 
 import com.stevejrong.music.factory.common.util.FileUtil;
-import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
-import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * 抽象音频文件转换器类
@@ -70,66 +72,41 @@ public abstract class AbstractAudioFileConverter implements IAudioFileConverter 
      * <p>
      * 只要进行格式转换，则FFmpeg组件的参数一定要设置，故必须强制自类重写此方法。
      *
-     * @param targetDirectory
-     * @param targetFileName
-     * @param ffmpegBuilder
-     * @return
+     * @param sourcePath      源音频文件位置
+     * @param targetDirectory 目标音频文件目录
+     * @param targetFileName  目标音频文件名称
+     * @param ffmpegBuilder   FFmpegBuilder构建对象
+     * @return 经过子类设置的FFmpegBuilder构建对象
      */
-    public abstract FFmpegBuilder setFFmpegBuilder(String targetDirectory, String targetFileName, FFmpegBuilder ffmpegBuilder);
+    public abstract FFmpegBuilder setFFmpegBuilder(String sourcePath, String targetDirectory, String targetFileName, FFmpegBuilder ffmpegBuilder);
 
     /**
-     * 从源音频文件中，复制专辑封面图片到目标音频文件的元数据信息中
+     * 从源音频文件中，获取元数据信息中专辑封面图片的字节数组
      *
-     * @param sourcePath
-     * @param targetPath
-     * @return
+     * @param sourcePath 源音频文件位置
+     * @return 源音频文件专辑封面图片元数据信息的字节数组
      */
-    protected boolean copyAlbumPicture(String sourcePath, String targetPath) {
+    protected byte[] getAlbumPictureByteArray(String sourcePath) {
         String sourceFileSuffix = FileUtil.getFileSuffix(sourcePath);
-        String targetFileSuffix = FileUtil.getFileSuffix(targetPath);
-
         IAudioFileMetadataQueryResolver metadataQueryResolverBySourceFile = this.getAudioFileMetadataQueryResolverByFileSuffix(sourceFileSuffix);
 
         byte[] sourceAlbumPictureByteArray;
+        AudioFile sourceAudioFile = null;
         try {
-            AudioFile sourceAudioFile = AudioFileIO.read(new File(sourcePath));
-            AudioFile targetAudioFile = AudioFileIO.read(new File(targetPath));
-
-            sourceAlbumPictureByteArray = metadataQueryResolverBySourceFile.getAlbumPicture(sourceAudioFile, false);
-            if (ArrayUtils.isNotEmpty(sourceAlbumPictureByteArray)) {
-
-                IAudioFileMetadataPersistResolver metadataPersistResolver = (IAudioFileMetadataPersistResolver) systemConfig
-                        .getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().get(targetFileSuffix)
-                        .stream().filter(resolver -> resolver instanceof IAudioFileMetadataPersistResolver).findAny().get();
-
-                metadataPersistResolver.setAudioFile(targetAudioFile);
-
-                IAudioFileMetadataQueryResolver metadataQueryResolverByTargetFile = this.getAudioFileMetadataQueryResolverByFileSuffix(targetFileSuffix);
-                metadataPersistResolver.setIAudioFileMetadataQueryResolver(metadataQueryResolverByTargetFile);
-
-                metadataPersistResolver.setAlbumPicture(sourceAlbumPictureByteArray);
-            } else {
-
-                LOGGER.warn(LoggerUtil.builder().append("abstractMusicFileConverter_copyAlbumPicture", "音频文件专辑封面图片拷贝")
-                        .append("sourcePath", sourcePath).append("sourceAlbumPictureByteArray_length", sourceAlbumPictureByteArray.length)
-                        .append("msg", "源音频文件无专辑封面图片，无法拷贝")
-                        .toString());
-            }
-
-            LOGGER.info(LoggerUtil.builder().append("abstractMusicFileConverter_copyAlbumPicture", "音频文件专辑封面图片拷贝")
-                    .append("sourcePath", sourcePath).append("targetPath", targetPath)
-                    .append("sourceAlbumPictureByteArray_length", sourceAlbumPictureByteArray.length)
-                    .toString());
-        } catch (Exception e) {
-            LOGGER.error(LoggerUtil.builder().append("abstractMusicFileConverter_copyAlbumPicture", "音频文件专辑封面图片拷贝")
-                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
-
-            return false;
+            sourceAudioFile = AudioFileIO.read(new File(sourcePath));
+        } catch (CannotReadException | ReadOnlyFileException | TagException | IOException | InvalidAudioFrameException e) {
+            e.printStackTrace();
         }
 
-        return true;
+        return metadataQueryResolverBySourceFile.getAlbumPicture(sourceAudioFile, false);
     }
 
+    /**
+     * 根据音频文件的文件后缀名获取对应的音频文件元数据解析器
+     *
+     * @param fileSuffix 音频文件的后缀名
+     * @return 音频文件元数据解析器
+     */
     private IAudioFileMetadataQueryResolver getAudioFileMetadataQueryResolverByFileSuffix(String fileSuffix) {
         return (IAudioFileMetadataQueryResolver) systemConfig
                 .getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().get(fileSuffix)

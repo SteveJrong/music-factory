@@ -19,6 +19,7 @@
 package com.stevejrong.music.factory.provider.service.music.formatConversion.impl;
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
+import com.stevejrong.music.factory.common.util.AlbumPictureUtil;
 import com.stevejrong.music.factory.common.util.FFmpegUtil;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractAudioFileConverter;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
@@ -49,13 +50,18 @@ public class FLAC_to_OGG_VORBIS_Converter extends AbstractAudioFileConverter imp
     }
 
     @Override
-    public FFmpegBuilder setFFmpegBuilder(String targetDirectory, String targetFileName, FFmpegBuilder ffmpegBuilder) {
+    public FFmpegBuilder setFFmpegBuilder(String sourcePath, String targetDirectory, String targetFileName, FFmpegBuilder ffmpegBuilder) {
         String targetPath = targetDirectory + File.separatorChar + targetFileName + this.targetFileSuffix();
 
         return ffmpegBuilder.addOutput(targetPath)
                 .disableVideo()
                 .setAudioCodec(BaseConstants.AUDIO_ENCODE_OGG_VORBIS)
+                .setFormat(BaseConstants.FILE_SUFFIX_OGG)
                 .setAudioQuality(10.0)
+                .addMetaTag("metadata_block_picture", AlbumPictureUtil.buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis(
+                        AlbumPictureUtil.albumPictureCompressByAlbumPictureByteArray(
+                                500, 500,
+                                super.getAlbumPictureByteArray(sourcePath))))
                 .setStrict(FFmpegBuilder.Strict.NORMAL)
                 .done();
     }
@@ -63,8 +69,7 @@ public class FLAC_to_OGG_VORBIS_Converter extends AbstractAudioFileConverter imp
     @Override
     public boolean convert(String sourcePath, String targetDirectory, String targetFileName) {
         try {
-            FFmpegUtil.convert(this.setFFmpegBuilder(targetDirectory, targetFileName, super.createDefaultFFmpegBuilder(sourcePath)));
-            copyAlbumPicture(sourcePath, targetDirectory + File.separatorChar + targetFileName + this.targetFileSuffix());
+            FFmpegUtil.convert(this.setFFmpegBuilder(sourcePath, targetDirectory, targetFileName, super.createDefaultFFmpegBuilder(sourcePath)));
         } catch (Exception e) {
             return false;
         }

@@ -20,10 +20,7 @@ package com.stevejrong.music.factory.provider.service.music.metadata.resolver.pe
 
 import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.enums.ID3v2FramesForMP3Enum;
-import com.stevejrong.music.factory.common.util.AlbumCoverUtil;
-import com.stevejrong.music.factory.common.util.DateTimeUtil;
-import com.stevejrong.music.factory.common.util.FileUtil;
-import com.stevejrong.music.factory.common.util.Mp3Util;
+import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.AbstractAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
@@ -142,7 +139,7 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
 
         BufferedImage originalAlbumPicture = null;
         if (ArrayUtils.isNotEmpty(originalAlbumPictureByteArray)) {
-            originalAlbumPicture = FileUtil.getBufferedImageByPictureByteArray(originalAlbumPictureByteArray);
+            originalAlbumPicture = ArrayUtil.getBufferedImageByPictureByteArray(originalAlbumPictureByteArray);
         }
 
         if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)
@@ -151,7 +148,7 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
             id3v2Tag.deleteField(FieldKey.COVER_ART);
 
             // 再设置新的专辑封面图片
-            Artwork artwork = ArtworkFactory.createArtworkFromMetadataBlockDataPicture(AlbumCoverUtil.buildMetadataBlockDataPicture(albumPictureByteArray));
+            Artwork artwork = ArtworkFactory.createArtworkFromMetadataBlockDataPicture(AlbumPictureUtil.buildMetadataBlockDataPicture(albumPictureByteArray));
             setFieldAndCommit(id3v2Tag, artwork, getAudioFile());
         }
     }
