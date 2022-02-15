@@ -26,6 +26,8 @@ import com.stevejrong.music.factory.bean.TestBean1;
 import com.stevejrong.music.factory.bean.TestBean2;
 import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.config.SystemConfig;
+import com.stevejrong.music.factory.provider.service.music.formatConversion.impl.DSF_to_OGG_VORBIS_Converter;
+import com.stevejrong.music.factory.provider.service.music.formatConversion.impl.FLAC_to_OGG_VORBIS_Converter;
 import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
@@ -55,17 +57,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static com.stevejrong.music.factory.common.util.SpringBeanUtil.getBean;
 
 /**
  * 测试类
@@ -79,17 +80,17 @@ public class TestCase {
 
     @Test
     public void analyzingAudioFile() {
-        IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> analyzingInfoForAudioFileModule = SpringBeanUtil.getBean("analyzingInfoForAudioFileModule");
+        IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> analyzingInfoForAudioFileModule = getBean("analyzingInfoForAudioFileModule");
         List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = analyzingInfoForAudioFileModule.doAction();
         Assert.assertNotNull(needComplementsMusicList);
     }
 
     @Test
     public void complementsInfoForAudioFile() {
-        IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> analyzingInfoForAudioFileModule = SpringBeanUtil.getBean("analyzingInfoForAudioFileModule");
+        IMusicFactoryModule<List<AnalyzingForAudioFileModuleBo>> analyzingInfoForAudioFileModule = getBean("analyzingInfoForAudioFileModule");
         List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = analyzingInfoForAudioFileModule.doAction();
 
-        ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = SpringBeanUtil.getBean("complementsInfoForAudioFileModule");
+        ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = getBean("complementsInfoForAudioFileModule");
         complementsInfoForAudioFileModule.setNeedComplementsAudioFileList(needComplementsMusicList);
         complementsInfoForAudioFileModule.doAction();
     }
@@ -101,7 +102,7 @@ public class TestCase {
         List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = Lists
                 .newArrayList(new AnalyzingForAudioFileModuleBo.Builder(audioFilePath, songTitle, songArtist).build());
 
-        ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = SpringBeanUtil.getBean("complementsInfoForAudioFileModule");
+        ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = getBean("complementsInfoForAudioFileModule");
         complementsInfoForAudioFileModule.setNeedComplementsAudioFileList(needComplementsMusicList);
         complementsInfoForAudioFileModule.doAction();
     }
@@ -122,7 +123,7 @@ public class TestCase {
 
     @Test
     public void getAudioFileMetadataResolversConfig() {
-        SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
+        SystemConfig systemConfig = getBean("systemConfig");
         Map<String, List> resolvers = systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers();
         Assert.assertNotNull(resolvers);
     }
@@ -131,7 +132,7 @@ public class TestCase {
     public void getResolver() {
         String encodingType = "mp3";
 
-        SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
+        SystemConfig systemConfig = getBean("systemConfig");
         IAudioFileMetadataQueryResolver metadataQueryResolver = (IAudioFileMetadataQueryResolver) systemConfig
                 .getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().get(encodingType)
                 .stream().filter(resolver -> resolver instanceof IAudioFileMetadataQueryResolver).findAny().get();
@@ -259,7 +260,7 @@ public class TestCase {
         AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/Aanysa-Snakehips - Burn Break Crash.mp3"));
         byte[] bytesOfPicture = ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/demo500500.jpg");
 
-        IAudioFileMetadataPersistResolver persistResolver = SpringBeanUtil.getBean("mp3MetadataPersistResolver");
+        IAudioFileMetadataPersistResolver persistResolver = getBean("mp3MetadataPersistResolver");
         persistResolver.setAudioFile(audioFile);
         persistResolver.setAlbumPicture(bytesOfPicture);
     }
@@ -288,26 +289,6 @@ public class TestCase {
         int height = bufferedImage.getHeight();
 
         System.out.println(String.format("Picture width: %d, height: %d.", width, height));
-    }
-
-    @Test
-    public void persistSongInfoTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
-        AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/test/4MINUTE - HUH.flac"));
-
-        IAudioFileMetadataPersistResolver metadataPersistResolver = SpringBeanUtil.getBean("flacMetadataPersistResolver");
-        metadataPersistResolver.setAudioFile(audioFile);
-        metadataPersistResolver.setIAudioFileMetadataQueryResolver(SpringBeanUtil.getBean("flacMetadataQueryResolver"));
-
-        metadataPersistResolver.setSongTitle("新设置的标题");
-        metadataPersistResolver.setSongArtist("新设置的艺术家");
-        metadataPersistResolver.setAlbumName("新设置的专辑名称");
-        metadataPersistResolver.setAlbumPicture(ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/default_album_pic.png"));
-        metadataPersistResolver.setSongLyrics("新设置的内嵌歌词");
-        metadataPersistResolver.setAlbumArtist("新设置的专辑艺术家");
-        metadataPersistResolver.setAlbumPublishDate(DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), "2000-12-31"));
-        metadataPersistResolver.setAlbumDescription("新设置的描述");
-        metadataPersistResolver.setAlbumLanguage("eng");
-        metadataPersistResolver.setAlbumCopyright("© 新设置的版权");
     }
 
     @Test
@@ -409,12 +390,12 @@ public class TestCase {
 
     @Test
     public void formatConversionTest() {
-        AudioFileFormatConversionModule formatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+        AudioFileFormatConversionModule formatConversionModule = getBean("audioFileFormatConversionModule");
 
-        SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
+        SystemConfig systemConfig = getBean("systemConfig");
         systemConfig.getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/old");
         systemConfig.getAudioFileFormatConversionConfig().setConvertedAudioFileDirectory("/Users/stevejrong/Desktop/new");
-        systemConfig.getAudioFileFormatConversionConfig().setCurrentAudioFileConverter(SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter"));
+        systemConfig.getAudioFileFormatConversionConfig().setSelectedAudioFileConverters(Lists.newArrayList((IAudioFileConverter) getBean("FLAC_to_OGG_VORBIS_Converter")));
         formatConversionModule.setSystemConfig(systemConfig);
 
         formatConversionModule.doAction();
@@ -422,7 +403,7 @@ public class TestCase {
 
     @Test
     public void getFileSuffixTest() {
-        System.out.println(FileUtil.getFileSuffix("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
+        System.out.println(FileUtil.getFileSuffixWithPoint("/Users/stevejrong/Desktop/20160110020233941355.jpg"));
     }
 
     @Test
@@ -450,12 +431,30 @@ public class TestCase {
     }
 
     @Test
-    public void ffmpegFormatConversionTest() {
-        IAudioFileConverter audioFileConverter = SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter");
+    public void ffmpegFormatConversionSingleTest() {
+        IAudioFileConverter audioFileConverter = getBean("DSF_to_OGG_VORBIS_Converter");
         audioFileConverter.convert(
-                "/Users/stevejrong/Desktop/old/Basixx;Ella Faye - We Came to Party.flac",
+                "/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.dsf",
                 "/Users/stevejrong/Desktop/new",
-                "Basixx;Ella Faye - We Came to Party");
+                "Mariah Carey - Love Takes Time");
+    }
+
+    @Test
+    public void ffmpegFormatConversionTest() {
+        AudioFileFormatConversionModule audioFileFormatConversionModule = getBean("audioFileFormatConversionModule");
+
+        FLAC_to_OGG_VORBIS_Converter flac_to_ogg_vorbis_converter = SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter");
+        DSF_to_OGG_VORBIS_Converter dsf_to_ogg_vorbis_converter = SpringBeanUtil.getBean("DSF_to_OGG_VORBIS_Converter");
+
+        SystemConfig systemConfig = getBean("systemConfig");
+        systemConfig.getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/old");
+        /*AudioFileFormatConversionConfig audioFileFormatConversionConfig = SpringBeanUtil.getBean("audioFileFormatConversionConfig");
+        systemConfig.setAudioFileFormatConversionConfig(audioFileFormatConversionConfig);*/
+        systemConfig.getAudioFileFormatConversionConfig().setConvertedAudioFileDirectory("/Users/stevejrong/Desktop/new");
+        systemConfig.getAudioFileFormatConversionConfig().setSelectedAudioFileConverters(Lists.newArrayList(flac_to_ogg_vorbis_converter, dsf_to_ogg_vorbis_converter));
+
+        audioFileFormatConversionModule.doAction();
+
     }
 
     @Test
@@ -490,7 +489,7 @@ public class TestCase {
         sb.append(StringUtil.byteArrayToHexString(byteArray));
 
         byte[] resultBytes1 = Hex.decodeHex(sb.toString());
-        String result1 = new BASE64Encoder().encode(resultBytes1);
+        // String result1 = new BASE64Encoder().encode(resultBytes1);
 
         String result2 = new String(Base64.encodeBase64(Hex.decodeHex(sb.toString())));
         System.out.println(result2);
@@ -503,5 +502,101 @@ public class TestCase {
 
         BufferedImage newBufferedImage = Thumbnails.of(bufferedImage).size(400, 400).asBufferedImage();
         ImageIO.write(newBufferedImage, "jpeg", new File("/Users/stevejrong/Desktop/old/3_compressed.jpeg"));
+    }
+
+    @Test
+    public void dsfAudioFileReadTest() throws CannotReadException, TagException, InvalidAudioFrameException, ReadOnlyFileException, IOException {
+        File file = new File("/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.dsf");
+        AudioFile audioFile = AudioFileIO.read(file);
+        AbstractID3v2Tag tag = (AbstractID3v2Tag) audioFile.getTag();
+
+        /**
+         Tag content:
+         TIT2:Text="Love Takes Time";
+         TPE1:Text="Mariah Carey";
+         TALB:Text="Mariah Carey";
+         TCON:Text="Pop";
+         TRCK:Text="15";
+         APIC:MIMEType="image/jpeg"; Description="1.jpg"; PictureData="295897 bytes";
+         USLT:Language="English"; Lyrics="歌词歌词";
+         COMM:Language="English"; Text="描述";
+         TLAN:Text="英语";
+         TCOP:Text="索尼音乐";
+         TYERTDAT:org.jaudiotagger.tag.id3.TyerTdatAggregatedFrame@142b73b
+         */
+        System.out.println(tag);
+    }
+
+    @Test
+    public void querySongInfoTest() throws CannotReadException, TagException, InvalidAudioFrameException, ReadOnlyFileException, IOException {
+        AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.dsf"));
+        IAudioFileMetadataQueryResolver metadataQueryResolver = getBean("dsfMetadataQueryResolver");
+        metadataQueryResolver.setAudioFile(audioFile);
+
+        String songTitle = metadataQueryResolver.getSongTitle();
+        String songArtist = metadataQueryResolver.getSongArtist();
+        String songLyrics = metadataQueryResolver.getSongLyrics();
+        String albumName = metadataQueryResolver.getAlbumName();
+        String albumArtist = metadataQueryResolver.getAlbumArtist();
+        LocalDate albumPublishDate = metadataQueryResolver.getAlbumPublishDate();
+        String albumDescription = metadataQueryResolver.getAlbumDescription();
+        String albumLanguage = metadataQueryResolver.getAlbumLanguage();
+        String albumCopyright = metadataQueryResolver.getAlbumCopyright();
+        byte[] albumPicture = metadataQueryResolver.getAlbumPicture(true);
+
+        System.out.println(audioFile);
+    }
+
+    @Test
+    public void persistSongInfoTest() throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+        AudioFile audioFile = AudioFileIO.read(new File("/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.dsf"));
+
+        IAudioFileMetadataPersistResolver metadataPersistResolver = getBean("dsfMetadataPersistResolver");
+        metadataPersistResolver.setAudioFile(audioFile);
+        metadataPersistResolver.setIAudioFileMetadataQueryResolver(getBean("dsfMetadataQueryResolver"));
+
+        metadataPersistResolver.setSongTitle("新设置的标题");
+        metadataPersistResolver.setSongArtist("新设置的艺术家");
+        metadataPersistResolver.setAlbumName("新设置的专辑名称");
+        metadataPersistResolver.setAlbumPicture(ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/一加LOGO.png"));
+        metadataPersistResolver.setSongLyrics("新设置的内嵌歌词");
+        metadataPersistResolver.setAlbumArtist("新设置的专辑艺术家");
+        metadataPersistResolver.setAlbumPublishDate(DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), "2000-12-31"));
+        metadataPersistResolver.setAlbumDescription("新设置的描述");
+        metadataPersistResolver.setAlbumLanguage("eng");
+        metadataPersistResolver.setAlbumCopyright("© 新设置的版权");
+    }
+
+    @Test
+    public void commandTest() throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        String[] commands = {
+                "/bin/sh", "/Users/stevejrong/Desktop/test.sh",
+                "/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.dsf",
+                "/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.ogg"
+        };
+        processBuilder.command(commands);
+        //将标准输入流和错误输入流合并，通过标准输入流读取信息
+        processBuilder.redirectErrorStream(true);
+        try {
+            //启动进程
+            Process start = processBuilder.start();
+            //获取输入流
+            InputStream inputStream = start.getInputStream();
+            //转成字符输入流
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            int len = -1;
+            char[] c = new char[1024];
+            StringBuffer outputString = new StringBuffer();
+            //读取进程输入流中的内容
+            while ((len = inputStreamReader.read(c)) != -1) {
+                String s = new String(c, 0, len);
+                outputString.append(s);
+                System.out.print(s);
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

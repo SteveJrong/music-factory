@@ -9,41 +9,65 @@
         <property name="convertedAudioFileDirectory" value="${musicFactory.base.convert.convertedAudioFileDirectory}"/>
         <!-- FFmpeg组件配置 -->
         <property name="ffmpegComponentConfig" ref="ffmpegComponentConfig"/>
+        <!-- 音频文件转换器转换所需动态链接库文件的操作系统支持配置 -->
+        <property name="formatConversionDllUtilsComponentConfig" ref="formatConversionDllUtilsComponentConfig"/>
+        <!-- 音频文件格式转换器列表配置 -->
         <property name="audioFileConverters">
             <list value-type="com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter">
                 <ref bean="FLAC_to_OGG_VORBIS_Converter"/>
+                <ref bean="DSF_to_OGG_VORBIS_Converter"/>
             </list>
         </property>
     </bean>
 
-    <!-- FLAC音频格式转换为Ogg Vorbis音频格式转换器 -->
+    <!-- FLAC音频编码格式 转换为 Ogg Vorbis音频编码格式 音频转换器 -->
     <bean id="FLAC_to_OGG_VORBIS_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.FLAC_to_OGG_VORBIS_Converter">
         <property name="systemConfig" ref="systemConfig"/>
     </bean>
-
-    <bean id="linuxOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.LINUX"/>
-    </bean>
-    <bean id="microsoftWindowsNTOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.MICROSOFT_WINDOWS_NT"/>
-    </bean>
-    <bean id="appleMacOSForFFmpeg" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum.APPLE_MAC_OS"/>
+    <!-- DSF（索尼专有格式）音频编码格式 转换为 Ogg Vorbis音频编码格式 音频转换器 -->
+    <bean id="DSF_to_OGG_VORBIS_Converter" class="com.stevejrong.music.factory.provider.service.music.formatConversion.impl.DSF_to_OGG_VORBIS_Converter">
+        <property name="systemConfig" ref="systemConfig"/>
+        <property name="executeCommandString">
+            <value>@ffmpegPath -y -v error -i "@sourceFilePath" -af 'lowpass=24000, volume=6dB' -sample_fmt s32 -ar 192000 -f flac pipe:1 | @ffmpegPath -i pipe:0 -vn -c:a libvorbis -q:a 10 -metadata "metadata_block_picture=@metadata_block_picture" "@targetFilePath"</value>
+        </property>
     </bean>
 
+    <!-- 操作系统支持枚举值映射为Bean -->
+    <bean id="linux" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSEnum.LINUX"/>
+    </bean>
+    <bean id="microsoftWindowsNT" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSEnum.MICROSOFT_WINDOWS_NT"/>
+    </bean>
+    <bean id="appleMacOS" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.stevejrong.music.factory.common.enums.SupportOSEnum.APPLE_MAC_OS"/>
+    </bean>
+
+    <!-- FFmpeg文件的操作系统支持配置 -->
     <bean id="ffmpegComponentConfig" class="com.stevejrong.music.factory.config.sub.FFmpegComponentConfig">
         <property name="ffmpegPathsByOSType">
             <map>
-                <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forMicrosoftWindowsNTPath}"/>
-                <entry key-ref="linuxOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forLinuxPath}"/>
-                <entry key-ref="appleMacOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forAppleMacOSPath}"/>
+                <entry key-ref="microsoftWindowsNT" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linux" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forLinuxPath}"/>
+                <entry key-ref="appleMacOS" value="${musicFactory.convert.ffmpegComponents.ffmpeg.forAppleMacOSPath}"/>
             </map>
         </property>
         <property name="ffmprobePathsByOSType">
             <map>
-                <entry key-ref="microsoftWindowsNTOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forMicrosoftWindowsNTPath}"/>
-                <entry key-ref="linuxOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forLinuxPath}"/>
-                <entry key-ref="appleMacOSForFFmpeg" value="${musicFactory.convert.ffmpegComponents.ffprobe.forAppleMacOSPath}"/>
+                <entry key-ref="microsoftWindowsNT" value="${musicFactory.convert.ffmpegComponents.ffprobe.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linux" value="${musicFactory.convert.ffmpegComponents.ffprobe.forLinuxPath}"/>
+                <entry key-ref="appleMacOS" value="${musicFactory.convert.ffmpegComponents.ffprobe.forAppleMacOSPath}"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- 音频文件转换器转换所需动态链接库文件的操作系统支持配置 -->
+    <bean id="formatConversionDllUtilsComponentConfig" class="com.stevejrong.music.factory.config.sub.ResourcesByOperatingSystemConfig">
+        <property name="resourceFilePathsByOSType">
+            <map>
+                <entry key-ref="microsoftWindowsNT" value="${musicFactory.convert.shellComponents.formatConversion.utils.dynamicLinkLibraries.forMicrosoftWindowsNTPath}"/>
+                <entry key-ref="linux" value="${musicFactory.convert.shellComponents.formatConversion.utils.dynamicLinkLibraries.forLinuxPath}"/>
+                <entry key-ref="appleMacOS" value="${musicFactory.convert.shellComponents.formatConversion.utils.dynamicLinkLibraries.forAppleMacOSPath}"/>
             </map>
         </property>
     </bean>

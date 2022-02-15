@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -16,39 +16,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.common.util;
+package com.stevejrong.music.factory.config.sub;
 
 import com.stevejrong.music.factory.common.enums.SupportOSEnum;
 
+import java.util.Map;
+
 /**
- * 操作系统/系统平台工具类
+ * 不同操作系统平台的资源文件通用配置
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public final class PlatformUtil {
+public class ResourcesByOperatingSystemConfig {
 
     /**
-     * 获取当前操作系统类型
-     *
-     * @return 受支持的操作系统类型枚举
+     * 对应不同操作系统平台的资源文件，其在项目资源目录中的位置
+     * <p>
+     * Key - 操作系统类型；Value - 对应操作系统平台下资源文件在项目资源目录中的位置
      */
-    public static SupportOSEnum getOperatingSystemType() {
-        String osString = System.getProperty("os.name").toLowerCase();
+    private Map<SupportOSEnum, String> resourceFilePathsByOSType;
 
-        if (osString.contains("linux")) {
-            return SupportOSEnum.LINUX;
-        }
+    public Map<SupportOSEnum, String> getResourceFilePathsByOSType() {
+        return resourceFilePathsByOSType;
+    }
 
-        if ((osString.indexOf("mac") >= 0 && osString.indexOf("os") > 0 && osString.indexOf("x") < 0)
-                || (osString.indexOf("mac") >= 0 && osString.indexOf("os") > 0 && osString.indexOf("x") > 0)) {
-            return SupportOSEnum.APPLE_MAC_OS;
-        }
-
-        if (osString.contains("windows")) {
-            return SupportOSEnum.MICROSOFT_WINDOWS_NT;
-        }
-
-        return null;
+    public void setResourceFilePathsByOSType(Map<SupportOSEnum, String> resourceFilePathsByOSType) {
+        this.resourceFilePathsByOSType = resourceFilePathsByOSType;
     }
 }

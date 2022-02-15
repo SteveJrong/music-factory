@@ -101,7 +101,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             try {
                 audioFile = AudioFileIO.read(FileUtils.getFile(item.getAudioFilePath()));
             } catch (CannotReadException | ReadOnlyFileException | TagException | IOException | InvalidAudioFrameException e) {
-                e.printStackTrace();
+                LOGGER.error(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "音频文件信息补全")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
 
             LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "开始补全音频文件元数据信息")
@@ -139,7 +140,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             complementedMetadataMusicFileBo.setSongArtist(analyzingForAudioFileModuleBo.getSongArtist());
             complementedMetadataMusicFileBo.setType(0);
 
-            LOGGER.warn(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "未成功补全音频文件元数据信息")
+            LOGGER.warn(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "补全音频文件元数据信息失败")
+                    .append("warnMsg", "歌曲在在线曲库中未搜索到")
                     .append("filePath", analyzingForAudioFileModuleBo.getAudioFilePath())
                     .append("songTitle", analyzingForAudioFileModuleBo.getSongTitle())
                     .append("songArtist", analyzingForAudioFileModuleBo.getSongArtist())
@@ -157,7 +159,7 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
         complementedMetadataMusicFileBo.setSongArtist(analyzingForAudioFileModuleBo.getSongArtist());
         complementedMetadataMusicFileBo.setType(1);
 
-        LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "已成功补全音频文件元数据信息")
+        LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "成功地补全了音频文件的元数据信息")
                 .append("filePath", analyzingForAudioFileModuleBo.getAudioFilePath())
                 .append("songTitle", analyzingForAudioFileModuleBo.getSongTitle())
                 .append("songArtist", analyzingForAudioFileModuleBo.getSongArtist())
@@ -200,11 +202,12 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             IAudioFileMetadataQueryResolver metadataQueryResolver = (IAudioFileMetadataQueryResolver)
                     systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().get(audioFormat)
                             .stream().filter(resolver -> resolver instanceof IAudioFileMetadataQueryResolver).findAny().get();
+            metadataQueryResolver.setAudioFile(audioFile);
 
             // 歌曲标题
-            String songTitle = metadataQueryResolver.getSongTitle(audioFile);
+            String songTitle = metadataQueryResolver.getSongTitle();
             // 歌曲艺术家
-            String songArtist = metadataQueryResolver.getSongArtist(audioFile);
+            String songArtist = metadataQueryResolver.getSongArtist();
 
             partnerSongInfoFilterCriteriaBean.setSearchKeywords(StringUtil.removeSpecialChars(songTitle)
                     + " " + StringUtil.removeSpecialChars(songArtist));

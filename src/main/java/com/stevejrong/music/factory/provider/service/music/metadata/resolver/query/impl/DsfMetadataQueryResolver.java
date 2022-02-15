@@ -26,10 +26,7 @@ import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.Ab
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.mp3.MP3File;
-import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.id3.*;
 import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
@@ -42,12 +39,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * MP3音频文件的元数据解析器
+ * Dsf（索尼专有格式）音频文件的元数据解析器
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryResolver implements IAudioFileMetadataQueryResolver {
+public class DsfMetadataQueryResolver extends AbstractAudioFileMetadataQueryResolver implements IAudioFileMetadataQueryResolver {
 
     @Override
     public void setAudioFile(AudioFile audioFile) {
@@ -56,17 +53,11 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public String getSongTitle() {
-        MP3File mp3File = (MP3File) super.audioFile;
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TIT2.getValue(),
                     "Text", id3v2Tag);
-        } else if (null != id3v1Tag) {
-            return id3v1Tag.getFirst(FieldKey.TITLE);
         }
 
         return null;
@@ -74,17 +65,11 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public String getSongArtist() {
-        MP3File mp3File = (MP3File) super.audioFile;
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TPE1.getValue(),
                     "Text", id3v2Tag);
-        } else if (null != id3v1Tag) {
-            return id3v1Tag.getFirst(FieldKey.TITLE);
         }
 
         return null;
@@ -92,32 +77,23 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public String getSongLyrics() {
-        MP3File mp3File = (MP3File) super.audioFile;
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.USLT.getValue(),
-                    "Description", id3v2Tag);
+                    "Lyrics", id3v2Tag);
         }
-        // ID3v1标签不支持歌词，返回null
+
         return null;
     }
 
     @Override
     public String getAlbumName() {
-        MP3File mp3File = (MP3File) super.audioFile;
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TALB.getValue(),
                     "Text", id3v2Tag);
-        } else if (null != id3v1Tag) {
-            return id3v1Tag.getFirst(FieldKey.ALBUM);
         }
 
         return null;
@@ -125,17 +101,11 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public String getAlbumArtist() {
-        MP3File mp3File = (MP3File) super.audioFile;
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
         if (null != id3v2Tag) {
-            return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TPE2.getValue(),
+            return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TPE1.getValue(),
                     "Text", id3v2Tag);
-        } else if (null != id3v1Tag) {
-            return id3v1Tag.getFirst(FieldKey.ALBUM_ARTIST);
         }
 
         return null;
@@ -143,15 +113,9 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public LocalDate getAlbumPublishDate() {
-        MP3File mp3File = (MP3File) super.audioFile;
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
         if (null != id3v2Tag) {
-            // ID3v2标签中的发布时间，支持年月日
-
             List<TagField> tagFieldList = Optional.ofNullable(
                     id3v2Tag.getFields(ID3v2FramesForMP3Enum.TYERTDAT.getValue())).orElse(Lists.newArrayList());
             TyerTdatAggregatedFrame body = null;
@@ -182,15 +146,6 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
                                     + publishMonthAndDayBody.get().getObjectValue("Text").toString());
                 }
             }
-        } else if (null != id3v1Tag
-                && CollectionUtils.isNotEmpty(id3v1Tag.getFields(FieldKey.YEAR))
-                && StringUtils.isNotBlank(id3v1Tag.getFirstField(FieldKey.YEAR).toString())) {
-
-            if (DateTimeUtil.DATE_PATTERN_OF_YYYY_FORMAT.matcher(id3v1Tag.getFirstField(FieldKey.YEAR).toString()).matches()) {
-
-                // 当在ID3v1标签中存在4位年份的数据时，就默认此信息正确，直接返回当前时间来认为此音频文件ID3v1标签中的发布时间信息没有缺失
-                return DateTimeUtil.getNowDate();
-            }
         }
 
         return null;
@@ -198,17 +153,11 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public String getAlbumDescription() {
-        MP3File mp3File = (MP3File) super.audioFile;
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
-        ID3v1Tag id3v1Tag = mp3File.getID3v1Tag();
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.COMM.getValue(),
-                    "Description", id3v2Tag);
-        } else if (null != id3v1Tag) {
-            return id3v1Tag.getFirst(FieldKey.COMMENT);
+                    "Text", id3v2Tag);
         }
 
         return null;
@@ -216,43 +165,33 @@ public class Mp3MetadataQueryResolver extends AbstractAudioFileMetadataQueryReso
 
     @Override
     public String getAlbumLanguage() {
-        MP3File mp3File = (MP3File) super.audioFile;
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TLAN.getValue(),
                     "Text", id3v2Tag);
         }
 
-        // ID3v1标签不支持语言类型，返回null
         return null;
     }
 
     @Override
     public String getAlbumCopyright() {
-        MP3File mp3File = (MP3File) super.audioFile;
-
-        // 当存在ID3v1和ID3v2两种标签时，优先将ID3v2作为判断依据
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
         if (null != id3v2Tag) {
             return Mp3Util.getContentByContentKeyAndMp3FrameNameInID3v2Tag(ID3v2FramesForMP3Enum.TCOP.getValue(),
                     "Text", id3v2Tag);
         }
 
-        // ID3v1标签不支持版权信息，返回null
         return null;
     }
 
     @Override
     public byte[] getAlbumPicture(boolean sizeLimit) {
-        MP3File mp3File = (MP3File) super.audioFile;
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) super.audioFile.getTag();
 
-        AbstractID3v2Tag id3v2Tag = mp3File.getID3v2Tag();
         AbstractID3v2Frame frame = null;
-
         if (null != id3v2Tag) {
             if (id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue()) instanceof ArrayList) {
                 frame = (AbstractID3v2Frame) ((List) id3v2Tag.getFrame(ID3v2FramesForMP3Enum.APIC.getValue())).get(0);

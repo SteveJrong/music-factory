@@ -19,6 +19,8 @@
 package com.stevejrong.music.factory.common.util;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,6 +32,7 @@ import java.lang.reflect.Method;
  * @since 1.0
  */
 public final class ReflectionUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtil.class);
 
     /**
      * 获取反射方法的返回值
@@ -52,9 +55,13 @@ public final class ReflectionUtil {
         }
 
         try {
+
             return ArrayUtils.isEmpty(parameters) ? (T) correctMethod.invoke(object)
                     : (T) correctMethod.invoke(object, parameters);
         } catch (IllegalAccessException | InvocationTargetException e) {
+            LOGGER.error(LoggerUtil.builder().append("reflectionUtil_getMethodValueByReflect", "获取反射方法的返回值")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+
             return null;
         }
     }

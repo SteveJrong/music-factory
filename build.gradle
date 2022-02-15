@@ -126,6 +126,7 @@ dependencies {
     implementation("net.bramp.ffmpeg:ffmpeg:$rootProject.ext.dependencies.ffmpegVersion")
     implementation("com.twelvemonkeys.imageio:imageio-jpeg:$rootProject.ext.dependencies.imageioJpegVersion")
     implementation("net.coobird:thumbnailator:$rootProject.ext.dependencies.thumbnailatorVersion")
+    implementation("net.java.dev.jna:jna:$rootProject.ext.dependencies.jnaVersion")
 
     implementation("com.squareup.okhttp3:okhttp:$rootProject.ext.dependencies.okHttpVersion")
     implementation("com.google.code.gson:gson:$rootProject.ext.dependencies.gsonVersion")

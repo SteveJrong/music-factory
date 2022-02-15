@@ -18,6 +18,7 @@
  */
 package com.stevejrong.music.factory.boot;
 
+import com.google.common.collect.Lists;
 import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.common.util.FormatConverterUtil;
 import com.stevejrong.music.factory.common.util.ReflectionUtil;
@@ -31,6 +32,7 @@ import com.stevejrong.music.factory.spi.music.bo.ComplementedMetadataAudioFileBo
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -137,30 +139,41 @@ public class MusicFactoryApplication {
                     break;
 
                 case "4":
-                    System.out.println(systemConfig.getBaseConfig().getSelectFormatConverterMessage());
+                    System.out.println(systemConfig.getBaseConfig().getSelectFormatConvertersMessage());
 
                     while (true) {
                         Scanner scanner5 = new Scanner(System.in);
                         String input5 = scanner5.next().toLowerCase().trim();
 
-                        if ("n".equals(input5)) {
+                        if ("n".equals(input5) || "y".equals(input5)) {
                             break;
                         }
 
                         if (!StringUtils.isNumeric(input5)) {
-                            System.err.println("您的输入的音频格式转换器编号格式非法，请重新输入！");
+                            System.err.println("您输入的音频格式转换器编号格式非法，请重新输入！");
                             continue;
                         }
 
                         IAudioFileConverter selectAudioFileConverter = FormatConverterUtil.getAudioFileConverterByConverterNum(Integer.parseInt(input5), systemConfig);
                         if (null == selectAudioFileConverter) {
-                            System.err.println("您的输入的音频格式转换器编号不存在，请重新输入！");
+                            System.err.println("您选择的音频格式转换器不存在，请重新输入！");
                             continue;
                         }
 
-                        systemConfig.getAudioFileFormatConversionConfig().setCurrentAudioFileConverter(selectAudioFileConverter);
-                        System.out.println("选择音频文件格式转换器成功。");
-                        break;
+                        if (CollectionUtils.isNotEmpty(systemConfig.getAudioFileFormatConversionConfig().getSelectedAudioFileConverters())
+                                && checkExistsAudioFileConverterAtSelectedAudioFileConverters(selectAudioFileConverter, systemConfig.getAudioFileFormatConversionConfig().getSelectedAudioFileConverters())) {
+                            System.err.println("您选择的音频格式转换器已存在，请重新输入！");
+                            continue;
+                        }
+
+                        if (CollectionUtils.isEmpty(systemConfig.getAudioFileFormatConversionConfig().getSelectedAudioFileConverters())) {
+                            systemConfig.getAudioFileFormatConversionConfig().setSelectedAudioFileConverters(Lists.newArrayList(selectAudioFileConverter));
+                        } else {
+                            systemConfig.getAudioFileFormatConversionConfig().getSelectedAudioFileConverters().add(selectAudioFileConverter);
+                        }
+
+                        System.out.println(systemConfig.getBaseConfig().getSelectFormatConvertersMessage()
+                                .replace("{{selectFormatConverterSuccessMessage}}", selectAudioFileConverter.getClass().getSimpleName()));
                     }
 
                     break;
@@ -214,14 +227,17 @@ public class MusicFactoryApplication {
     private static String buildCurrentFormatConverterConfigInfo(SystemConfig systemConfig) {
         StringBuilder sb = new StringBuilder("当前已选择的音频文件格式转换器：");
 
-        IAudioFileConverter currentAudioFileConverter = systemConfig.getAudioFileFormatConversionConfig().getCurrentAudioFileConverter();
-        if (null != currentAudioFileConverter) {
-            sb.append("● ")
-                    .append(currentAudioFileConverter.converterNum())
-                    .append(". ")
-                    .append("[")
-                    .append(currentAudioFileConverter.getClass().getSimpleName())
-                    .append("]");
+        List<IAudioFileConverter> selectedAudioFileConverters = systemConfig.getAudioFileFormatConversionConfig().getSelectedAudioFileConverters();
+
+        if (CollectionUtils.isNotEmpty(selectedAudioFileConverters)) {
+            for (IAudioFileConverter currentAudioFileConverter : selectedAudioFileConverters) {
+                sb.append("● ")
+                        .append(currentAudioFileConverter.converterNum())
+                        .append(". ")
+                        .append("[")
+                        .append(currentAudioFileConverter.getClass().getSimpleName())
+                        .append("]");
+            }
         } else {
             sb.append("< 未选择音频文件格式转换器！请输入对应功能编号来设置！ >");
         }
@@ -250,5 +266,22 @@ public class MusicFactoryApplication {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * 判断用户选择的音频文件转换器是否存在于用户已选择的音频文件转换器集合中
+     *
+     * @param selectAudioFileConverter    用户选择的音频转换器对象
+     * @param selectedAudioFileConverters 用户已选择的音频转换器集合对象
+     * @return true - 用户选择的音频文件转换器已存在于用户已选择的音频转换器集合中；false - 用户选择的音频文件转换器在用户已选择的音频转换器集合中不存在
+     */
+    private static boolean checkExistsAudioFileConverterAtSelectedAudioFileConverters(IAudioFileConverter selectAudioFileConverter, List<IAudioFileConverter> selectedAudioFileConverters) {
+        for (IAudioFileConverter audioFileConverter : selectedAudioFileConverters) {
+            if (selectAudioFileConverter.converterNum() == audioFileConverter.converterNum()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

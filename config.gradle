@@ -17,6 +17,7 @@ ext {
             ffmpegVersion             : '0.6.2',
             imageioJpegVersion        : '3.7.0',
             thumbnailatorVersion      : '0.4.16',
+            jnaVersion                : '5.10.0',
 
             okHttpVersion             : '3.10.0',
             gsonVersion               : '1.7',

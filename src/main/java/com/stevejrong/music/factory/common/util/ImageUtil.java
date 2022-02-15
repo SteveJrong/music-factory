@@ -18,6 +18,9 @@
  */
 package com.stevejrong.music.factory.common.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.imageio.stream.FileImageInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,6 +33,7 @@ import java.io.IOException;
  * @since 1.0
  */
 public final class ImageUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
 
     /**
      * 图片转字节数组
@@ -52,8 +56,9 @@ public final class ImageUtil {
             imageByteArray = output.toByteArray();
             output.close();
             imageInputStream.close();
-        } catch (IOException ex1) {
-            ex1.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.error(LoggerUtil.builder().append("imageUtil_imageFileToByteArray", "图片转字节数组")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return imageByteArray;

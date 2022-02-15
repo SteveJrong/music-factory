@@ -57,6 +57,7 @@ public final class BaseConstants {
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String APPLICATION_JSON_UTF_8 = APPLICATION_JSON.concat(";").concat("charset=utf-8");
 
+    public static final String FILE_SUFFIX_DSF = "dsf";
     public static final String FILE_SUFFIX_FLAC = "flac";
     public static final String FILE_SUFFIX_MP3 = "mp3";
     public static final String FILE_SUFFIX_M4A = "m4a";

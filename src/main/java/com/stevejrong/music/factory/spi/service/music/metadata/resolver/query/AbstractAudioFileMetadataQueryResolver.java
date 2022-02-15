@@ -16,37 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist;
+package com.stevejrong.music.factory.spi.service.music.metadata.resolver.query;
 
-import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.jaudiotagger.audio.AudioFile;
 
-
 /**
- * 音频文件文件元数据存储器抽象类
+ * 音频文件文件元数据解析器抽象类
  * <p>
- * 承载音频文件AudioFile对象以及解析器对象
+ * 承载音频文件AudioFile对象
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public abstract class AbstractAudioFileMetadataPersistResolver {
+public abstract class AbstractAudioFileMetadataQueryResolver {
 
     /**
      * 音频文件对象
      */
     protected AudioFile audioFile;
 
-    /**
-     * 音频文件文件元数据解析器接口
-     */
-    protected IAudioFileMetadataQueryResolver metadataQueryResolver;
-
     protected AudioFile getAudioFile() {
         return audioFile;
-    }
-
-    public IAudioFileMetadataQueryResolver getMetadataQueryResolver() {
-        return metadataQueryResolver;
     }
 }

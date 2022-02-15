@@ -18,7 +18,7 @@
  */
 package com.stevejrong.music.factory.common.util;
 
-import com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum;
+import com.stevejrong.music.factory.common.enums.SupportOSEnum;
 import com.stevejrong.music.factory.config.SystemConfig;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
@@ -54,18 +54,18 @@ public final class FFmpegUtil {
     private static synchronized FFmpeg getFfmpegInstanceByOSType() {
         if (null == FFMPEG) {
             SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
-            Map<SupportOSForFFmpegEnum, String> ffmpegPathsByOSTypeMaps = systemConfig
+            Map<SupportOSEnum, String> ffmpegPathsByOSTypeMaps = systemConfig
                     .getAudioFileFormatConversionConfig().getFfmpegComponentConfig().getFfmpegPathsByOSType();
 
-            SupportOSForFFmpegEnum operatingSystemEnum = PlatformUtil.getOperatingSystemType();
+            SupportOSEnum operatingSystemEnum = PlatformUtil.getOperatingSystemType();
 
-            File ffmpegFile = FileUtil.getResourceFile(ffmpegPathsByOSTypeMaps.get(operatingSystemEnum));
-            ffmpegFile.setExecutable(true);
+            File ffmpegFile = FileUtil.getResourceFile(ffmpegPathsByOSTypeMaps.get(operatingSystemEnum), null);
+            ffmpegFile.setExecutable(true, false);
 
             try {
                 FFMPEG = new FFmpeg(ffmpegFile.getPath());
             } catch (IOException e) {
-                LOGGER.error(LoggerUtil.builder().append("fFmpegUtil_getFfmpegInstanceByOSType")
+                LOGGER.error(LoggerUtil.builder().append("ffmpegUtil_getFfmpegInstanceByOSType")
                         .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }
@@ -81,18 +81,18 @@ public final class FFmpegUtil {
     private static synchronized FFprobe getFfprobeInstanceByOSType() {
         if (null == FFPROBE) {
             SystemConfig systemConfig = SpringBeanUtil.getBean("systemConfig");
-            Map<SupportOSForFFmpegEnum, String> ffprobePathsByOSTypeMaps = systemConfig
+            Map<SupportOSEnum, String> ffprobePathsByOSTypeMaps = systemConfig
                     .getAudioFileFormatConversionConfig().getFfmpegComponentConfig().getFfmprobePathsByOSType();
 
-            SupportOSForFFmpegEnum operatingSystemEnum = PlatformUtil.getOperatingSystemType();
+            SupportOSEnum operatingSystemEnum = PlatformUtil.getOperatingSystemType();
 
-            File ffprobeFile = FileUtil.getResourceFile(ffprobePathsByOSTypeMaps.get(operatingSystemEnum));
+            File ffprobeFile = FileUtil.getResourceFile(ffprobePathsByOSTypeMaps.get(operatingSystemEnum), null);
             ffprobeFile.setExecutable(true);
 
             try {
                 FFPROBE = new FFprobe(ffprobeFile.getPath());
             } catch (IOException e) {
-                LOGGER.error(LoggerUtil.builder().append("fFmpegUtil_getFfprobeInstanceByOSType")
+                LOGGER.error(LoggerUtil.builder().append("ffmpegUtil_getFfprobeInstanceByOSType")
                         .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }
@@ -116,6 +116,26 @@ public final class FFmpegUtil {
     }
 
     /**
+     * 获取FFmpeg文件的可执行文件名称
+     *
+     * @return FFmpeg文件的可执行文件名称
+     */
+    public static String getFfmpegFileName() {
+        FFmpeg fFmpegInstance = getFfmpegInstanceByOSType();
+        return FileUtil.getFileNameWithSuffix(fFmpegInstance.getPath());
+    }
+
+    /**
+     * 获取FFmpeg文件的可执行文件位置
+     *
+     * @return FFmpeg文件的可执行文件位置
+     */
+    public static String getFfmpegFilePath() {
+        FFmpeg fFmpegInstance = getFfmpegInstanceByOSType();
+        return fFmpegInstance.getPath();
+    }
+
+    /**
      * 获取Ffmpeg Probe结果的实例
      *
      * @param ffprobeInstance Ffmpeg Probe对象
@@ -127,7 +147,7 @@ public final class FFmpegUtil {
             try {
                 FFMPEG_PROBE_RESULT = ffprobeInstance.probe(sourceFilePath);
             } catch (IOException e) {
-                LOGGER.error(LoggerUtil.builder().append("fFmpegUtil_getFfmpegProbeResultInstance")
+                LOGGER.error(LoggerUtil.builder().append("ffmpegUtil_getFfmpegProbeResultInstance")
                         .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }

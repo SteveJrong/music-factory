@@ -18,15 +18,13 @@
  */
 package com.stevejrong.music.factory.provider.service.music.impl;
 
-import com.stevejrong.music.factory.common.util.DateTimeUtil;
-import com.stevejrong.music.factory.common.util.HardwareUtil;
-import com.stevejrong.music.factory.common.util.LoggerUtil;
-import com.stevejrong.music.factory.common.util.RandomUtil;
+import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.parallel.FormatConvertMaster;
 import com.stevejrong.music.factory.spi.music.bo.AudioFileFormatConversionModuleBo;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
 import com.stevejrong.music.factory.spi.service.music.AbstractMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,18 +50,27 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
 
         try {
             // 读取原始文件目录下的所有音频文件，依次进行转换
-            Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
-                            path -> path.toString().endsWith(super.getSystemConfig().getAudioFileFormatConversionConfig().getCurrentAudioFileConverter().sourceFileSuffix()))
+            Files.list(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()))
+                    .filter(path -> {
+                                for (IAudioFileConverter audioFileConverter : super.getSystemConfig().getAudioFileFormatConversionConfig().getSelectedAudioFileConverters()) {
+                                    if (audioFileConverter.sourceFileSuffix().equals(FileUtil.getFileSuffixWithPoint(path.toAbsolutePath().toString()))) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                    )
                     .forEach(file -> {
                         String sourcePath = file.toAbsolutePath().toString();
                         String targetDirectory = super.getSystemConfig().getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory();
 
+                        IAudioFileConverter currentAudioFileConverter = FormatConverterUtil.getAudioFileConverterBySourceFileSuffix(FileUtil.getFileSuffixWithPoint(file.toFile().getAbsolutePath()), super.getSystemConfig());
                         FormatConvertTaskBo formatConvertTask = new FormatConvertTaskBo(
                                 RandomUtil.getARandomNumeric(1, Integer.MAX_VALUE),
-                                "转换 [" + file.getFileName().toString() + "] 使用 [" + super.getSystemConfig().getAudioFileFormatConversionConfig().getCurrentAudioFileConverter().getClass().getSimpleName() + "] 转换器",
+                                "转换 [" + file.getFileName().toString() + "] 使用 [" + currentAudioFileConverter.getClass().getSimpleName() + "] 转换器",
                                 sourcePath,
                                 targetDirectory,
-                                super.getSystemConfig().getAudioFileFormatConversionConfig().getCurrentAudioFileConverter());
+                                currentAudioFileConverter);
 
                         // 向Master提交任务，以使得Worker执行任务
                         formatConvertMaster.submit(formatConvertTask);

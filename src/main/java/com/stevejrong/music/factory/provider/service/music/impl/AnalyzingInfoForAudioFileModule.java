@@ -68,9 +68,11 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
 
         try {
             Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
+                            // TODO 下一版要解决灵活读取
                             path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC)
                                     || path.toString().endsWith(BaseConstants.FILE_SUFFIX_MP3)
-                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_OGG))
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_OGG)
+                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_DSF))
                     .forEach(file -> {
                         AudioFile audioFile = null;
                         try {
@@ -87,27 +89,28 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                         IAudioFileMetadataQueryResolver metadataQueryResolver = (IAudioFileMetadataQueryResolver)
                                 systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().get(audioFormat)
                                         .stream().filter(resolver -> resolver instanceof IAudioFileMetadataQueryResolver).findAny().get();
+                        metadataQueryResolver.setAudioFile(audioFile);
 
                         // 歌曲标题
-                        String songTitle = metadataQueryResolver.getSongTitle(audioFile);
+                        String songTitle = metadataQueryResolver.getSongTitle();
                         // 歌曲艺术家
-                        String songArtist = metadataQueryResolver.getSongArtist(audioFile);
+                        String songArtist = metadataQueryResolver.getSongArtist();
                         // 歌曲内嵌歌词
-                        String songLyrics = metadataQueryResolver.getSongLyrics(audioFile);
+                        String songLyrics = metadataQueryResolver.getSongLyrics();
                         // 歌曲所属专辑的名称
-                        String albumName = metadataQueryResolver.getAlbumName(audioFile);
+                        String albumName = metadataQueryResolver.getAlbumName();
                         // 歌曲所属专辑的艺术家
-                        String albumArtist = metadataQueryResolver.getAlbumArtist(audioFile);
+                        String albumArtist = metadataQueryResolver.getAlbumArtist();
                         // 歌曲所属专辑的发布时间
-                        LocalDate albumPublishDate = metadataQueryResolver.getAlbumPublishDate(audioFile);
+                        LocalDate albumPublishDate = metadataQueryResolver.getAlbumPublishDate();
                         // 歌曲所属专辑的描述
-                        String albumDescription = metadataQueryResolver.getAlbumDescription(audioFile);
+                        String albumDescription = metadataQueryResolver.getAlbumDescription();
                         // 歌曲所属专辑的语言类型
-                        String albumLanguage = metadataQueryResolver.getAlbumLanguage(audioFile);
+                        String albumLanguage = metadataQueryResolver.getAlbumLanguage();
                         // 歌曲所属专辑的版权信息
-                        String albumCopyright = metadataQueryResolver.getAlbumCopyright(audioFile);
+                        String albumCopyright = metadataQueryResolver.getAlbumCopyright();
                         // 歌曲所属的专辑封面
-                        byte[] albumPicture = metadataQueryResolver.getAlbumPicture(audioFile, true);
+                        byte[] albumPicture = metadataQueryResolver.getAlbumPicture(true);
 
                         BaseFilterChain filterChain = SpringBeanUtil.getBean("baseFilterChain");
 

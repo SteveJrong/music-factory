@@ -69,7 +69,12 @@ public class BaseConfig {
     /**
      * 选择音频文件格式转换器的提示信息
      */
-    private String selectFormatConverterMessage;
+    private String selectFormatConvertersMessage;
+
+    /**
+     * 选择音频文件格式转换器成功的提示信息
+     */
+    private String selectFormatConverterSuccessMessage;
 
     public String getSpringConfigurationFileName() {
         return springConfigurationFileName;
@@ -135,11 +140,19 @@ public class BaseConfig {
         this.customConvertedAudioFileDirectorySuccessMessage = customConvertedAudioFileDirectorySuccessMessage;
     }
 
-    public String getSelectFormatConverterMessage() {
-        return selectFormatConverterMessage;
+    public String getSelectFormatConvertersMessage() {
+        return selectFormatConvertersMessage;
     }
 
-    public void setSelectFormatConverterMessage(String selectFormatConverterMessage) {
-        this.selectFormatConverterMessage = selectFormatConverterMessage;
+    public void setSelectFormatConvertersMessage(String selectFormatConvertersMessage) {
+        this.selectFormatConvertersMessage = selectFormatConvertersMessage;
+    }
+
+    public String getSelectFormatConverterSuccessMessage() {
+        return selectFormatConverterSuccessMessage;
+    }
+
+    public void setSelectFormatConverterSuccessMessage(String selectFormatConverterSuccessMessage) {
+        this.selectFormatConverterSuccessMessage = selectFormatConverterSuccessMessage;
     }
 }

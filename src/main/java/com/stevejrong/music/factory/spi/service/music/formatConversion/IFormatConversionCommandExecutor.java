@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -16,16 +16,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.common.enums;
+package com.stevejrong.music.factory.spi.service.music.formatConversion;
+
+
+import com.sun.jna.Library;
+import com.sun.jna.Native;
 
 /**
- * 操作系统支持枚举类
+ * 音频文件转换器转换时，所需调用的动态链接库接口
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public enum SupportOSForFFmpegEnum implements AbstractEnum {
-    MICROSOFT_WINDOWS_NT {},
-    LINUX {},
-    APPLE_MAC_OS {}
+public interface IFormatConversionCommandExecutor extends Library {
+
+    /**
+     * 获取音频文件转换器转换所需动态链接库文件的文件位置
+     *
+     * @return 动态链接库文件的文件位置
+     */
+    String getDynamicLinkLibrariesFilePath();
+
+    /**
+     * 调用执行C动态链接库文件中名为<code>execute(char *command)</code>的函数
+     *
+     * @param command
+     * @return
+     */
+    int execute(String command);
 }

@@ -18,10 +18,13 @@
  */
 package com.stevejrong.music.factory.provider.service.music.analyzing.filter.impl;
 
+import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.spi.music.bean.MusicInfoByFilterBean;
 import com.stevejrong.music.factory.spi.music.bo.validator.filtrated.FiltratedResultDataBo;
 import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -35,6 +38,7 @@ import java.io.IOException;
  * @since 1.0
  */
 public class AlbumPictureFilter extends AbstractFilter<MusicInfoByFilterBean, FiltratedResultDataBo<Boolean>> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlbumPictureFilter.class);
 
     @Override
     public FiltratedResultDataBo<Boolean> filtrate(MusicInfoByFilterBean criteriaBean) {
@@ -46,7 +50,8 @@ public class AlbumPictureFilter extends AbstractFilter<MusicInfoByFilterBean, Fi
         try {
             image = ImageIO.read(new ByteArrayInputStream(criteriaBean.getAlbumPicture()));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("albumPictureFilter_filtrate", "主过滤方法")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return new FiltratedResultDataBo.Builder<Boolean>(

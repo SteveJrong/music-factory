@@ -48,4 +48,22 @@ public final class FormatConverterUtil {
 
         return null;
     }
+
+    /**
+     * 根据源音频文件的文件后缀名获取音频文件格式转换器对象
+     *
+     * @param sourceFileSuffix 源音频文件的文件后缀名
+     * @param systemConfig     系统配置
+     * @return 音频文件格式转换器对象
+     */
+    public static IAudioFileConverter getAudioFileConverterBySourceFileSuffix(String sourceFileSuffix, SystemConfig systemConfig) {
+        List<IAudioFileConverter> audioFileConverters = systemConfig.getAudioFileFormatConversionConfig().getAudioFileConverters();
+        for (IAudioFileConverter audioFileConverter : audioFileConverters) {
+            if (audioFileConverter.sourceFileSuffix().equals(sourceFileSuffix)) {
+                return audioFileConverter;
+            }
+        }
+
+        return null;
+    }
 }

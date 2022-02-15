@@ -22,16 +22,13 @@ import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.ResourcesFileEnum;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 文件操作工具类
@@ -40,6 +37,8 @@ import java.nio.file.Paths;
  * @since 1.0
  */
 public final class FileUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
+
     private static byte[] DEFAULT_ALBUM_PICTURE_BYTE_ARRAY = null;
 
     /**
@@ -67,7 +66,8 @@ public final class FileUtil {
             resourceFile = File.createTempFile(resourcesFileEnum.getValue(), "temp");
             FileUtils.copyInputStreamToFile(inputStream, resourceFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("FileUtil_getResourceFile", "获取资源文件")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return resourceFile;
@@ -77,18 +77,21 @@ public final class FileUtil {
      * 获取资源文件
      *
      * @param resourcesFilePath 资源文件位置
+     * @param fileSuffix        自定义的临时文件后缀
      * @return 资源文件
      */
-    public static File getResourceFile(String resourcesFilePath) {
+    public static File getResourceFile(String resourcesFilePath, String fileSuffix) {
+        // TODO 下次版本更新要解决临时文件重复创建浪费磁盘空间的问题
         InputStream inputStream = FileUtil.class.getClassLoader()
                 .getResourceAsStream(resourcesFilePath);
 
         File resourceFile = null;
         try {
-            resourceFile = File.createTempFile(resourcesFilePath, "temp");
+            resourceFile = File.createTempFile(resourcesFilePath, StringUtils.isNotEmpty(fileSuffix) ? fileSuffix : "temp");
             FileUtils.copyInputStreamToFile(inputStream, resourceFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("FileUtil_getResourceFile", "获取资源文件")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return resourceFile;
@@ -138,13 +141,23 @@ public final class FileUtil {
     }
 
     /**
-     * 获取文件后缀名
+     * 获取文件后缀名（不含点符号）
      *
      * @param filePath 文件位置
      * @return 文件后缀名
      */
-    public static String getFileSuffix(String filePath) {
+    public static String getFileSuffixWithoutPoint(String filePath) {
         return filePath.substring(filePath.lastIndexOf(".") + 1);
+    }
+
+    /**
+     * 获取文件后缀名（含点符号）
+     *
+     * @param filePath 文件位置
+     * @return 文件后缀名
+     */
+    public static String getFileSuffixWithPoint(String filePath) {
+        return filePath.substring(filePath.lastIndexOf("."));
     }
 
     /**
@@ -155,6 +168,16 @@ public final class FileUtil {
      */
     public static String getFileNameWithoutSuffix(String filePath) {
         return filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1, filePath.lastIndexOf(BaseConstants.POINT_CHAR));
+    }
+
+    /**
+     * 获取文件名称（含文件后缀名）
+     *
+     * @param filePath
+     * @return
+     */
+    public static String getFileNameWithSuffix(String filePath) {
+        return filePath.substring(filePath.lastIndexOf(File.separatorChar) + 1);
     }
 
     /**

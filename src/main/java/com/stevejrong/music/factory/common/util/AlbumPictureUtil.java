@@ -23,6 +23,8 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockDataPicture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -36,6 +38,7 @@ import java.io.IOException;
  * @since 1.0
  */
 public final class AlbumPictureUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlbumPictureUtil.class);
 
     /**
      * 构建用于专辑封面的MetadataBlockDataPicture图片对象
@@ -86,6 +89,9 @@ public final class AlbumPictureUtil {
         try {
             resultBytes = Hex.decodeHex(sb.toString());
         } catch (DecoderException e) {
+            LOGGER.error(LoggerUtil.builder().append("albumPictureUtil_buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis",
+                            "构建Ogg Vorbis音频文件格式元数据中，Base64编码的Blob二进制专辑封面图片数据")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return new String(Base64.encodeBase64(resultBytes));
@@ -104,6 +110,9 @@ public final class AlbumPictureUtil {
         try {
             Thumbnails.of(new ByteArrayInputStream(sourceAlbumPictureByteArray)).size(width, height).toOutputStream(outputStream);
         } catch (IOException e) {
+            LOGGER.error(LoggerUtil.builder().append("albumPictureUtil_albumPictureCompressByAlbumPictureByteArray",
+                            "构建Ogg Vorbis音频文件格式元数据中，Base64编码的Blob二进制专辑封面图片数据")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return outputStream.toByteArray();

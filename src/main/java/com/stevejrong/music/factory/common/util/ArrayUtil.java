@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,6 +18,9 @@
  */
 package com.stevejrong.music.factory.common.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
@@ -31,6 +34,7 @@ import java.nio.ByteBuffer;
  * @since 1.0
  */
 public final class ArrayUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArrayUtil.class);
 
     /**
      * 字节数组转换为ByteBuffer对象
@@ -57,7 +61,8 @@ public final class ArrayUtil {
         try {
             image = ImageIO.read(new ByteArrayInputStream(pictureByteArray));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("arrayUtil_getBufferedImageByPictureByteArray", "获取图片字节数组的BufferedImage对象")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return image;
@@ -65,6 +70,7 @@ public final class ArrayUtil {
 
     /**
      * 字节数组转换为File对象
+     * <p>
      * 此方法会生成临时文件
      *
      * @param byteArray 字节数组
@@ -82,7 +88,8 @@ public final class ArrayUtil {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(LoggerUtil.builder().append("arrayUtil_byteArrayToFile", "字节数组转换为File对象")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }
 
@@ -93,7 +100,8 @@ public final class ArrayUtil {
             bufferedOutput.flush();
             bufferedOutput.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("arrayUtil_byteArrayToFile", "字节数组转换为File对象")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return file;
@@ -110,8 +118,9 @@ public final class ArrayUtil {
             FileImageOutputStream imageOutput = new FileImageOutputStream(new File(path));
             imageOutput.write(byteArray, 0, byteArray.length);
             imageOutput.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error(LoggerUtil.builder().append("arrayUtil_byteArrayToImageFile", "字节数组存为图片")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -21,6 +21,8 @@ package com.stevejrong.music.factory.common.util;
 import com.google.common.collect.Lists;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,6 +35,8 @@ import java.util.List;
  * @since 1.0
  */
 public final class BeanMapperUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanMapperUtil.class);
+
     private static DozerBeanMapper dozer = new DozerBeanMapper();
 
     private BeanMapperUtil() {
@@ -59,19 +63,32 @@ public final class BeanMapperUtil {
         }
     }
 
+    /**
+     * 类复制
+     *
+     * @param source      源类的对象
+     * @param targetClass 目标类的对象
+     * @param <T>         目标类的类型
+     * @return
+     */
     public static <T> T copy(Object source, Class<T> targetClass) {
         T target = null;
         try {
             target = targetClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("beanMapperUtil_copy", "类复制")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         dozer.map(source, target);
-
         return target;
     }
 
+    /**
+     * 获取Dozer的实例
+     *
+     * @return
+     */
     public static Mapper getMapper() {
         return dozer;
     }

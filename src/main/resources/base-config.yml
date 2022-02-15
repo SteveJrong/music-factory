@@ -27,3 +27,10 @@ musicFactory:
         forAppleMacOSPath: components/ffmpeg/macOS/ffprobe
         forLinuxPath: components/ffmpeg/Linux/ffprobe
         forMicrosoftWindowsNTPath: components/ffmpeg/WindowsNT/ffprobe.exe
+    shellComponents:
+      formatConversion:
+        utils:
+          dynamicLinkLibraries:
+            forAppleMacOSPath: components/shells/formatConversion/utils/dynamic-link-libraries/macOS/shell-util
+            forLinuxPath: components/shells/formatConversion/utils/dynamic-link-libraries/Linux/shell-util
+            forMicrosoftWindowsNTPath:

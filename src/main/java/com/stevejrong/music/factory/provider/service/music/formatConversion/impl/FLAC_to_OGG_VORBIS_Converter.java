@@ -19,13 +19,9 @@
 package com.stevejrong.music.factory.provider.service.music.formatConversion.impl;
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
-import com.stevejrong.music.factory.common.util.AlbumPictureUtil;
-import com.stevejrong.music.factory.common.util.FFmpegUtil;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractAudioFileConverter;
+import com.stevejrong.music.factory.spi.music.bo.formatConversion.FFmpegBuilderBo;
+import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractAudioFileConverterUseFFmpegWrapper;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
-import net.bramp.ffmpeg.builder.FFmpegBuilder;
-
-import java.io.File;
 
 /**
  * FLAC音频编码格式 转换为 Ogg Vorbis音频编码格式 音频转换器
@@ -33,7 +29,7 @@ import java.io.File;
  * @author Steve Jrong
  * @since 1.0
  */
-public class FLAC_to_OGG_VORBIS_Converter extends AbstractAudioFileConverter implements IAudioFileConverter {
+public class FLAC_to_OGG_VORBIS_Converter extends AbstractAudioFileConverterUseFFmpegWrapper implements IAudioFileConverter {
     @Override
     public int converterNum() {
         return 1;
@@ -50,30 +46,16 @@ public class FLAC_to_OGG_VORBIS_Converter extends AbstractAudioFileConverter imp
     }
 
     @Override
-    public FFmpegBuilder setFFmpegBuilder(String sourcePath, String targetDirectory, String targetFileName, FFmpegBuilder ffmpegBuilder) {
-        String targetPath = targetDirectory + File.separatorChar + targetFileName + this.targetFileSuffix();
-
-        return ffmpegBuilder.addOutput(targetPath)
-                .disableVideo()
-                .setAudioCodec(BaseConstants.AUDIO_ENCODE_OGG_VORBIS)
-                .setFormat(BaseConstants.FILE_SUFFIX_OGG)
-                .setAudioQuality(10.0)
-                .addMetaTag("metadata_block_picture", AlbumPictureUtil.buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis(
-                        AlbumPictureUtil.albumPictureCompressByAlbumPictureByteArray(
-                                500, 500,
-                                super.getAlbumPictureByteArray(sourcePath))))
-                .setStrict(FFmpegBuilder.Strict.NORMAL)
-                .done();
+    protected String getTargetAudioCodecName() {
+        return BaseConstants.AUDIO_ENCODE_OGG_VORBIS;
     }
 
     @Override
-    public boolean convert(String sourcePath, String targetDirectory, String targetFileName) {
-        try {
-            FFmpegUtil.convert(this.setFFmpegBuilder(sourcePath, targetDirectory, targetFileName, super.createDefaultFFmpegBuilder(sourcePath)));
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+    protected FFmpegBuilderBo buildFFmpegBuilderBo(String sourcePath, String targetDirectory, String targetFileName) {
+        return new FFmpegBuilderBo
+                .Builder(sourcePath, targetDirectory, targetFileName, this.targetFileSuffix())
+                .targetAudioCodecName(this.getTargetAudioCodecName())
+                .ffmpegBuilder(super.createDefaultFFmpegBuilder(sourcePath))
+                .build();
     }
 }

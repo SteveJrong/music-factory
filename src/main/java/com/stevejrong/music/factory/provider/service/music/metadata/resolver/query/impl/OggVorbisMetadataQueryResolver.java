@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.AbstractAudioFileMetadataQueryResolver;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,166 +47,171 @@ import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IA
  * @author Steve Jrong
  * @since 1.0
  */
-public class OggVorbisMetadataQueryResolver implements IAudioFileMetadataQueryResolver {
+public class OggVorbisMetadataQueryResolver extends AbstractAudioFileMetadataQueryResolver implements IAudioFileMetadataQueryResolver {
 
-	@Override
-	public String getSongTitle(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+    @Override
+    public void setAudioFile(AudioFile audioFile) {
+        super.audioFile = audioFile;
+    }
 
-		TagField songTitleTagField = vorbisCommentTag.getFirstField(FieldKey.TITLE);
-		if (null != songTitleTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) songTitleTagField).getContent())) {
-			return ((VorbisCommentTagField) (songTitleTagField)).getContent();
-		}
+    @Override
+    public String getSongTitle() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField songTitleTagField = vorbisCommentTag.getFirstField(FieldKey.TITLE);
+        if (null != songTitleTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) songTitleTagField).getContent())) {
+            return ((VorbisCommentTagField) (songTitleTagField)).getContent();
+        }
 
-	@Override
-	public String getSongArtist(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		TagField songArtistTagField = vorbisCommentTag.getFirstField(FieldKey.ARTIST);
-		if (null != songArtistTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) songArtistTagField).getContent())) {
-			return ((VorbisCommentTagField) (songArtistTagField)).getContent();
-		}
+    @Override
+    public String getSongArtist() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField songArtistTagField = vorbisCommentTag.getFirstField(FieldKey.ARTIST);
+        if (null != songArtistTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) songArtistTagField).getContent())) {
+            return ((VorbisCommentTagField) (songArtistTagField)).getContent();
+        }
 
-	@Override
-	public String getSongLyrics(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		TagField songLyricsTagField = vorbisCommentTag.getFirstField(FieldKey.LYRICS);
-		if (null != songLyricsTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) songLyricsTagField).getContent())) {
-			return ((VorbisCommentTagField) songLyricsTagField).getContent();
-		}
+    @Override
+    public String getSongLyrics() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField songLyricsTagField = vorbisCommentTag.getFirstField(FieldKey.LYRICS);
+        if (null != songLyricsTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) songLyricsTagField).getContent())) {
+            return ((VorbisCommentTagField) songLyricsTagField).getContent();
+        }
 
-	@Override
-	public String getAlbumName(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		TagField albumNameTagField = vorbisCommentTag.getFirstField(FieldKey.ALBUM);
-		if (null != albumNameTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) albumNameTagField).getContent())) {
-			return ((VorbisCommentTagField) albumNameTagField).getContent();
-		}
+    @Override
+    public String getAlbumName() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField albumNameTagField = vorbisCommentTag.getFirstField(FieldKey.ALBUM);
+        if (null != albumNameTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) albumNameTagField).getContent())) {
+            return ((VorbisCommentTagField) albumNameTagField).getContent();
+        }
 
-	@Override
-	public String getAlbumArtist(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		TagField albumArtistTagField = vorbisCommentTag.getFirstField(FieldKey.ALBUM_ARTIST);
-		if (null != albumArtistTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) albumArtistTagField).getContent())) {
-			return ((VorbisCommentTagField) albumArtistTagField).getContent();
-		}
+    @Override
+    public String getAlbumArtist() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField albumArtistTagField = vorbisCommentTag.getFirstField(FieldKey.ALBUM_ARTIST);
+        if (null != albumArtistTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) albumArtistTagField).getContent())) {
+            return ((VorbisCommentTagField) albumArtistTagField).getContent();
+        }
 
-	@Override
-	public LocalDate getAlbumPublishDate(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		List<TagField> albumPublishDateTagFields = Optional.ofNullable(vorbisCommentTag.getFields("DATE"))
-				.orElse(Lists.newArrayList());
-		String albumPublishDate;
-		if (CollectionUtils.isNotEmpty(albumPublishDateTagFields)) {
-			albumPublishDate = ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent();
+    @Override
+    public LocalDate getAlbumPublishDate() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-			if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT.matcher(albumPublishDate).matches()) {
+        List<TagField> albumPublishDateTagFields = Optional.ofNullable(vorbisCommentTag.getFields("DATE"))
+                .orElse(Lists.newArrayList());
+        String albumPublishDate;
+        if (CollectionUtils.isNotEmpty(albumPublishDateTagFields)) {
+            albumPublishDate = ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent();
 
-				return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(),
-						((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent());
-			} else if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL.matcher(albumPublishDate)
-					.matches()) {
+            if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT.matcher(albumPublishDate).matches()) {
 
-				return DateTimeUtil.stringToLocalDate(
-						DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
-						((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent());
-			}
-		}
+                return DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(),
+                        ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent());
+            } else if (DateTimeUtil.DATE_PATTERN_OF_YYYYMMDD_FORMAT_WITHOUT_SYMBOL.matcher(albumPublishDate)
+                    .matches()) {
 
-		// FLAC中的标签支持年月日完整存储。除了形如 0000-00-00 或 00001122
-		// 这两种形式外，其余形式均认为发布时间不存在，返回null打标签，来进行补全
-		return null;
-	}
+                return DateTimeUtil.stringToLocalDate(
+                        DateTimeUtil.DatePattern.YYYYMMDD_FORMAT_WITHOUT_SYMBOL.getValue(),
+                        ((VorbisCommentTagField) albumPublishDateTagFields.get(0)).getContent());
+            }
+        }
 
-	@Override
-	public String getAlbumDescription(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        // FLAC中的标签支持年月日完整存储。除了形如 0000-00-00 或 00001122
+        // 这两种形式外，其余形式均认为发布时间不存在，返回null打标签，来进行补全
+        return null;
+    }
 
-		TagField albumDescriptionTagField = vorbisCommentTag.getFirstField(FieldKey.COMMENT);
-		if (null != albumDescriptionTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) albumDescriptionTagField).getContent())) {
-			return ((VorbisCommentTagField) albumDescriptionTagField).getContent();
-		}
+    @Override
+    public String getAlbumDescription() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField albumDescriptionTagField = vorbisCommentTag.getFirstField(FieldKey.COMMENT);
+        if (null != albumDescriptionTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) albumDescriptionTagField).getContent())) {
+            return ((VorbisCommentTagField) albumDescriptionTagField).getContent();
+        }
 
-	@Override
-	public String getAlbumLanguage(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		TagField albumLanguageTagField = vorbisCommentTag.getFirstField(FieldKey.LANGUAGE);
-		if (null != albumLanguageTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) albumLanguageTagField).getContent())) {
-			return ((VorbisCommentTagField) albumLanguageTagField).getContent();
-		}
+    @Override
+    public String getAlbumLanguage() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField albumLanguageTagField = vorbisCommentTag.getFirstField(FieldKey.LANGUAGE);
+        if (null != albumLanguageTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) albumLanguageTagField).getContent())) {
+            return ((VorbisCommentTagField) albumLanguageTagField).getContent();
+        }
 
-	@Override
-	public String getAlbumCopyright(AudioFile audioFile) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		TagField albumCopyrightTagField = vorbisCommentTag.getFirstField(FieldKey.COPYRIGHT);
-		if (null != albumCopyrightTagField
-				&& StringUtils.isNotBlank(((VorbisCommentTagField) albumCopyrightTagField).getContent())) {
-			return ((VorbisCommentTagField) albumCopyrightTagField).getContent();
-		}
+    @Override
+    public String getAlbumCopyright() {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-		return null;
-	}
+        TagField albumCopyrightTagField = vorbisCommentTag.getFirstField(FieldKey.COPYRIGHT);
+        if (null != albumCopyrightTagField
+                && StringUtils.isNotBlank(((VorbisCommentTagField) albumCopyrightTagField).getContent())) {
+            return ((VorbisCommentTagField) albumCopyrightTagField).getContent();
+        }
 
-	@Override
-	public byte[] getAlbumPicture(AudioFile audioFile, boolean sizeLimit) {
-		VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
+        return null;
+    }
 
-		byte[] originalAlbumPictureData;
-		if (null != vorbisCommentTag.getFirstArtwork()
-				&& ArrayUtils.isNotEmpty(vorbisCommentTag.getFirstArtwork().getBinaryData())) {
-			originalAlbumPictureData = vorbisCommentTag.getFirstArtwork().getBinaryData();
+    @Override
+    public byte[] getAlbumPicture(boolean sizeLimit) {
+        VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) super.audioFile.getTag();
 
-			BufferedImage image = null;
-			try {
-				image = ImageIO.read(new ByteArrayInputStream(originalAlbumPictureData));
-			} catch (IOException e) {
-			}
+        byte[] originalAlbumPictureData;
+        if (null != vorbisCommentTag.getFirstArtwork()
+                && ArrayUtils.isNotEmpty(vorbisCommentTag.getFirstArtwork().getBinaryData())) {
+            originalAlbumPictureData = vorbisCommentTag.getFirstArtwork().getBinaryData();
 
-			if (sizeLimit && (image.getWidth() * image.getHeight() >= 500 * 500)) {
+            BufferedImage image = null;
+            try {
+                image = ImageIO.read(new ByteArrayInputStream(originalAlbumPictureData));
+            } catch (IOException e) {
+            }
 
-				// 当开启专辑封面尺寸限定、专辑封面存在且符合尺寸时，才返回专辑图片的字节数组
-				return originalAlbumPictureData;
-			} else if (!sizeLimit) {
+            if (sizeLimit && (image.getWidth() * image.getHeight() >= 500 * 500)) {
 
-				// 若专辑封面尺寸限定已关闭，则表明无需限制尺寸，直接返回图片数组
-				return originalAlbumPictureData;
-			}
-		}
+                // 当开启专辑封面尺寸限定、专辑封面存在且符合尺寸时，才返回专辑图片的字节数组
+                return originalAlbumPictureData;
+            } else if (!sizeLimit) {
 
-		return null;
-	}
+                // 若专辑封面尺寸限定已关闭，则表明无需限制尺寸，直接返回图片数组
+                return originalAlbumPictureData;
+            }
+        }
+
+        return null;
+    }
 }

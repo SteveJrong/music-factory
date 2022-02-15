@@ -21,7 +21,6 @@ package com.stevejrong.music.factory.config.sub;
 import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 音频文件转换配置类
@@ -42,14 +41,19 @@ public class AudioFileFormatConversionConfig {
     private FFmpegComponentConfig ffmpegComponentConfig;
 
     /**
+     * 音频格式转换时所需动态链接库文件的操作系统支持配置
+     */
+    private ResourcesByOperatingSystemConfig formatConversionDllUtilsComponentConfig;
+
+    /**
      * 音频文件格式转换器集合
      */
     private List<IAudioFileConverter> audioFileConverters;
 
     /**
-     * 用户选择的音频文件格式转换器对象
+     * 用户选择的音频文件格式转换器对象集合
      */
-    private IAudioFileConverter currentAudioFileConverter;
+    private List<IAudioFileConverter> selectedAudioFileConverters;
 
     public String getConvertedAudioFileDirectory() {
         return convertedAudioFileDirectory;
@@ -75,11 +79,19 @@ public class AudioFileFormatConversionConfig {
         this.audioFileConverters = audioFileConverters;
     }
 
-    public IAudioFileConverter getCurrentAudioFileConverter() {
-        return currentAudioFileConverter;
+    public List<IAudioFileConverter> getSelectedAudioFileConverters() {
+        return selectedAudioFileConverters;
     }
 
-    public void setCurrentAudioFileConverter(IAudioFileConverter currentAudioFileConverter) {
-        this.currentAudioFileConverter = currentAudioFileConverter;
+    public void setSelectedAudioFileConverters(List<IAudioFileConverter> selectedAudioFileConverters) {
+        this.selectedAudioFileConverters = selectedAudioFileConverters;
+    }
+
+    public ResourcesByOperatingSystemConfig getFormatConversionDllUtilsComponentConfig() {
+        return formatConversionDllUtilsComponentConfig;
+    }
+
+    public void setFormatConversionDllUtilsComponentConfig(ResourcesByOperatingSystemConfig formatConversionDllUtilsComponentConfig) {
+        this.formatConversionDllUtilsComponentConfig = formatConversionDllUtilsComponentConfig;
     }
 }

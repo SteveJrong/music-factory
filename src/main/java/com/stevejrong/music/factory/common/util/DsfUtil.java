@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,37 +18,27 @@
  */
 package com.stevejrong.music.factory.common.util;
 
-import com.stevejrong.music.factory.common.enums.SupportOSEnum;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.dsf.Dsf;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
 
 /**
- * 操作系统/系统平台工具类
+ * DSF音频文件工具类
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public final class PlatformUtil {
+public final class DsfUtil {
 
     /**
-     * 获取当前操作系统类型
+     * 检查Dsf音频文件中是否存在ID3v2标签。若不存在，则返回一个ID3v23对象
      *
-     * @return 受支持的操作系统类型枚举
+     * @param dsfFile DSF音频文件对象
+     * @return ID3v2对象
      */
-    public static SupportOSEnum getOperatingSystemType() {
-        String osString = System.getProperty("os.name").toLowerCase();
-
-        if (osString.contains("linux")) {
-            return SupportOSEnum.LINUX;
-        }
-
-        if ((osString.indexOf("mac") >= 0 && osString.indexOf("os") > 0 && osString.indexOf("x") < 0)
-                || (osString.indexOf("mac") >= 0 && osString.indexOf("os") > 0 && osString.indexOf("x") > 0)) {
-            return SupportOSEnum.APPLE_MAC_OS;
-        }
-
-        if (osString.contains("windows")) {
-            return SupportOSEnum.MICROSOFT_WINDOWS_NT;
-        }
-
-        return null;
+    public static Tag checkID3v2Tag(AudioFile dsfFile) {
+        AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) dsfFile.getTag();
+        return null != id3v2Tag ? id3v2Tag : Dsf.createDefaultTag();
     }
 }

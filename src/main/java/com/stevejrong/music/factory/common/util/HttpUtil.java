@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -21,6 +21,8 @@ package com.stevejrong.music.factory.common.util;
 import com.stevejrong.music.factory.common.enums.BaseEnums;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -32,6 +34,8 @@ import java.util.Map;
  * @since 1.0
  */
 public final class HttpUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtil.class);
+
     private static final ThreadLocal<OkHttpClient> httpClientThreadLocal = new ThreadLocal<OkHttpClient>();
 
     /**
@@ -89,7 +93,8 @@ public final class HttpUtil {
             Response response = call.execute();
             result = response.body();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_getSync", "发起GET请求（内部方法）")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -130,7 +135,8 @@ public final class HttpUtil {
             Response response = call.execute();
             result = response.body();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_postSync", "发起同步POST请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -148,7 +154,8 @@ public final class HttpUtil {
         try {
             result = getSync(url, null, requestParams).string();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_get", "发起无请求头且带参的GET请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -166,7 +173,8 @@ public final class HttpUtil {
         try {
             result = getSync(url, null, requestParams).bytes();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_getImage", "发起无请求头、带参且用于获取URL图片为字节数组的GET请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -185,7 +193,8 @@ public final class HttpUtil {
         try {
             result = getSync(url, null, requestParams).bytes();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_getOfBytes", "发起无请求头且带参的GET请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -204,7 +213,8 @@ public final class HttpUtil {
         try {
             result = getSync(url, headerParams, requestParams).string();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_get", "发起有请求头的且带参的GET请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -223,7 +233,8 @@ public final class HttpUtil {
         try {
             result = postSync(url, httpRequestBodyDataType, null, bodyParamsString).string();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_post", "发起无请求头且带参的POST请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;
@@ -243,7 +254,8 @@ public final class HttpUtil {
         try {
             result = postSync(url, httpRequestBodyDataType, headerParams, bodyParamsString).string();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("httpUtil_post", "发起有请求头且带参的POST请求")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return result;

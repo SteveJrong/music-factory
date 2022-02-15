@@ -20,6 +20,8 @@ package com.stevejrong.music.factory.common.util;
 
 import com.google.common.base.Splitter;
 import com.stevejrong.music.factory.common.constants.BaseConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +39,8 @@ import java.util.regex.Pattern;
  * @since 1.0
  */
 public final class StringUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringUtil.class);
+
     public static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile(
             "[\\n`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]");
 
@@ -52,7 +56,8 @@ public final class StringUtil {
         try {
             encodeResult = URLEncoder.encode(words, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("stringUtil_urlEncode", "URL编码")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
         return encodeResult;
@@ -175,14 +180,16 @@ public final class StringUtil {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(LoggerUtil.builder().append("stringUtil_writeStringToTxt", "字符串内容写入文本文件")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
             }
         }
 
         try {
             Files.write(Paths.get(filePath.concat(File.separator).concat(fileName).concat(fileSuffix)), content.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("stringUtil_writeStringToTxt", "字符串内容写入文本文件")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
     }
 }

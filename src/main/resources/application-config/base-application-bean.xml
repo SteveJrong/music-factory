@@ -65,10 +65,18 @@
 √ 已成功补全{{audioFileCountForMetadataInfoCompletedSuccess}}个音频文件的元数据信息。&#x000A;
 × 未成功补全{{audioFileCountForMetadataInfoCompletedFailure}}个音频文件的元数据信息。"/>
 
-        <property name="selectFormatConverterMessage" value="
+        <property name="selectFormatConvertersMessage" value="
 &#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
 =============================== 选择音频文件格式转换器 =============================== &#x000A;
-根据[受支持的音频格式转换器列表]，输入对应的音频文件格式转换器编号，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+根据[受支持的音频格式转换器列表]：
+输入一个对应的音频文件格式转换器编号，并按[Enter]键应用设置（若需要应用多个音频文件转换器，则根据提示，多次重复以上步骤即可）。
+输入[Y]或[y]确认所有选择并结束操作。
+输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="selectFormatConverterSuccessMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 选择音频文件格式转换器成功 =============================== &#x000A;
+您选择了 [{{selectFormatConverterSuccessMessage}}] 音频文件转换器。&#x000A;"/>
     </bean>
 
     <!-- 系统配置 -->

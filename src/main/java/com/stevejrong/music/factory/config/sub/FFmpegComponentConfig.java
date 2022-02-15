@@ -18,7 +18,7 @@
  */
 package com.stevejrong.music.factory.config.sub;
 
-import com.stevejrong.music.factory.common.enums.SupportOSForFFmpegEnum;
+import com.stevejrong.music.factory.common.enums.SupportOSEnum;
 
 import java.util.Map;
 
@@ -35,28 +35,28 @@ public final class FFmpegComponentConfig {
      * <p>
      * Key - 操作系统类型；Value - 对应操作系统的FFmpeg文件位置
      */
-    private Map<SupportOSForFFmpegEnum, String> ffmpegPathsByOSType;
+    private Map<SupportOSEnum, String> ffmpegPathsByOSType;
 
     /**
      * ffprobe文件对于不同操作系统，存储的文件位置
      * <p>
      * Key - 操作系统类型；Value - 对应操作系统的ffprobe文件位置
      */
-    private Map<SupportOSForFFmpegEnum, String> ffmprobePathsByOSType;
+    private Map<SupportOSEnum, String> ffmprobePathsByOSType;
 
-    public Map<SupportOSForFFmpegEnum, String> getFfmpegPathsByOSType() {
+    public Map<SupportOSEnum, String> getFfmpegPathsByOSType() {
         return ffmpegPathsByOSType;
     }
 
-    public void setFfmpegPathsByOSType(Map<SupportOSForFFmpegEnum, String> ffmpegPathsByOSType) {
+    public void setFfmpegPathsByOSType(Map<SupportOSEnum, String> ffmpegPathsByOSType) {
         this.ffmpegPathsByOSType = ffmpegPathsByOSType;
     }
 
-    public Map<SupportOSForFFmpegEnum, String> getFfmprobePathsByOSType() {
+    public Map<SupportOSEnum, String> getFfmprobePathsByOSType() {
         return ffmprobePathsByOSType;
     }
 
-    public void setFfmprobePathsByOSType(Map<SupportOSForFFmpegEnum, String> ffmprobePathsByOSType) {
+    public void setFfmprobePathsByOSType(Map<SupportOSEnum, String> ffmprobePathsByOSType) {
         this.ffmprobePathsByOSType = ffmprobePathsByOSType;
     }
 }

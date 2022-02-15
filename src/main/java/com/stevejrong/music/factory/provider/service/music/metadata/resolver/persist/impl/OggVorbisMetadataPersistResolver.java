@@ -56,7 +56,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setSongTitle(String songTitle) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalSongTitle = super.getMetadataQueryResolver().getSongTitle(getAudioFile());
+        String originalSongTitle = super.getMetadataQueryResolver().getSongTitle();
 
         if (StringUtils.isNotBlank(songTitle) && StringUtils.isBlank(originalSongTitle)) {
             // 当标签中没有歌曲名称时，需设置标签中的歌曲名称信息
@@ -67,7 +67,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setSongArtist(String songArtist) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalSongArtist = super.getMetadataQueryResolver().getSongArtist(getAudioFile());
+        String originalSongArtist = super.getMetadataQueryResolver().getSongArtist();
 
         if (StringUtils.isNotBlank(songArtist) && StringUtils.isBlank(originalSongArtist)) {
             // 当标签中没有歌曲艺术家时，需设置标签中的歌曲艺术家信息
@@ -78,7 +78,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setAlbumName(String albumName) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalAlbumName = super.getMetadataQueryResolver().getAlbumName(getAudioFile());
+        String originalAlbumName = super.getMetadataQueryResolver().getAlbumName();
 
         if (StringUtils.isNotBlank(albumName) && StringUtils.isBlank(originalAlbumName)) {
             // 当标签中没有歌曲所属的专辑名称时，需设置标签中的歌曲所属的专辑名称信息
@@ -95,7 +95,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
             albumPictureByteArray = FileUtil.getDefaultAlbumPictureByteArray();
         }
 
-        byte[] originalAlbumPictureByteArray = super.getMetadataQueryResolver().getAlbumPicture(getAudioFile(), true);
+        byte[] originalAlbumPictureByteArray = super.getMetadataQueryResolver().getAlbumPicture(true);
 
         if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
             // 先删除专辑封面属性
@@ -111,7 +111,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setSongLyrics(String songLyrics) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalSongLyrics = super.getMetadataQueryResolver().getSongLyrics(getAudioFile());
+        String originalSongLyrics = super.getMetadataQueryResolver().getSongLyrics();
 
         if (StringUtils.isNotBlank(songLyrics) && StringUtils.isBlank(originalSongLyrics)) {
             // 当标签中没有歌曲内嵌歌词时，需设置标签中的歌曲内嵌歌词信息
@@ -122,7 +122,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setAlbumArtist(String albumArtist) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalAlbumArtist = super.getMetadataQueryResolver().getAlbumArtist(getAudioFile());
+        String originalAlbumArtist = super.getMetadataQueryResolver().getAlbumArtist();
 
         if (StringUtils.isNotBlank(albumArtist) && StringUtils.isBlank(originalAlbumArtist)) {
             // 当标签中没有歌曲所属专辑的艺术家时，需设置标签中的歌曲所属专辑的艺术家信息
@@ -133,7 +133,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setAlbumPublishDate(LocalDate albumPublishDate) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        LocalDate originalAlbumPublishDate = super.getMetadataQueryResolver().getAlbumPublishDate(getAudioFile());
+        LocalDate originalAlbumPublishDate = super.getMetadataQueryResolver().getAlbumPublishDate();
 
         if (null != albumPublishDate && null == originalAlbumPublishDate) {
             // 当标签中没有歌曲所属专辑的发布时间时，需设置标签中的歌曲所属专辑的发布时间信息
@@ -145,7 +145,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setAlbumDescription(String albumDescription) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalAlbumDescription = super.getMetadataQueryResolver().getAlbumDescription(getAudioFile());
+        String originalAlbumDescription = super.getMetadataQueryResolver().getAlbumDescription();
 
         if (StringUtils.isNotBlank(albumDescription) && StringUtils.isBlank(originalAlbumDescription)) {
             // 当标签中没有歌曲所属专辑的描述时，需设置标签中的歌曲所属专辑的描述信息
@@ -156,7 +156,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setAlbumLanguage(String albumLanguage) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalAlbumLanguage = super.getMetadataQueryResolver().getAlbumLanguage(getAudioFile());
+        String originalAlbumLanguage = super.getMetadataQueryResolver().getAlbumLanguage();
 
         if (StringUtils.isNotBlank(albumLanguage) && StringUtils.isBlank(originalAlbumLanguage)) {
             // 当标签中没有歌曲所属专辑的语言类型时，需设置标签中的歌曲所属专辑的语言类型信息
@@ -167,7 +167,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     @Override
     public void setAlbumCopyright(String albumCopyright) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
-        String originalAlbumCopyright = super.getMetadataQueryResolver().getAlbumCopyright(getAudioFile());
+        String originalAlbumCopyright = super.getMetadataQueryResolver().getAlbumCopyright();
 
         if (StringUtils.isNotBlank(albumCopyright) && StringUtils.isBlank(originalAlbumCopyright)) {
             // 当标签中没有歌曲所属专辑的语言类型时，需设置标签中的歌曲所属专辑的语言类型信息

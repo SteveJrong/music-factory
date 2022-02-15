@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,9 +18,12 @@
  */
 package com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist;
 
+import com.stevejrong.music.factory.common.constants.BaseConstants;
+import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.dsf.DsfFileWriter;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.FieldKey;
@@ -30,16 +33,22 @@ import org.jaudiotagger.tag.id3.AbstractID3v1Tag;
 import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
 import org.jaudiotagger.tag.id3.ID3v23Tag;
 import org.jaudiotagger.tag.images.Artwork;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
 /**
- * Service Interface - 文件元数据存储器接口
+ * 文件元数据存储器接口
  * <p>
  * 针对不同的音频文件类型，去对应实现不同的元数据存储器，保存元数据信息
+ *
+ * @author Steve Jrong
+ * @since 1.0
  */
 public interface IAudioFileMetadataPersistResolver {
+    Logger LOGGER = LoggerFactory.getLogger(IAudioFileMetadataPersistResolver.class);
 
     /**
      * 设置音频文件对象
@@ -126,9 +135,9 @@ public interface IAudioFileMetadataPersistResolver {
     void setAlbumCopyright(String albumCopyright);
 
     /**
-     * 设置专辑封面并应用
+     * 设置专辑封面图片并应用
      *
-     * @param artwork   专辑封面对象
+     * @param artwork   专辑封面图片对象
      * @param audioFile 音频文件对象
      */
     default void setFieldAndCommit(Tag tag, Artwork artwork, AudioFile audioFile) {
@@ -141,7 +150,8 @@ public interface IAudioFileMetadataPersistResolver {
                 AudioFileIO.write(audioFile);
             }
         } catch (CannotWriteException | IOException | TagException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("iAudioFileMetadataPersistResolver_setFieldAndCommit", "设置专辑封面并应用")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
     }
 
@@ -170,12 +180,21 @@ public interface IAudioFileMetadataPersistResolver {
             }
 
             if (audioFile instanceof MP3File) {
+
                 ((MP3File) audioFile).save();
+            } else if (BaseConstants.FILE_SUFFIX_DSF.equals(audioFile.getExt())) {
+
+                // 处理DSF音频文件的元数据信息保存
+                audioFile.setTag(tag);
+                new DsfFileWriter().write(audioFile);
             } else {
+
+                // 处理除MP3和DSF音频文件以外的其他音频文件的元数据信息保存
                 AudioFileIO.write(audioFile);
             }
         } catch (TagException | CannotWriteException | IOException e) {
-            e.printStackTrace();
+            LOGGER.error(LoggerUtil.builder().append("iAudioFileMetadataPersistResolver_setFieldAndCommit", "设置属性并应用")
+                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
     }
 }
