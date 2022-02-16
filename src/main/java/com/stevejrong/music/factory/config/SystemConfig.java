@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -18,7 +18,11 @@
  */
 package com.stevejrong.music.factory.config;
 
-import com.stevejrong.music.factory.config.sub.*;
+
+import com.stevejrong.music.factory.config.sub.AnalysingAndComplementsForAudioFileConfig;
+import com.stevejrong.music.factory.config.sub.BaseConfig;
+import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
+import com.stevejrong.music.factory.config.sub.AudioFileFormatConversionConfig;
 
 import java.util.List;
 

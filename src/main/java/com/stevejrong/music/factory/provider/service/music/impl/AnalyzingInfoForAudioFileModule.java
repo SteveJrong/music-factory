@@ -19,7 +19,7 @@
 package com.stevejrong.music.factory.provider.service.music.impl;
 
 import com.google.common.collect.Lists;
-import com.stevejrong.music.factory.common.constants.BaseConstants;
+import com.stevejrong.music.factory.common.util.FileUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.common.util.SpringBeanUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
@@ -35,10 +35,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.TagException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -64,21 +61,33 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
     @Override
     public List<AnalyzingForAudioFileModuleBo> doAction() {
         // 需要做信息补全的音频文件信息集合
-        List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = Lists.newArrayList();
+        List<AnalyzingForAudioFileModuleBo> needComplementsMusicList = Lists.newCopyOnWriteArrayList();
 
         try {
-            Files.newDirectoryStream(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()),
-                            // TODO 下一版要解决灵活读取
-                            path -> path.toString().endsWith(BaseConstants.FILE_SUFFIX_FLAC)
-                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_MP3)
-                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_OGG)
-                                    || path.toString().endsWith(BaseConstants.FILE_SUFFIX_DSF))
+            // 读取原始音频文件目录下，所有受支持的音频文件
+            Files.list(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()))
+                    .filter(path -> {
+                                if (Files.isDirectory(path)) {
+                                    // 读取目录下的文件时，排除子目录
+                                    return false;
+                                }
+
+                                for (Map.Entry<String, List> item : super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().entrySet()) {
+                                    if (item.getKey().equals(FileUtil.getFileSuffixWithoutPoint(path.toAbsolutePath().toString()))) {
+                                        return true;
+                                    }
+                                }
+
+                                return false;
+                            }
+                    )
                     .forEach(file -> {
                         AudioFile audioFile = null;
+
                         try {
                             audioFile = AudioFileIO.read(new File(file.toAbsolutePath().toString()));
-                        } catch (CannotReadException | ReadOnlyFileException | InvalidAudioFrameException | TagException | IOException e) {
-                            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析")
+                        } catch (Exception e) {
+                            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析失败")
                                     .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
                         }
 

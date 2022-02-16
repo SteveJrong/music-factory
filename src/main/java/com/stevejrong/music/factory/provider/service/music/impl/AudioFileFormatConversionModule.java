@@ -49,9 +49,15 @@ public class AudioFileFormatConversionModule extends AbstractMusicFactoryModule 
         FormatConvertMaster formatConvertMaster = new FormatConvertMaster(HardwareUtil.getAllCoresCountByCpu());
 
         try {
-            // 读取原始文件目录下的所有音频文件，依次进行转换
+            // 读取原始音频文件目录下，所有受支持的音频文件
             Files.list(Paths.get(super.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory()))
                     .filter(path -> {
+                                if (Files.isDirectory(path)) {
+                                    // 读取目录下的文件时，排除子目录
+                                    return false;
+                                }
+
+                                // 读取目录下的音频文件时，仅读取受支持的音频文件格式
                                 for (IAudioFileConverter audioFileConverter : super.getSystemConfig().getAudioFileFormatConversionConfig().getSelectedAudioFileConverters()) {
                                     if (audioFileConverter.sourceFileSuffix().equals(FileUtil.getFileSuffixWithPoint(path.toAbsolutePath().toString()))) {
                                         return true;

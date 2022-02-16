@@ -28,6 +28,7 @@ import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.impl.DSF_to_OGG_VORBIS_Converter;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.impl.FLAC_to_OGG_VORBIS_Converter;
+import com.stevejrong.music.factory.provider.service.music.impl.AnalyzingInfoForAudioFileModule;
 import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
@@ -598,5 +599,16 @@ public class TestCase {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void anaysingAudioFileTest() {
+        AnalyzingInfoForAudioFileModule analyzingInfoForAudioFileModule = SpringBeanUtil.getBean("analyzingInfoForAudioFileModule");
+        analyzingInfoForAudioFileModule.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/old");
+        List<AnalyzingForAudioFileModuleBo> analyzingForAudioFileModuleBos = analyzingInfoForAudioFileModule.doAction();
+
+        ComplementsInfoForAudioFileModule complementsInfoForAudioFileModule = SpringBeanUtil.getBean("complementsInfoForAudioFileModule");
+        complementsInfoForAudioFileModule.setNeedComplementsAudioFileList(analyzingForAudioFileModuleBos);
+        complementsInfoForAudioFileModule.doAction();
     }
 }

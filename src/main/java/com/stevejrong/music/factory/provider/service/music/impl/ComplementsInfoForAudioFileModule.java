@@ -19,10 +19,7 @@
 package com.stevejrong.music.factory.provider.service.music.impl;
 
 import com.google.common.collect.Lists;
-import com.stevejrong.music.factory.common.util.FileUtil;
-import com.stevejrong.music.factory.common.util.LoggerUtil;
-import com.stevejrong.music.factory.common.util.SpringBeanUtil;
-import com.stevejrong.music.factory.common.util.StringUtil;
+import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
 import com.stevejrong.music.factory.spi.music.bean.partner.AbstractPartnerSongInfoFilterCriteriaBean;
@@ -91,13 +88,14 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
     @Override
     public Object doAction() {
         // 音频文件信息补全成功的歌曲信息集合
-        List<ComplementedMetadataAudioFileBo> complementSuccessAudioFileList = Lists.newArrayList();
+        List<ComplementedMetadataAudioFileBo> complementSuccessAudioFileList = Lists.newCopyOnWriteArrayList();
         // 音频文件信息补全失败的歌曲信息集合
-        List<ComplementedMetadataAudioFileBo> complementFailureAudioFileList = Lists.newArrayList();
+        List<ComplementedMetadataAudioFileBo> complementFailureAudioFileList = Lists.newCopyOnWriteArrayList();
 
-        needComplementsAudioFileList.forEach(item -> {
+        this.getNeedComplementsAudioFileList().forEach(item -> {
             // 读取需要补全信息的音频文件
             AudioFile audioFile = null;
+
             try {
                 audioFile = AudioFileIO.read(FileUtils.getFile(item.getAudioFilePath()));
             } catch (CannotReadException | ReadOnlyFileException | TagException | IOException | InvalidAudioFrameException e) {
@@ -108,8 +106,7 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "开始补全音频文件元数据信息")
                     .append("filePath", item.getAudioFilePath()).toString());
 
-            ComplementedMetadataAudioFileBo complementedMetadataAudioFileBo = execute(item, audioFile);
-
+            ComplementedMetadataAudioFileBo complementedMetadataAudioFileBo = this.execute(item, audioFile);
             if (null != complementedMetadataAudioFileBo && complementedMetadataAudioFileBo.getType() == 1) {
                 complementSuccessAudioFileList.add(complementedMetadataAudioFileBo);
             } else {
@@ -129,10 +126,10 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
      */
     public ComplementedMetadataAudioFileBo execute(AnalyzingForAudioFileModuleBo analyzingForAudioFileModuleBo, AudioFile audioFile) {
         // 获取音频文件的正确元数据信息
-        PartnerSongInfoBo partnerSongInfoBo = getMetadata(analyzingForAudioFileModuleBo, audioFile);
+        PartnerSongInfoBo partnerSongInfoBo = this.getMetadata(analyzingForAudioFileModuleBo, audioFile);
 
         ComplementedMetadataAudioFileBo complementedMetadataMusicFileBo;
-        if (null == partnerSongInfoBo) {
+        if (BeanUtil.checkAllFieldsIsNullValue(partnerSongInfoBo)) {
             // 元数据基础信息构建为空，一般是歌曲没有搜索到，返回补全失败的歌曲信息
             complementedMetadataMusicFileBo = new ComplementedMetadataAudioFileBo();
             complementedMetadataMusicFileBo.setFileAbsolutePath(analyzingForAudioFileModuleBo.getAudioFilePath());
@@ -151,7 +148,7 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
         }
 
         // 保存元数据信息
-        persistMetadata(audioFile, partnerSongInfoBo);
+        this.persistMetadata(audioFile, partnerSongInfoBo);
 
         complementedMetadataMusicFileBo = new ComplementedMetadataAudioFileBo();
         complementedMetadataMusicFileBo.setFileAbsolutePath(analyzingForAudioFileModuleBo.getAudioFilePath());
