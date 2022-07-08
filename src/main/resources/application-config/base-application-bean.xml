@@ -22,11 +22,16 @@
 ------------------------------- 当前分析和补全音乐信息过滤器配置信息 ------------------------------- &#x000A;{{currentAnalysingAndComplementsFilterConfigInfo}}&#x000A;
 ------------------------------- 当前音频文件格式转换器配置信息 ------------------------------- &#x000A;{{currentFormatConverterConfigInfo}}&#x000A;
 ------------------------------- 受支持的音频格式转换器列表 ------------------------------- &#x000A;{{supportConvertFormatsInfoByFormatConversion}}&#x000A;
+※ 音频文件元数据信息补全：&#x000A;
 [1] 自定义原始音频文件的存放位置。&#x000A;
 [2] 分析指定目录下的音频文件，并补全音频文件元数据信息。&#x000A;
+※ 音频文件格式转换：&#x000A;
 [3] 自定义转换格式后的音频文件存放位置。&#x000A;
 [4] 选择音频文件格式转换器。&#x000A;
 [5] 批量转换指定目录下的音频文件。&#x000A;
+※ 音频文件专辑封面压缩：&#x000A;
+[6] 自定义专辑封面压缩后的音频文件存放位置。&#x000A;
+[7] 批量压缩指定目录下音频文件的专辑封面。&#x000A;
 [0] 退出程序。&#x000A;&#x000A;
 输入上述数字序号来执行任务：_"/>
 
@@ -77,6 +82,17 @@
 &#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
 =============================== 选择音频文件格式转换器成功 =============================== &#x000A;
 您选择了 [{{selectFormatConverterSuccessMessage}}] 音频文件转换器。&#x000A;"/>
+
+        <property name="customCompressedAudioFileDirectoryMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义专辑封面压缩后的音频文件存放目录 =============================== &#x000A;
+当前转换格式后的音频文件存放目录为：{{defaultCompressedAudioFileDirectory}}。&#x000A;
+将专辑封面压缩后的音频文件文件夹直接拖动或从地址栏粘贴至此处，并按[Enter]键应用设置，输入[N]或[n]以退出当前选项：_"/>
+
+        <property name="customCompressedAudioFileDirectorySuccessMessage" value="
+&#x000A;&#x000A; =============================== 欢迎使用Music Factory =============================== &#x000A;
+=============================== 自定义专辑封面压缩后的音频文件存放目录成功 =============================== &#x000A;
+专辑封面压缩后的音频文件存放目录，已由{{oldCompressedAudioFileDirectory}}成功地更改为了{{newCompressedAudioFileDirectory}}。&#x000A;"/>
     </bean>
 
     <!-- 系统配置 -->
@@ -90,6 +106,7 @@
         </property>
         <property name="analysingAndComplementsForAudioFileConfig" ref="analysingAndComplementsForAudioFileConfig"/>
         <property name="audioFileFormatConversionConfig" ref="audioFileFormatConversionConfig"/>
+        <property name="albumPictureCompressionConfig" ref="albumPictureCompressionConfig"/>
     </bean>
 
     <!-- 用于支持项目读取Yml/Yaml配置文件 -->

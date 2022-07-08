@@ -23,8 +23,8 @@ import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.util.AlbumPictureUtil;
 import com.stevejrong.music.factory.common.util.FFmpegUtil;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FFmpegBuilderBo;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractAudioFileConverterUsePipeInDllFile;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.AbstractAudioFileConverterUsePipeInDllFile;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.IAudioFileConverter;
 
 import java.io.File;
 import java.util.Map;
@@ -54,14 +54,15 @@ public class DSF_to_OGG_VORBIS_Converter extends AbstractAudioFileConverterUsePi
 
     @Override
     protected Map<String, String> addReplaceStringsMapOfExecuteCommand(FFmpegBuilderBo ffmpegBuilderBo) {
-        Map<String, String> replaceStringsMap = Maps.newHashMap();
-        replaceStringsMap.put("@ffmpegPath", FFmpegUtil.getFfmpegFilePath());
-        replaceStringsMap.put("@sourceFilePath", ffmpegBuilderBo.getSourcePath());
-        replaceStringsMap.put("@metadata_block_picture", AlbumPictureUtil.buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis(
+        Map<String, String> replaceStringsMap = Maps.newConcurrentMap();
+        replaceStringsMap.put(BaseConstants.STRING_REPLACE_PREFIX_CHAR + BaseConstants.FFMPEG_PATH, FFmpegUtil.getFfmpegFilePath());
+        replaceStringsMap.put(BaseConstants.STRING_REPLACE_PREFIX_CHAR + BaseConstants.SOURCE_FILE_PATH, ffmpegBuilderBo.getSourcePath());
+        replaceStringsMap.put(BaseConstants.STRING_REPLACE_PREFIX_CHAR + BaseConstants.METADATA_BLOCK_PICTURE, AlbumPictureUtil.buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis(
                 AlbumPictureUtil.albumPictureCompressByAlbumPictureByteArray(
-                        500, 500,
-                        super.getAlbumPictureByteArray(ffmpegBuilderBo.getSourcePath()))));
-        replaceStringsMap.put("@targetFilePath", ffmpegBuilderBo.getTargetDirectory() + File.separatorChar + ffmpegBuilderBo.getTargetFileName() + this.targetFileSuffix());
+                        super.getSystemConfig().getAlbumPictureCompressionConfig().getCompressPixelValue(),
+                        super.getSystemConfig().getAlbumPictureCompressionConfig().getCompressPixelValue(),
+                        AlbumPictureUtil.getAlbumPictureByteArray(super.getSystemConfig(), ffmpegBuilderBo.getSourcePath()))));
+        replaceStringsMap.put(BaseConstants.STRING_REPLACE_PREFIX_CHAR + BaseConstants.TARGET_FILE_PATH, ffmpegBuilderBo.getTargetDirectory() + File.separatorChar + ffmpegBuilderBo.getTargetFileName() + this.targetFileSuffix());
 
         return replaceStringsMap;
     }

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.spi.service.music.formatConversion;
+package com.stevejrong.music.factory.spi.service.music.parallel.formatConversion;
 
 import com.stevejrong.music.factory.common.enums.SupportOSEnum;
 import com.stevejrong.music.factory.common.util.FileUtil;
@@ -25,6 +25,7 @@ import com.stevejrong.music.factory.common.util.PlatformUtil;
 import com.stevejrong.music.factory.common.util.SpringBeanUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FFmpegBuilderBo;
+import com.stevejrong.music.factory.spi.music.bo.parallel.formatConversion.AudioFileFormatConversionTaskBo;
 import com.sun.jna.Native;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import org.slf4j.Logger;
@@ -84,7 +85,11 @@ public abstract class AbstractAudioFileConverterUsePipeInDllFile extends Abstrac
     }
 
     @Override
-    public boolean convert(String sourcePath, String targetDirectory, String targetFileName) {
+    public boolean execute(AudioFileFormatConversionTaskBo paramBo) {
+        String sourcePath = paramBo.getSourcePath();
+        String targetDirectory = paramBo.getTargetDirectory();
+        String targetFileName = paramBo.getSourceFileName();
+
         FFmpegBuilderBo fFmpegBuilderBo = new FFmpegBuilderBo.Builder(sourcePath, targetDirectory, targetFileName, this.targetFileSuffix()).build();
         Map<String, String> replaceStringsMap = this.addReplaceStringsMapOfExecuteCommand(fFmpegBuilderBo);
 
@@ -94,13 +99,41 @@ public abstract class AbstractAudioFileConverterUsePipeInDllFile extends Abstrac
         }
 
         String dynamicLinkLibrariesFilePath = this.getDynamicLinkLibrariesFilePath();
-        IFormatConversionCommandExecutor formatConversionCommandExecutor = Native.loadLibrary(dynamicLinkLibrariesFilePath, IFormatConversionCommandExecutor.class);
+        IFormatConversionCommandExecutor formatConversionCommandExecutor = null;
+        try {
+            formatConversionCommandExecutor = Native.loadLibrary(dynamicLinkLibrariesFilePath, IFormatConversionCommandExecutor.class);
+        } catch (Exception e) {
+            LOGGER.error(LoggerUtil.builder().append("abstractAudioFileConverterUsePipeInDllFile_execute", "加载动态链接库异常")
+                    .append("exception", e).append("exceptionMsg", e.getMessage())
+                    .append("dynamicLinkLibrariesFilePath", dynamicLinkLibrariesFilePath)
+                    .append("sourcePath", sourcePath)
+                    .append("targetDirectory", targetDirectory)
+                    .append("targetFileName", targetFileName)
+                    .toString());
 
-        int result = formatConversionCommandExecutor.execute(currentExecuteCommandString);
+            return false;
+        }
 
-        LOGGER.info(LoggerUtil.builder().append("abstractAudioFileConverterUsePipeInDllFile_convert", "成功地转换了音频文件")
+        int result = 0;
+        try {
+            result = formatConversionCommandExecutor.execute(currentExecuteCommandString);
+        } catch (Exception e) {
+            LOGGER.error(LoggerUtil.builder().append("abstractAudioFileConverterUsePipeInDllFile_execute", "执行动态链接库异常")
+                    .append("exception", e).append("exceptionMsg", e.getMessage())
+                    .append("currentExecuteCommandString", currentExecuteCommandString)
+                    .append("dynamicLinkLibrariesFilePath", dynamicLinkLibrariesFilePath)
+                    .append("result", result)
+                    .append("sourcePath", sourcePath)
+                    .append("targetDirectory", targetDirectory)
+                    .append("targetFileName", targetFileName)
+                    .toString());
+
+            return false;
+        }
+
+        LOGGER.info(LoggerUtil.builder().append("abstractAudioFileConverterUsePipeInDllFile_execute", "音频文件格式转换成功")
                 .append("result", result)
-                .append("sourcePath", fFmpegBuilderBo.getSourcePath())
+                .append("sourcePath", sourcePath)
                 .append("targetPath", fFmpegBuilderBo.getTargetDirectory() + File.separatorChar + fFmpegBuilderBo.getTargetFileName() + fFmpegBuilderBo.getTargetFileSuffix())
                 .toString());
 

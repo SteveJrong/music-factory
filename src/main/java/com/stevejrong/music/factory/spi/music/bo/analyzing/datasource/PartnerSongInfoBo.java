@@ -20,12 +20,15 @@ package com.stevejrong.music.factory.spi.music.bo.analyzing.datasource;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 /**
+ * 第三方歌曲信息Bo
+ *
  * @author Steve Jrong
  * @since 1.0
  */
-public class PartnerSongInfoBo implements Serializable {
+public final class PartnerSongInfoBo implements Serializable {
     private static final long serialVersionUID = 2000901512499577020L;
 
     /**
@@ -222,5 +225,21 @@ public class PartnerSongInfoBo implements Serializable {
 
     public String getAlbumCopyright() {
         return albumCopyright;
+    }
+
+    @Override
+    public String toString() {
+        return "PartnerSongInfoBo{" +
+                "songTitle='" + songTitle + '\'' +
+                ", songArtist='" + songArtist + '\'' +
+                ", albumName='" + albumName + '\'' +
+                ", albumPicture=" + Arrays.toString(albumPicture) +
+                ", songLyrics='" + songLyrics + '\'' +
+                ", albumArtist='" + albumArtist + '\'' +
+                ", albumPublishDate=" + albumPublishDate +
+                ", albumDescription='" + albumDescription + '\'' +
+                ", albumLanguage='" + albumLanguage + '\'' +
+                ", albumCopyright='" + albumCopyright + '\'' +
+                '}';
     }
 }

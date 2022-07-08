@@ -20,8 +20,8 @@ package com.stevejrong.music.factory.provider.service.music.formatConversion.imp
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FFmpegBuilderBo;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.AbstractAudioFileConverterUseFFmpegWrapper;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.AbstractAudioFileConverterUseFFmpegWrapper;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.IAudioFileConverter;
 
 /**
  * FLAC音频编码格式 转换为 Ogg Vorbis音频编码格式 音频转换器

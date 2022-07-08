@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -21,6 +21,8 @@ package com.stevejrong.music.factory.spi.music.bo;
 import java.io.Serializable;
 
 /**
+ * 音频文件元数据信息补全Bo
+ *
  * @author Steve Jrong
  * @since 1.0
  */
@@ -89,5 +91,15 @@ public class ComplementedMetadataAudioFileBo implements Serializable {
         this.songTitle = songTitle;
         this.songArtist = songArtist;
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "ComplementedMetadataAudioFileBo{" +
+                "fileAbsolutePath='" + fileAbsolutePath + '\'' +
+                ", songTitle='" + songTitle + '\'' +
+                ", songArtist='" + songArtist + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

@@ -25,7 +25,7 @@ import java.util.List;
  * @author Steve Jrong
  * @since 1.0
  */
-public class QQMusicInfoSongVo implements Serializable {
+public final class QQMusicInfoSongVo implements Serializable {
     private static final long serialVersionUID = -5075105483046176264L;
 
     /**

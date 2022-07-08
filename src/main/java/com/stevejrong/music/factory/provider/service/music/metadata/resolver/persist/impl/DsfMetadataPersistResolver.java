@@ -28,7 +28,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
@@ -97,7 +96,7 @@ public class DsfMetadataPersistResolver extends AbstractAudioFileMetadataPersist
     }
 
     @Override
-    public void setAlbumPicture(byte[] albumPictureByteArray) {
+    public void setAlbumPicture(byte[] albumPictureByteArray, boolean forceMode) {
         AbstractID3v2Tag id3v2Tag = (AbstractID3v2Tag) DsfUtil.checkID3v2Tag(super.getAudioFile());
 
         if (ArrayUtils.isEmpty(albumPictureByteArray)) {
@@ -113,7 +112,7 @@ public class DsfMetadataPersistResolver extends AbstractAudioFileMetadataPersist
             originalAlbumPicture = ArrayUtil.getBufferedImageByPictureByteArray(originalAlbumPictureByteArray);
         }
 
-        if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)
+        if (forceMode || ArrayUtils.isEmpty(originalAlbumPictureByteArray)
                 || (null != originalAlbumPicture && originalAlbumPicture.getWidth() * originalAlbumPicture.getHeight() < 500 * 500)) {
             // 先删除专辑封面属性
             id3v2Tag.deleteField(FieldKey.COVER_ART);

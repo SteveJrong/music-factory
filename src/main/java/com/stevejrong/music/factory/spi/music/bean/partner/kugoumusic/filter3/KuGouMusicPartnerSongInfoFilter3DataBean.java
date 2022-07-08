@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter3DataBean implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter3DataBean implements Serializable {
     private static final long serialVersionUID = -3766252183920833520L;
 
     private String album_id;
@@ -39,5 +39,12 @@ public class KuGouMusicPartnerSongInfoFilter3DataBean implements Serializable {
 
     public KuGouMusicPartnerSongInfoFilter3DataBean(String album_id) {
         this.album_id = album_id;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter3DataBean{" +
+                "album_id='" + album_id + '\'' +
+                '}';
     }
 }

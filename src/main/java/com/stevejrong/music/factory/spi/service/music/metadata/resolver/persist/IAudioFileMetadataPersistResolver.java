@@ -89,8 +89,9 @@ public interface IAudioFileMetadataPersistResolver {
      * 设置音频文件元数据中歌曲所属专辑的封面
      *
      * @param albumPictureByteArray 歌曲所属专辑的封面
+     * @param forceMode             是否开启强制模式。将其设为true后，在保存音频文件的专辑封面图片前，不再对原音频文件中的专辑封面进行检查，而是直接强制设置进去。
      */
-    void setAlbumPicture(byte[] albumPictureByteArray);
+    void setAlbumPicture(byte[] albumPictureByteArray, boolean forceMode);
 
     /**
      * 设置音频文件元数据中的歌曲内嵌歌词

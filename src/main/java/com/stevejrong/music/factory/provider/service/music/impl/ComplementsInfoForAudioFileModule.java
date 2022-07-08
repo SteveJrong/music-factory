@@ -99,11 +99,11 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             try {
                 audioFile = AudioFileIO.read(FileUtils.getFile(item.getAudioFilePath()));
             } catch (CannotReadException | ReadOnlyFileException | TagException | IOException | InvalidAudioFrameException e) {
-                LOGGER.error(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "音频文件信息补全")
-                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+                LOGGER.error(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "音频文件读取异常")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).append("audioFilePath", item.getAudioFilePath()).toString());
             }
 
-            LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "开始补全音频文件元数据信息")
+            LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_doAction", "补全音频文件元数据信息")
                     .append("filePath", item.getAudioFilePath()).toString());
 
             ComplementedMetadataAudioFileBo complementedMetadataAudioFileBo = this.execute(item, audioFile);
@@ -137,9 +137,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             complementedMetadataMusicFileBo.setSongArtist(analyzingForAudioFileModuleBo.getSongArtist());
             complementedMetadataMusicFileBo.setType(0);
 
-            LOGGER.warn(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "补全音频文件元数据信息失败")
-                    .append("warnMsg", "歌曲在在线曲库中未搜索到")
-                    .append("filePath", analyzingForAudioFileModuleBo.getAudioFilePath())
+            LOGGER.warn(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "未在在线曲库中搜索到此歌曲")
+                    .append("audioFilePath", analyzingForAudioFileModuleBo.getAudioFilePath())
                     .append("songTitle", analyzingForAudioFileModuleBo.getSongTitle())
                     .append("songArtist", analyzingForAudioFileModuleBo.getSongArtist())
                     .toString());
@@ -156,10 +155,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
         complementedMetadataMusicFileBo.setSongArtist(analyzingForAudioFileModuleBo.getSongArtist());
         complementedMetadataMusicFileBo.setType(1);
 
-        LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "成功地补全了音频文件的元数据信息")
+        LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_execute", "补全了音频文件的元数据信息成功")
                 .append("filePath", analyzingForAudioFileModuleBo.getAudioFilePath())
-                .append("songTitle", analyzingForAudioFileModuleBo.getSongTitle())
-                .append("songArtist", analyzingForAudioFileModuleBo.getSongArtist())
                 .toString());
 
         return complementedMetadataMusicFileBo;
@@ -189,7 +186,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
             partnerSongInfoFilterCriteriaBean.setSearchKeywords(FileUtil.getSearchSongKeywordsByAudioFileName(item.getAudioFileName()));
 
             LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_getMetadata")
-                    .append("根据音频文件获取搜索关键字").append("searchSongKeywords", partnerSongInfoFilterCriteriaBean.getSearchKeywords())
+                    .append("根据音频文件名称获取搜索关键字").append("searchSongKeywords", partnerSongInfoFilterCriteriaBean.getSearchKeywords())
+                    .append("audioFilePath", audioFile.getFile().getAbsolutePath())
                     .toString());
         } else {
             // 否则根据音频文件中的元数据信息来获取搜索歌曲时的两个搜索关键字
@@ -210,7 +208,8 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
                     + " " + StringUtil.removeSpecialChars(songArtist));
 
             LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_getMetadata")
-                    .append("根据音频文件元数据获取搜索关键字").append("searchSongKeywords", partnerSongInfoFilterCriteriaBean.getSearchKeywords())
+                    .append("根据音频文件内的元数据获取搜索关键字").append("searchSongKeywords", partnerSongInfoFilterCriteriaBean.getSearchKeywords())
+                    .append("audioFilePath", audioFile.getFile().getAbsolutePath())
                     .toString());
         }
 
@@ -218,7 +217,10 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
         List<FiltratedResultBo> filtratedResultBoList = filterChain.filtrateParams(partnerSongInfoDataSourceActiveConfigName, partnerSongInfoFilterCriteriaBean);
 
         LOGGER.info(LoggerUtil.builder().append("complementsInfoForAudioFileModule_getMetadata")
-                .append("filtratedResultBoList", filtratedResultBoList).toString());
+                .append("filtratedResultBoList", filtratedResultBoList)
+                .append("searchSongKeywords", partnerSongInfoFilterCriteriaBean.getSearchKeywords())
+                .append("audioFilePath", audioFile.getFile().getAbsolutePath())
+                .toString());
 
         IPartnerSongInfoResolver partnerSongInfoResolver = ((FilterGroupsConfig)
                 SpringBeanUtil.getBean(partnerSongInfoDataSourceActiveConfigName))
@@ -250,7 +252,7 @@ public class ComplementsInfoForAudioFileModule extends AbstractMusicFactoryModul
         metadataPersistResolver.setSongTitle(partnerSongInfoBo.getSongTitle());
         metadataPersistResolver.setSongArtist(partnerSongInfoBo.getSongArtist());
         metadataPersistResolver.setAlbumName(partnerSongInfoBo.getAlbumName());
-        metadataPersistResolver.setAlbumPicture(partnerSongInfoBo.getAlbumPicture());
+        metadataPersistResolver.setAlbumPicture(partnerSongInfoBo.getAlbumPicture(), false);
         metadataPersistResolver.setSongLyrics(partnerSongInfoBo.getSongLyrics());
         metadataPersistResolver.setAlbumArtist(partnerSongInfoBo.getAlbumArtist());
         metadataPersistResolver.setAlbumPublishDate(partnerSongInfoBo.getAlbumPublishDate());

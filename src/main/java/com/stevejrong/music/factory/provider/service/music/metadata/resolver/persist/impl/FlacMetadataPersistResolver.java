@@ -86,7 +86,7 @@ public class FlacMetadataPersistResolver extends AbstractAudioFileMetadataPersis
     }
 
     @Override
-    public void setAlbumPicture(byte[] albumPictureByteArray) {
+    public void setAlbumPicture(byte[] albumPictureByteArray, boolean forceMode) {
         FlacTag flacTag = (FlacTag) getAudioFile().getTag();
 
         if (ArrayUtils.isEmpty(albumPictureByteArray)) {
@@ -96,7 +96,7 @@ public class FlacMetadataPersistResolver extends AbstractAudioFileMetadataPersis
 
         byte[] originalAlbumPictureByteArray = super.getMetadataQueryResolver().getAlbumPicture(true);
 
-        if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
+        if (forceMode || ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
             // 先删除专辑封面属性
             flacTag.deleteField(FieldKey.COVER_ART);
 

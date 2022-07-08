@@ -124,7 +124,7 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
     }
 
     @Override
-    public void setAlbumPicture(byte[] albumPictureByteArray) {
+    public void setAlbumPicture(byte[] albumPictureByteArray, boolean forceMode) {
         // 专辑封面不支持ID3v1标签
         AbstractID3v2Tag id3v2Tag = Mp3Util.checkID3v2Tag((MP3File) getAudioFile());
 
@@ -141,7 +141,7 @@ public class Mp3MetadataPersistResolver extends AbstractAudioFileMetadataPersist
             originalAlbumPicture = ArrayUtil.getBufferedImageByPictureByteArray(originalAlbumPictureByteArray);
         }
 
-        if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)
+        if (forceMode || ArrayUtils.isEmpty(originalAlbumPictureByteArray)
                 || (null != originalAlbumPicture && originalAlbumPicture.getWidth() * originalAlbumPicture.getHeight() < 500 * 500)) {
             // 先删除专辑封面属性
             id3v2Tag.deleteField(FieldKey.COVER_ART);

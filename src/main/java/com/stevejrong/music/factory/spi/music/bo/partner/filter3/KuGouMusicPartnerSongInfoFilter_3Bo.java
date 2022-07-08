@@ -25,7 +25,7 @@ import java.util.List;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_3Bo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_3Bo implements Serializable {
     private static final long serialVersionUID = 6642933774170485816L;
 
     private int status;
@@ -66,5 +66,14 @@ public class KuGouMusicPartnerSongInfoFilter_3Bo implements Serializable {
 
     public void setData(List<KuGouMusicPartnerSongInfoFilter_3DataBo> data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter_3Bo{" +
+                "status=" + status +
+                ", error_code=" + error_code +
+                ", err_msg='" + err_msg + '\'' +
+                '}';
     }
 }

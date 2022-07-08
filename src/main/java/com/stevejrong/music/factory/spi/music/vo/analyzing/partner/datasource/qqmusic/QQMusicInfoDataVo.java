@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class QQMusicInfoDataVo implements Serializable {
+public final class QQMusicInfoDataVo implements Serializable {
     private static final long serialVersionUID = -3730619791236909919L;
 
     /**
@@ -59,5 +59,12 @@ public class QQMusicInfoDataVo implements Serializable {
     public QQMusicInfoDataVo(String keyword, QQMusicInfoSongVo song) {
         this.keyword = keyword;
         this.song = song;
+    }
+
+    @Override
+    public String toString() {
+        return "QQMusicInfoDataVo{" +
+                "keyword='" + keyword + '\'' +
+                '}';
     }
 }

@@ -87,7 +87,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
     }
 
     @Override
-    public void setAlbumPicture(byte[] albumPictureByteArray) {
+    public void setAlbumPicture(byte[] albumPictureByteArray, boolean forceMode) {
         VorbisCommentTag vorbisCommentTag = (VorbisCommentTag) audioFile.getTag();
 
         if (ArrayUtils.isEmpty(albumPictureByteArray)) {
@@ -97,7 +97,7 @@ public class OggVorbisMetadataPersistResolver extends AbstractAudioFileMetadataP
 
         byte[] originalAlbumPictureByteArray = super.getMetadataQueryResolver().getAlbumPicture(true);
 
-        if (ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
+        if (forceMode || ArrayUtils.isEmpty(originalAlbumPictureByteArray)) {
             // 先删除专辑封面属性
             vorbisCommentTag.deleteField(FieldKey.COVER_ART);
 

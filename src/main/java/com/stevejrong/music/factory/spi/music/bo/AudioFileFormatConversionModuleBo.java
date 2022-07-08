@@ -1,6 +1,6 @@
 /*
  *             Copyright (C) 2022 Steve Jrong
- * 
+ *
  * 	   GitHub Homepage: https://www.github.com/SteveJrong
  *      Gitee Homepage: https://gitee.com/stevejrong1024
  *
@@ -21,10 +21,12 @@ package com.stevejrong.music.factory.spi.music.bo;
 import java.io.Serializable;
 
 /**
+ * 音频文件格式转换Bo
+ *
  * @author Steve Jrong
  * @since 1.0
  */
-public class AudioFileFormatConversionModuleBo implements Serializable {
+public final class AudioFileFormatConversionModuleBo implements Serializable {
     private static final long serialVersionUID = -7561630163510737142L;
 
     /**
@@ -115,5 +117,17 @@ public class AudioFileFormatConversionModuleBo implements Serializable {
         this.encodingType = encodingType;
         this.bitRate = bitRate;
         this.encoder = encoder;
+    }
+
+    @Override
+    public String toString() {
+        return "AudioFileFormatConversionModuleBo{" +
+                "fileAbsolutePath='" + fileAbsolutePath + '\'' +
+                ", songName='" + songName + '\'' +
+                ", singerName='" + singerName + '\'' +
+                ", encodingType='" + encodingType + '\'' +
+                ", bitRate='" + bitRate + '\'' +
+                ", encoder=" + encoder +
+                '}';
     }
 }

@@ -25,7 +25,7 @@ import java.util.List;
  * @author Steve Jrong
  * @since 1.0
  */
-public class QQMusicInfoSongDetailVo implements Serializable {
+public final class QQMusicInfoSongDetailVo implements Serializable {
     private static final long serialVersionUID = 8480558002112197668L;
 
     /**
@@ -131,5 +131,17 @@ public class QQMusicInfoSongDetailVo implements Serializable {
         this.cdIdx = cdIdx;
         this.singer = singer;
         this.songname = songname;
+    }
+
+    @Override
+    public String toString() {
+        return "QQMusicInfoSongDetailVo{" +
+                "albumid=" + albumid +
+                ", albummid='" + albummid + '\'' +
+                ", albumname='" + albumname + '\'' +
+                ", belongCD=" + belongCD +
+                ", cdIdx=" + cdIdx +
+                ", songname='" + songname + '\'' +
+                '}';
     }
 }

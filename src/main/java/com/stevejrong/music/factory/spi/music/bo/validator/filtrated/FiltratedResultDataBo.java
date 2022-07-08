@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class FiltratedResultDataBo<T> implements Serializable {
+public final class FiltratedResultDataBo<T> implements Serializable {
     private static final long serialVersionUID = -6122119187027696370L;
 
     /**
@@ -82,5 +82,12 @@ public class FiltratedResultDataBo<T> implements Serializable {
 
     public T getData() {
         return data;
+    }
+
+    @Override
+    public String toString() {
+        return "FiltratedResultDataBo{" +
+                "result=" + result +
+                '}';
     }
 }

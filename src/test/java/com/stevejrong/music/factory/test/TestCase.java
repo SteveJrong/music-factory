@@ -28,14 +28,15 @@ import com.stevejrong.music.factory.common.util.*;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.impl.DSF_to_OGG_VORBIS_Converter;
 import com.stevejrong.music.factory.provider.service.music.formatConversion.impl.FLAC_to_OGG_VORBIS_Converter;
+import com.stevejrong.music.factory.provider.service.music.impl.AlbumPictureCompressionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.AnalyzingInfoForAudioFileModule;
 import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.persist.IAudioFileMetadataPersistResolver;
 import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.IAudioFileConverter;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
@@ -263,7 +264,7 @@ public class TestCase {
 
         IAudioFileMetadataPersistResolver persistResolver = getBean("mp3MetadataPersistResolver");
         persistResolver.setAudioFile(audioFile);
-        persistResolver.setAlbumPicture(bytesOfPicture);
+        persistResolver.setAlbumPicture(bytesOfPicture, false);
     }
 
     @Test
@@ -432,12 +433,28 @@ public class TestCase {
     }
 
     @Test
-    public void ffmpegFormatConversionSingleTest() {
-        IAudioFileConverter audioFileConverter = getBean("DSF_to_OGG_VORBIS_Converter");
-        audioFileConverter.convert(
-                "/Users/stevejrong/Desktop/old/Mariah Carey - Love Takes Time.dsf",
-                "/Users/stevejrong/Desktop/new",
-                "Mariah Carey - Love Takes Time");
+    public void audioFileFormatConversionTest() {
+        AudioFileFormatConversionModule audioFileFormatConversionModule = SpringBeanUtil.getBean("audioFileFormatConversionModule");
+        audioFileFormatConversionModule.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/test");
+
+        IAudioFileConverter flacToOggAudioFileConverter = SpringBeanUtil.getBean("FLAC_to_OGG_VORBIS_Converter");
+        IAudioFileConverter dsfToOggAudioFileConverter = SpringBeanUtil.getBean("DSF_to_OGG_VORBIS_Converter");
+        audioFileFormatConversionModule.getSystemConfig().getAudioFileFormatConversionConfig().setSelectedAudioFileConverters(
+                Lists.newArrayList(flacToOggAudioFileConverter, dsfToOggAudioFileConverter)
+        );
+        audioFileFormatConversionModule.getSystemConfig().getAudioFileFormatConversionConfig().setConvertedAudioFileDirectory("/Users/stevejrong/Desktop/test/converted");
+
+        audioFileFormatConversionModule.doAction();
+    }
+
+    @Test
+    public void albumPictureCompressionTest(){
+        AlbumPictureCompressionModule albumPictureCompressionModule = SpringBeanUtil.getBean("albumPictureCompressionModule");
+        albumPictureCompressionModule.getSystemConfig().getAnalysingAndComplementsForAudioFileConfig().setAudioFileDirectory("/Users/stevejrong/Desktop/test/original");
+
+        albumPictureCompressionModule.getSystemConfig().getAlbumPictureCompressionConfig().setCompressedAudioFileDirectory("/Users/stevejrong/Desktop/test/compressed");
+
+        albumPictureCompressionModule.doAction();
     }
 
     @Test
@@ -559,7 +576,7 @@ public class TestCase {
         metadataPersistResolver.setSongTitle("新设置的标题");
         metadataPersistResolver.setSongArtist("新设置的艺术家");
         metadataPersistResolver.setAlbumName("新设置的专辑名称");
-        metadataPersistResolver.setAlbumPicture(ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/一加LOGO.png"));
+        metadataPersistResolver.setAlbumPicture(ImageUtil.imageFileToByteArray("/Users/stevejrong/Desktop/一加LOGO.png"), false);
         metadataPersistResolver.setSongLyrics("新设置的内嵌歌词");
         metadataPersistResolver.setAlbumArtist("新设置的专辑艺术家");
         metadataPersistResolver.setAlbumPublishDate(DateTimeUtil.stringToLocalDate(DateTimeUtil.DatePattern.YYYYMMDD_FORMAT.getValue(), "2000-12-31"));

@@ -19,4 +19,9 @@
     <bean id="audioFileFormatConversionModule" class="com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule">
         <property name="systemConfig" ref="systemConfig"/>
     </bean>
+
+    <!--业务模块：音频文件专辑封面压缩-->
+    <bean id="albumPictureCompressionModule" class="com.stevejrong.music.factory.provider.service.music.impl.AlbumPictureCompressionModule">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
 </beans>

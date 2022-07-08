@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_3AuthorsVo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_3AuthorsVo implements Serializable {
     private static final long serialVersionUID = -7465192983341832913L;
 
     /**
@@ -38,5 +38,12 @@ public class KuGouMusicPartnerSongInfoFilter_3AuthorsVo implements Serializable 
 
     public void setAuthor_name(String author_name) {
         this.author_name = author_name;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter_3AuthorsVo{" +
+                "author_name='" + author_name + '\'' +
+                '}';
     }
 }

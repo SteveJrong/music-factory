@@ -22,10 +22,12 @@ import java.io.File;
 import java.io.Serializable;
 
 /**
+ * 音频文件分析Bo
+ *
  * @author Steve Jrong
  * @since 1.0
  */
-public class AnalyzingForAudioFileModuleBo implements Serializable {
+public final class AnalyzingForAudioFileModuleBo implements Serializable {
     private static final long serialVersionUID = -1591136590926715426L;
 
     /**
@@ -105,5 +107,15 @@ public class AnalyzingForAudioFileModuleBo implements Serializable {
 
     public String getSongArtist() {
         return songArtist;
+    }
+
+    @Override
+    public String toString() {
+        return "AnalyzingForAudioFileModuleBo{" +
+                "audioFilePath='" + audioFilePath + '\'' +
+                ", audioFileName='" + audioFileName + '\'' +
+                ", songTitle='" + songTitle + '\'' +
+                ", songArtist='" + songArtist + '\'' +
+                '}';
     }
 }

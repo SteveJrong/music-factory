@@ -18,7 +18,7 @@
  */
 package com.stevejrong.music.factory.config.sub;
 
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.IAudioFileConverter;
 
 import java.util.List;
 

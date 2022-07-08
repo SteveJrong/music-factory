@@ -16,32 +16,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.spi.service.music.formatConversion;
+package com.stevejrong.music.factory.spi.service.music.parallel.albumPictureCompression;
 
-
-import com.sun.jna.Library;
-import com.sun.jna.Native;
+import com.stevejrong.music.factory.spi.music.bo.parallel.albumPictureCompression.AlbumPictureCompressionTaskBo;
+import com.stevejrong.music.factory.spi.service.music.parallel.IMultiThreadedTaskProcessor;
 
 /**
- * 音频文件转换器转换时，所需调用的动态链接库接口
+ * 音频文件专辑封面压缩器接口
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public interface IFormatConversionCommandExecutor extends Library {
+public interface IAudioFileAlbumPictureCompressor extends IMultiThreadedTaskProcessor<AlbumPictureCompressionTaskBo> {
 
     /**
-     * 获取音频文件转换器转换所需动态链接库文件的文件位置
+     * 音频文件专辑封面压缩的像素值（长宽像素值相同）
      *
-     * @return 动态链接库文件的文件位置
+     * @return 音频文件专辑封面压缩的像素值
      */
-    String getDynamicLinkLibrariesFilePath();
+    int compressPixelValue();
 
-    /**
-     * 调用执行C动态链接库文件中名为<code>execute(char *command)</code>的函数
-     *
-     * @param command
-     * @return
-     */
-    int execute(String command);
+    @Override
+    boolean execute(AlbumPictureCompressionTaskBo paramBo);
 }

@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_1Vo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_1Vo implements Serializable {
     private static final long serialVersionUID = 87979449232775757L;
 
     /**
@@ -77,5 +77,14 @@ public class KuGouMusicPartnerSongInfoFilter_1Vo implements Serializable {
 
     public void setErrcode(int errcode) {
         this.errcode = errcode;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter_1Vo{" +
+                "status=" + status +
+                ", error='" + error + '\'' +
+                ", errcode=" + errcode +
+                '}';
     }
 }

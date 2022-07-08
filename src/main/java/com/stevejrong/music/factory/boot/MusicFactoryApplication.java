@@ -25,13 +25,14 @@ import com.stevejrong.music.factory.common.util.ReflectionUtil;
 import com.stevejrong.music.factory.common.util.SpringBeanUtil;
 import com.stevejrong.music.factory.config.SystemConfig;
 import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
+import com.stevejrong.music.factory.provider.service.music.impl.AlbumPictureCompressionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.AudioFileFormatConversionModule;
 import com.stevejrong.music.factory.provider.service.music.impl.ComplementsInfoForAudioFileModule;
 import com.stevejrong.music.factory.spi.music.bo.AnalyzingForAudioFileModuleBo;
 import com.stevejrong.music.factory.spi.music.bo.ComplementedMetadataAudioFileBo;
 import com.stevejrong.music.factory.spi.service.music.IMusicFactoryModule;
 import com.stevejrong.music.factory.spi.service.music.filter.AbstractFilter;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.IAudioFileConverter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -183,6 +184,31 @@ public class MusicFactoryApplication {
                     formatConversionModule.doAction();
                     break;
 
+                case "6":
+                    String defaultCompressedAudioFileDirectory = systemConfig.getAlbumPictureCompressionConfig().getCompressedAudioFileDirectory();
+                    System.out.println(systemConfig.getBaseConfig().getCustomCompressedAudioFileDirectoryMessage()
+                            .replace("{{defaultCompressedAudioFileDirectory}}", defaultCompressedAudioFileDirectory));
+
+                    Scanner scanner6 = new Scanner(System.in);
+                    String input6 = scanner6.next();
+
+                    if (FileUtil.checkIsDirectory(input6)) {
+                        systemConfig.getAlbumPictureCompressionConfig().setCompressedAudioFileDirectory(input6);
+
+                        String newCompressedAudioFileDirectory = systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory();
+                        System.out.println(systemConfig.getBaseConfig().getCustomCompressedAudioFileDirectorySuccessMessage()
+                                .replace("{{oldCompressedAudioFileDirectory}}", defaultCompressedAudioFileDirectory)
+                                .replace("{{newCompressedAudioFileDirectory}}", newCompressedAudioFileDirectory));
+                    } else {
+                        System.err.println("设置专辑封面压缩后的音频文件存放目录位置失败！请填写存在且正确的文件目录位置。\n\n");
+                    }
+                    break;
+
+                case "7":
+                    AlbumPictureCompressionModule albumPictureCompressionModule = SpringBeanUtil.getBean("albumPictureCompressionModule");
+                    albumPictureCompressionModule.doAction();
+                    break;
+
                 case "0":
                     System.out.println("感谢您的使用！\n\n");
                     System.exit(0);
@@ -204,6 +230,7 @@ public class MusicFactoryApplication {
         StringBuilder sb = new StringBuilder("● 原始音频文件存放目录:\t"
                 + systemConfig.getAnalysingAndComplementsForAudioFileConfig().getAudioFileDirectory() + "\n");
         sb.append("● 转换格式后的音频文件存放目录:\t").append(systemConfig.getAudioFileFormatConversionConfig().getConvertedAudioFileDirectory()).append("\n");
+        sb.append("● 专辑封面压缩后的音频文件存放目录:\t").append(systemConfig.getAlbumPictureCompressionConfig().getCompressedAudioFileDirectory()).append("\n");
 
         return sb.toString();
     }

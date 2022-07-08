@@ -16,27 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.spi.music.bo.formatConversion;
+package com.stevejrong.music.factory.spi.music.bo.parallel.formatConversion;
 
-import com.stevejrong.music.factory.common.util.FileUtil;
-import com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter;
+import com.stevejrong.music.factory.spi.music.bo.parallel.AbstractMultiThreadedTaskBo;
+import com.stevejrong.music.factory.spi.service.music.parallel.IMultiThreadedTaskProcessor;
+
+import java.io.Serializable;
 
 /**
- * 格式转换任务Bo
+ * 多线程音频文件格式转换任务Bo
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public final class FormatConvertTaskBo {
-    /**
-     * 自定义的实际任务ID
-     */
-    private long taskId;
-
-    /**
-     * 自定义的实际任务名称
-     */
-    private String taskName;
+public final class AudioFileFormatConversionTaskBo extends AbstractMultiThreadedTaskBo implements Serializable {
+    private static final long serialVersionUID = 271312685529137822L;
 
     /**
      * 源音频文件位置
@@ -54,39 +48,21 @@ public final class FormatConvertTaskBo {
     private String targetDirectory;
 
     /**
-     * 已选择的音频文件转换器
-     */
-    private IAudioFileConverter selectAudioFileConverter;
-
-    /**
-     * Task任务构造方法。
+     * 格式转换任务的构造方法
+     * <p>
      * 以自定义的任务ID和自定义的任务名称，来创建一个Task任务。
      *
-     * @param taskId   自定义的任务ID
-     * @param taskName 自定义的任务名称
+     * @param taskId                   自定义的任务ID
+     * @param taskName                 自定义的任务名称
+     * @param sourcePath
+     * @param sourceFileName
+     * @param targetDirectory
      */
-    public FormatConvertTaskBo(long taskId, String taskName, String sourcePath, String targetDirectory, IAudioFileConverter selectAudioFileConverter) {
-        this.taskId = taskId;
-        this.taskName = taskName;
+    public AudioFileFormatConversionTaskBo(long taskId, String taskName, IMultiThreadedTaskProcessor<?> multiThreadedTaskProcessor, String sourcePath, String sourceFileName, String targetDirectory) {
+        super(taskId, taskName, multiThreadedTaskProcessor);
         this.sourcePath = sourcePath;
+        this.sourceFileName = sourceFileName;
         this.targetDirectory = targetDirectory;
-        this.selectAudioFileConverter = selectAudioFileConverter;
-    }
-
-    public long getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
     }
 
     public String getSourcePath() {
@@ -98,7 +74,11 @@ public final class FormatConvertTaskBo {
     }
 
     public String getSourceFileName() {
-        return FileUtil.getFileNameWithoutSuffix(sourcePath);
+        return sourceFileName;
+    }
+
+    public void setSourceFileName(String sourceFileName) {
+        this.sourceFileName = sourceFileName;
     }
 
     public String getTargetDirectory() {
@@ -109,11 +89,12 @@ public final class FormatConvertTaskBo {
         this.targetDirectory = targetDirectory;
     }
 
-    public IAudioFileConverter getSelectAudioFileConverter() {
-        return selectAudioFileConverter;
-    }
-
-    public void setSelectAudioFileConverter(IAudioFileConverter selectAudioFileConverter) {
-        this.selectAudioFileConverter = selectAudioFileConverter;
+    @Override
+    public String toString() {
+        return "AudioFileFormatConversionTaskBo{" +
+                "sourcePath='" + sourcePath + '\'' +
+                ", sourceFileName='" + sourceFileName + '\'' +
+                ", targetDirectory='" + targetDirectory + '\'' +
+                '}';
     }
 }

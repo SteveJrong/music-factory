@@ -16,7 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.spi.service.music.formatConversion;
+package com.stevejrong.music.factory.spi.service.music.parallel.formatConversion;
+
+import com.stevejrong.music.factory.spi.music.bo.parallel.formatConversion.AudioFileFormatConversionTaskBo;
+import com.stevejrong.music.factory.spi.service.music.parallel.IMultiThreadedTaskProcessor;
 
 /**
  * 音频文件格式转换器接口
@@ -24,7 +27,7 @@ package com.stevejrong.music.factory.spi.service.music.formatConversion;
  * @author Steve Jrong
  * @since 1.0
  */
-public interface IAudioFileConverter {
+public interface IAudioFileConverter extends IMultiThreadedTaskProcessor<AudioFileFormatConversionTaskBo> {
 
     /**
      * 音频文件格式转换器序号
@@ -47,13 +50,6 @@ public interface IAudioFileConverter {
      */
     String targetFileSuffix();
 
-    /**
-     * 音频文件格式转换
-     *
-     * @param sourcePath      源文件位置
-     * @param targetDirectory 目标文件目录
-     * @param targetFileName  目标文件名称
-     * @return 音频文件格式转换结果。true - 音频文件格式转换成功; false - 音频文件格式转换失败。
-     */
-    boolean convert(String sourcePath, String targetDirectory, String targetFileName);
+    @Override
+    boolean execute(AudioFileFormatConversionTaskBo paramBo);
 }

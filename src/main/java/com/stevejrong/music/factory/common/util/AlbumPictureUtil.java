@@ -18,17 +18,26 @@
  */
 package com.stevejrong.music.factory.common.util;
 
+import com.stevejrong.music.factory.config.SystemConfig;
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.audio.flac.metadatablock.MetadataBlockDataPicture;
+import org.jaudiotagger.tag.TagException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -116,5 +125,35 @@ public final class AlbumPictureUtil {
         }
 
         return outputStream.toByteArray();
+    }
+
+    /**
+     * 从源音频文件中，获取元数据信息中专辑封面图片的字节数组
+     *
+     * @param sourcePath 源音频文件位置
+     * @return 源音频文件专辑封面图片元数据信息的字节数组
+     */
+    public static byte[] getAlbumPictureByteArray(SystemConfig systemConfig, String sourcePath) {
+        String sourceFileSuffix = FileUtil.getFileSuffixWithoutPoint(sourcePath);
+        IAudioFileMetadataQueryResolver metadataQueryResolverBySourceFile = FileUtil.getAudioFileMetadataQueryResolverByFileSuffix(systemConfig, sourceFileSuffix);
+
+        AudioFile sourceAudioFile = null;
+        synchronized (AlbumPictureUtil.class) {
+            /*
+             * 这里必须使用同步块来顺序读取，以此来保证多线程下使用AudioFileIO.read()方法加载文件时，不出现脏读。
+             * 若去掉此处的线程同步代码，将会发生若干个音频文件的专辑封面图片，会显示成若干个相同的。
+             */
+            try {
+                sourceAudioFile = AudioFileIO.read(new File(sourcePath));
+            } catch (CannotReadException | ReadOnlyFileException | TagException | IOException | InvalidAudioFrameException e) {
+
+                LOGGER.error(LoggerUtil.builder().append("albumPictureUtil_getAlbumPictureByteArray",
+                                "从源音频文件中，获取元数据信息中专辑封面图片的字节数组")
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+            }
+        }
+
+        metadataQueryResolverBySourceFile.setAudioFile(sourceAudioFile);
+        return metadataQueryResolverBySourceFile.getAlbumPicture(false);
     }
 }

@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_2DataBo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_2DataBo implements Serializable {
     private static final long serialVersionUID = -1838170602873317161L;
 
     private String album_id;
@@ -45,5 +45,13 @@ public class KuGouMusicPartnerSongInfoFilter_2DataBo implements Serializable {
 
     public void setLyrics(String lyrics) {
         this.lyrics = lyrics;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter_2DataBo{" +
+                "album_id='" + album_id + '\'' +
+                ", lyrics='" + lyrics + '\'' +
+                '}';
     }
 }

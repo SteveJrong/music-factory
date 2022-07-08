@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--音频格式转换配置文件-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- 音频文件专辑封面压缩配置 -->
+    <bean id="albumPictureCompressionConfig" class="com.stevejrong.music.factory.config.sub.AlbumPictureCompressionConfig">
+        <!-- 专辑封面压缩后的音频文件存放目录 -->
+        <property name="compressedAudioFileDirectory" value="${musicFactory.base.albumPictureCompression.albumPictureCompressedAudioFileDirectory}"/>
+        <!-- 音频文件专辑封面压缩的像素值（长宽像素值相同） -->
+        <property name="compressPixelValue" value="${musicFactory.base.albumPictureCompression.compressPixelValue}"/>
+    </bean>
+
+    <!-- 音频文件专辑封面压缩器 -->
+    <bean id="audioFileAlbumPictureCompressor" class="com.stevejrong.music.factory.provider.service.music.albumPictureCompression.impl.AudioFileAlbumPictureCompressor">
+        <property name="systemConfig" ref="systemConfig"/>
+    </bean>
+</beans>

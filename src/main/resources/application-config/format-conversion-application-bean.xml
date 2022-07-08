@@ -13,7 +13,7 @@
         <property name="formatConversionDllUtilsComponentConfig" ref="formatConversionDllUtilsComponentConfig"/>
         <!-- 音频文件格式转换器列表配置 -->
         <property name="audioFileConverters">
-            <list value-type="com.stevejrong.music.factory.spi.service.music.formatConversion.IAudioFileConverter">
+            <list value-type="com.stevejrong.music.factory.spi.service.music.parallel.formatConversion.IAudioFileConverter">
                 <ref bean="FLAC_to_OGG_VORBIS_Converter"/>
                 <ref bean="DSF_to_OGG_VORBIS_Converter"/>
             </list>

@@ -19,36 +19,37 @@
 package com.stevejrong.music.factory.provider.service.music.formatConversion.parallel;
 
 import com.google.common.collect.Maps;
-import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
+import com.stevejrong.music.factory.spi.music.bo.parallel.AbstractMultiThreadedTaskBo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * 多线程格式转换的Master类
+ * 多线程任务处理的Master类
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public class FormatConvertMaster {
+public class MultiThreadedTaskProcessingMaster {
+
     /**
-     * 实际要执行的任务队列。
+     * 实际要执行的任务队列
      * <p>
      * 存放实际要处理的具体任务。
      * 因取出任务这一动作具有并发风险，故此集合类型必须为线程安全的。
      */
-    private ConcurrentLinkedQueue<FormatConvertTaskBo> formatConvertTaskQueue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<AbstractMultiThreadedTaskBo> multiThreadedTaskProcessingQueue = new ConcurrentLinkedQueue<>();
 
     /**
-     * FormatConvertWorker子任务对象Map集合。
+     * MultiThreadedTaskProcessingWorker子任务对象Map集合
      * <p>
      * 存放处理任务的处理者（Worker）。实际的任务不是由Master直接去处理，而是要委派给Worker去处理。
      */
-    private Map<Long, Thread> formatConvertWorkers = Maps.newHashMap();
+    private Map<Long, Thread> multiThreadedTaskProcessingWorkers = Maps.newConcurrentMap();
 
     /**
-     * 任务处理完成后的结果集合。
+     * 任务处理完成后的结果集合
      * <p>
      * 将实际处理的具体任务ID做为Key、将处理具体任务后的自定义结果做为Value，存入此Map集合中。
      * 因将键值对放入Map这一动作具有并发风险，故此集合类型必须为线程安全的。
@@ -56,7 +57,7 @@ public class FormatConvertMaster {
     private ConcurrentHashMap<Long, Object> parallelExecuteResults = new ConcurrentHashMap<>();
 
     /**
-     * FormatConvertMaster类的构造方法。
+     * 多线程任务处理的Master类的构造方法。
      * <p>
      * 创建Master对象时，指定创建处理任务的处理者（Worker）的数量。
      *
@@ -64,47 +65,47 @@ public class FormatConvertMaster {
      *                          此参数值将决定创建任务处理者（Worker）的数量。即当多线程处理任务时，有几个线程同时并行执行处理。
      *                          建议设置为主机核心数值（含超线程核心数）。
      */
-    public FormatConvertMaster(int createWorkerCount) {
+    public MultiThreadedTaskProcessingMaster(int createWorkerCount) {
         for (int i = 0; i < createWorkerCount; i++) {
 
             // 创建Worker子任务。以便由Master分配Worker去进行多线程处理任务。
-            FormatConvertWorker formatConvertWorker = new FormatConvertWorker(i, "处理者（Worker）-" + i);
+            MultiThreadedTaskProcessingWorker worker = new MultiThreadedTaskProcessingWorker(i, "多线程任务处理者（Worker）-" + i);
             // 设置Worker子任务执行完后的结果集合对象。用于保存每个Worker执行完后的结果数据。
-            formatConvertWorker.setParallelExecuteResults(this.parallelExecuteResults);
+            worker.setParallelExecuteResults(this.parallelExecuteResults);
             // 设置任务队列集合对象
-            formatConvertWorker.setFormatConvertTaskQueue(this.formatConvertTaskQueue);
+            worker.setMultiThreadedTaskProcessingQueue(this.multiThreadedTaskProcessingQueue);
 
             // 以Key为数字、Value为多线程的Worker子任务对象，将其放入Worker子任务集合中。
-            this.formatConvertWorkers.put((long) i, new Thread(formatConvertWorker));
+            this.multiThreadedTaskProcessingWorkers.put((long) i, new Thread(worker));
         }
     }
 
     /**
-     * 提交任务方法
+     * 提交任务
      *
-     * @param formatConvertTask
+     * @param multiThreadedTaskProcessingBo 多线程任务处理抽象类的子类Bo。此形参，携带了执行具体任务时的各种自定义参数。
      */
-    public void submit(FormatConvertTaskBo formatConvertTask) {
-        this.formatConvertTaskQueue.add(formatConvertTask);
+    public void submit(AbstractMultiThreadedTaskBo multiThreadedTaskProcessingBo) {
+        this.multiThreadedTaskProcessingQueue.add(multiThreadedTaskProcessingBo);
     }
 
     /**
-     * 开始任务方法
+     * 开始任务
      */
     public void start() {
-        for (Map.Entry<Long, Thread> item : this.formatConvertWorkers.entrySet()) {
+        for (Map.Entry<Long, Thread> item : this.multiThreadedTaskProcessingWorkers.entrySet()) {
             // 依次启动Master构造方法中，向Worker子任务集合中放入的多线程Worker子任务
             item.getValue().start();
         }
     }
 
     /**
-     * 判断所有线程是否都执行完毕的方法
+     * 判断所有线程是否都执行完毕
      *
      * @return true - 全部执行完毕；false - 未执行完毕
      */
     public boolean hasComplete() {
-        for (Map.Entry<Long, Thread> item : this.formatConvertWorkers.entrySet()) {
+        for (Map.Entry<Long, Thread> item : this.multiThreadedTaskProcessingWorkers.entrySet()) {
             if (item.getValue().getState() != Thread.State.TERMINATED) {
                 // 当某个线程执行完毕后，它的状态应为terminated。若不是，则表明还未执行完毕
                 return false;
@@ -115,7 +116,7 @@ public class FormatConvertMaster {
     }
 
     /**
-     * 获取任务执行总结果的方法
+     * 获取任务执行总结果
      *
      * @return 实际的结果值合计
      */

@@ -87,8 +87,8 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                         try {
                             audioFile = AudioFileIO.read(new File(file.toAbsolutePath().toString()));
                         } catch (Exception e) {
-                            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析失败")
-                                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+                            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件读取异常")
+                                    .append("exception", e).append("exceptionMsg", e.getMessage()).append("audioFilePath", file.toAbsolutePath().toString()).toString());
                         }
 
                         AudioHeader audioHeader = audioFile.getAudioHeader();
@@ -132,8 +132,8 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                                 .songLyrics(songLyrics)
                                 .build();
 
-                        LOGGER.info(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "开始分析音频文件")
-                                .append("filePath", file.getFileName().toAbsolutePath())
+                        LOGGER.info(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "分析音频文件")
+                                .append("audioFilePath", file.getFileName().toAbsolutePath())
                                 .append("musicInfoBean", musicInfoBean)
                                 .toString());
 
@@ -145,8 +145,8 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                                 .filter(item -> !item)
                                 .collect(Collectors.toList());
 
-                        LOGGER.info(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "分析音频文件结束")
-                                .append("filePath", file.getFileName().toAbsolutePath())
+                        LOGGER.info(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "分析音频文件完成")
+                                .append("audioFilePath", file.getFileName().toAbsolutePath())
                                 .append("filtratedFalseResultBoList", filtratedFalseResultBoList)
                                 .toString());
 
@@ -161,7 +161,7 @@ public class AnalyzingInfoForAudioFileModule extends AbstractMusicFactoryModule 
                         }
                     });
         } catch (IOException e) {
-            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析")
+            LOGGER.error(LoggerUtil.builder().append("analyzingInfoForAudioFileModule_doAction", "音频文件信息分析异常")
                     .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 

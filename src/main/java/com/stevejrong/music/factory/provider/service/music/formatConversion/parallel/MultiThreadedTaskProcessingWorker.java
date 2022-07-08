@@ -20,7 +20,8 @@ package com.stevejrong.music.factory.provider.service.music.formatConversion.par
 
 import com.stevejrong.music.factory.common.util.DateTimeUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
-import com.stevejrong.music.factory.spi.music.bo.formatConversion.FormatConvertTaskBo;
+import com.stevejrong.music.factory.spi.music.bo.parallel.AbstractMultiThreadedTaskBo;
+import com.stevejrong.music.factory.spi.service.music.parallel.IMultiThreadedTaskProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +29,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * 多线程格式转换的处理者（Worker）类
+ * 多线程任务处理的处理者（Worker）类
  *
  * @author Steve Jrong
  * @since 1.0
  */
-public final class FormatConvertWorker implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FormatConvertWorker.class);
+public final class MultiThreadedTaskProcessingWorker implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultiThreadedTaskProcessingWorker.class);
 
     /**
      * 自定义处理者（Worker）的ID
@@ -47,15 +48,15 @@ public final class FormatConvertWorker implements Runnable {
     private String workerName;
 
     /**
-     * 实际要执行的任务队列。
+     * 实际要执行的任务队列
      * <p>
      * 存放实际要处理的具体任务。
      * 因取出任务这一动作具有并发风险，故此集合类型必须为线程安全的。
      */
-    private ConcurrentLinkedQueue<FormatConvertTaskBo> formatConvertTaskQueue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<AbstractMultiThreadedTaskBo> multiThreadedTaskProcessingQueue = new ConcurrentLinkedQueue<>();
 
     /**
-     * 任务处理完成后的结果集合。
+     * 任务处理完成后的结果集合
      * <p>
      * 将实际处理的具体任务ID做为Key、将处理具体任务后的自定义结果做为Value，存入此Map集合中。
      * 因将键值对放入Map这一动作具有并发风险，故此集合类型必须为线程安全的。
@@ -78,12 +79,12 @@ public final class FormatConvertWorker implements Runnable {
         this.workerName = workerName;
     }
 
-    public ConcurrentLinkedQueue<FormatConvertTaskBo> getFormatConvertTaskQueue() {
-        return formatConvertTaskQueue;
+    public ConcurrentLinkedQueue<AbstractMultiThreadedTaskBo> getMultiThreadedTaskProcessingQueue() {
+        return multiThreadedTaskProcessingQueue;
     }
 
-    public void setFormatConvertTaskQueue(ConcurrentLinkedQueue<FormatConvertTaskBo> formatConvertTaskQueue) {
-        this.formatConvertTaskQueue = formatConvertTaskQueue;
+    public void setMultiThreadedTaskProcessingQueue(ConcurrentLinkedQueue<AbstractMultiThreadedTaskBo> multiThreadedTaskProcessingQueue) {
+        this.multiThreadedTaskProcessingQueue = multiThreadedTaskProcessingQueue;
     }
 
     public ConcurrentHashMap<Long, Object> getParallelExecuteResults() {
@@ -94,7 +95,7 @@ public final class FormatConvertWorker implements Runnable {
         this.parallelExecuteResults = parallelExecuteResults;
     }
 
-    public FormatConvertWorker(long workerId, String workerName) {
+    public MultiThreadedTaskProcessingWorker(long workerId, String workerName) {
         this.workerId = workerId;
         this.workerName = workerName;
     }
@@ -103,35 +104,41 @@ public final class FormatConvertWorker implements Runnable {
     public void run() {
         while (true) {
             // 从实际要执行的任务队列中，取出一个，并出队
-            FormatConvertTaskBo formatConvertTask = this.formatConvertTaskQueue.poll();
+            AbstractMultiThreadedTaskBo multiThreadedTaskProcessingBo = this.multiThreadedTaskProcessingQueue.poll();
 
-            if (null == formatConvertTask) {
+            if (null == multiThreadedTaskProcessingBo) {
                 // 当实际要执行的任务队列中已没有任何待处理的任务时，多线程处理任务执行结束，跳出循环
                 break;
             }
 
             long start = System.currentTimeMillis();
-            boolean result = execute(formatConvertTask);
+            boolean result = execute(multiThreadedTaskProcessingBo);
 
             // 将处理后的结果数据存入结果集合中
-            this.parallelExecuteResults.put(formatConvertTask.getTaskId(), result);
+            this.parallelExecuteResults.put(multiThreadedTaskProcessingBo.getTaskId(), result);
 
-            LOGGER.info(LoggerUtil.builder().append("formatConvertWorker_run", "音频文件格式转换处理者（Worker）")
-                    .append("executeMsg", String.format("【%s】→【%s】成功！处理结果：%b，耗时：%s。", this.workerName, formatConvertTask.getTaskName(),
+            LOGGER.info(LoggerUtil.builder().append("multiThreadedTaskProcessingWorker_run", "多线程任务处理者（Worker）")
+                    .append("executeMsg", String.format("【%s】→【%s】成功！本次处理结果：%b，本次处理耗时：%s。", this.workerName, multiThreadedTaskProcessingBo.getTaskName(),
                             result, DateTimeUtil.milliSecondToHHMMssString((System.currentTimeMillis() - start)))).toString());
         }
     }
 
     /**
-     * 音频格式转换任务
+     * 执行并处理多线程任务
      *
-     * @param formatConvertTask
+     * @param multiThreadedTaskProcessingBo 多线程任务处理抽象类的子类Bo。此形参，携带了执行具体任务时的各种自定义参数。
      * @return 音频文件格式转换结果。true - 音频文件格式转换成功; false - 音频文件格式转换失败。
      */
-    private boolean execute(FormatConvertTaskBo formatConvertTask) {
+    private boolean execute(AbstractMultiThreadedTaskBo multiThreadedTaskProcessingBo) {
         try {
-            formatConvertTask.getSelectAudioFileConverter().convert(formatConvertTask.getSourcePath(), formatConvertTask.getTargetDirectory(), formatConvertTask.getSourceFileName());
+            IMultiThreadedTaskProcessor multiThreadedTaskProcessor = multiThreadedTaskProcessingBo.getMultiThreadedTaskProcessor();
+            multiThreadedTaskProcessor.execute(multiThreadedTaskProcessingBo);
         } catch (Exception e) {
+            LOGGER.error(LoggerUtil.builder().append("multiThreadedTaskProcessingWorker_execute", "执行并处理多线程任务异常")
+                    .append("exception", e).append("exceptionMsg", e.getMessage())
+                    .append("multiThreadedTaskProcessingBo", multiThreadedTaskProcessingBo)
+                    .toString());
+
             return false;
         }
 

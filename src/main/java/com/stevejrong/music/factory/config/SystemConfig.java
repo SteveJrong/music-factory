@@ -19,10 +19,7 @@
 package com.stevejrong.music.factory.config;
 
 
-import com.stevejrong.music.factory.config.sub.AnalysingAndComplementsForAudioFileConfig;
-import com.stevejrong.music.factory.config.sub.BaseConfig;
-import com.stevejrong.music.factory.config.sub.FilterGroupsConfig;
-import com.stevejrong.music.factory.config.sub.AudioFileFormatConversionConfig;
+import com.stevejrong.music.factory.config.sub.*;
 
 import java.util.List;
 
@@ -54,6 +51,11 @@ public class SystemConfig {
      */
     private AudioFileFormatConversionConfig audioFileFormatConversionConfig;
 
+    /**
+     * 音频文件专辑封面压缩配置
+     */
+    private AlbumPictureCompressionConfig albumPictureCompressionConfig;
+
     public BaseConfig getBaseConfig() {
         return baseConfig;
     }
@@ -84,5 +86,13 @@ public class SystemConfig {
 
     public void setAudioFileFormatConversionConfig(AudioFileFormatConversionConfig audioFileFormatConversionConfig) {
         this.audioFileFormatConversionConfig = audioFileFormatConversionConfig;
+    }
+
+    public AlbumPictureCompressionConfig getAlbumPictureCompressionConfig() {
+        return albumPictureCompressionConfig;
+    }
+
+    public void setAlbumPictureCompressionConfig(AlbumPictureCompressionConfig albumPictureCompressionConfig) {
+        this.albumPictureCompressionConfig = albumPictureCompressionConfig;
     }
 }

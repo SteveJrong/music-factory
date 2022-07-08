@@ -25,7 +25,7 @@ import java.util.List;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter3Bean implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter3Bean implements Serializable {
     private static final long serialVersionUID = -9212758646108895684L;
 
     private int appid;
@@ -93,5 +93,17 @@ public class KuGouMusicPartnerSongInfoFilter3Bean implements Serializable {
         this.clienttime = clienttime;
         this.clientver = clientver;
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter3Bean{" +
+                "appid=" + appid +
+                ", clienttime='" + clienttime + '\'' +
+                ", clientver=" + clientver +
+                ", data=" + data +
+                ", key='" + key + '\'' +
+                ", mid='" + mid + '\'' +
+                '}';
     }
 }

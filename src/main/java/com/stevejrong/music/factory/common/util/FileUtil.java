@@ -20,15 +20,16 @@ package com.stevejrong.music.factory.common.util;
 
 import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.enums.ResourcesFileEnum;
+import com.stevejrong.music.factory.config.SystemConfig;
+import com.stevejrong.music.factory.spi.service.music.metadata.resolver.query.IAudioFileMetadataQueryResolver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.channels.FileChannel;
 
 /**
  * 文件操作工具类
@@ -66,7 +67,7 @@ public final class FileUtil {
             resourceFile = File.createTempFile(resourcesFileEnum.getValue(), "temp");
             FileUtils.copyInputStreamToFile(inputStream, resourceFile);
         } catch (IOException e) {
-            LOGGER.error(LoggerUtil.builder().append("FileUtil_getResourceFile", "获取资源文件")
+            LOGGER.error(LoggerUtil.builder().append("fileUtil_getResourceFile", "获取资源文件")
                     .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
@@ -90,7 +91,7 @@ public final class FileUtil {
             resourceFile = File.createTempFile(resourcesFilePath, StringUtils.isNotEmpty(fileSuffix) ? fileSuffix : "temp");
             FileUtils.copyInputStreamToFile(inputStream, resourceFile);
         } catch (IOException e) {
-            LOGGER.error(LoggerUtil.builder().append("FileUtil_getResourceFile", "获取资源文件")
+            LOGGER.error(LoggerUtil.builder().append("fileUtil_getResourceFile", "获取资源文件")
                     .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
         }
 
@@ -188,5 +189,51 @@ public final class FileUtil {
      */
     public static long getFileSize(String filePath) {
         return new File(filePath).length();
+    }
+
+    /**
+     * 根据音频文件的文件后缀名获取对应的音频文件元数据解析器
+     *
+     * @param systemConfig 系统配置
+     * @param fileSuffix   音频文件的后缀名
+     * @return 音频文件元数据解析器
+     */
+    public static IAudioFileMetadataQueryResolver getAudioFileMetadataQueryResolverByFileSuffix(SystemConfig systemConfig, String fileSuffix) {
+        return (IAudioFileMetadataQueryResolver) systemConfig
+                .getAnalysingAndComplementsForAudioFileConfig().getAudioFileMetadataResolvers().get(fileSuffix)
+                .stream().filter(resolver -> resolver instanceof IAudioFileMetadataQueryResolver).findAny().get();
+    }
+
+    /**
+     * 文件拷贝
+     * <p>
+     * NIO方式快速拷贝。
+     *
+     * @param sourcePath 源文件位置
+     * @param targetPath 目标文件位置
+     * @return 文件拷贝结果。true - 文件拷贝成功；false - 文件拷贝失败。
+     */
+    public static boolean fileCopy(String sourcePath, String targetPath) {
+        File sourceFile = new File(sourcePath), targetFile = new File(targetPath);
+
+        try (FileInputStream inputStream = new FileInputStream(sourceFile);
+             FileOutputStream outputStream = new FileOutputStream(targetFile);
+
+             // 获得源文件的文件通道
+             FileChannel sourceChannel = inputStream.getChannel();
+             // 获得目标文件的文件通道
+             FileChannel targetChannel = outputStream.getChannel();
+        ) {
+
+            //两通道连接，并从源文件通道读取数据后，写入到目标文件通道
+            sourceChannel.transferTo(0, sourceChannel.size(), targetChannel);
+        } catch (IOException e) {
+            LOGGER.error(LoggerUtil.builder().append("fileUtil_fileCopy", "文件拷贝")
+                    .append("exception", e).append("exceptionMsg", e.getMessage())
+                    .append("sourcePath", sourcePath).append("targetPath", targetPath).toString());
+            return false;
+        }
+
+        return true;
     }
 }

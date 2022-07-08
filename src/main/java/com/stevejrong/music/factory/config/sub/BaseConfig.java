@@ -76,6 +76,16 @@ public class BaseConfig {
      */
     private String selectFormatConverterSuccessMessage;
 
+    /**
+     * 自定义辑封面压缩后的音频文件存放目录提示信息
+     */
+    private String customCompressedAudioFileDirectoryMessage;
+
+    /**
+     * 自定义辑封面压缩后的音频文件存放目录成功的提示信息
+     */
+    private String customCompressedAudioFileDirectorySuccessMessage;
+
     public String getSpringConfigurationFileName() {
         return springConfigurationFileName;
     }
@@ -154,5 +164,21 @@ public class BaseConfig {
 
     public void setSelectFormatConverterSuccessMessage(String selectFormatConverterSuccessMessage) {
         this.selectFormatConverterSuccessMessage = selectFormatConverterSuccessMessage;
+    }
+
+    public String getCustomCompressedAudioFileDirectoryMessage() {
+        return customCompressedAudioFileDirectoryMessage;
+    }
+
+    public void setCustomCompressedAudioFileDirectoryMessage(String customCompressedAudioFileDirectoryMessage) {
+        this.customCompressedAudioFileDirectoryMessage = customCompressedAudioFileDirectoryMessage;
+    }
+
+    public String getCustomCompressedAudioFileDirectorySuccessMessage() {
+        return customCompressedAudioFileDirectorySuccessMessage;
+    }
+
+    public void setCustomCompressedAudioFileDirectorySuccessMessage(String customCompressedAudioFileDirectorySuccessMessage) {
+        this.customCompressedAudioFileDirectorySuccessMessage = customCompressedAudioFileDirectorySuccessMessage;
     }
 }

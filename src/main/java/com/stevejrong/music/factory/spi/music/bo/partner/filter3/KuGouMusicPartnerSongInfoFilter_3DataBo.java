@@ -27,7 +27,7 @@ import java.util.List;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_3DataBo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_3DataBo implements Serializable {
     private static final long serialVersionUID = -6202916653439729991L;
 
     /**
@@ -119,5 +119,17 @@ public class KuGouMusicPartnerSongInfoFilter_3DataBo implements Serializable {
 
     public void setPublish_company(String publish_company) {
         this.publish_company = publish_company;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter_3DataBo{" +
+                "album_name='" + album_name + '\'' +
+                ", sizable_cover='" + sizable_cover + '\'' +
+                ", publish_date='" + publish_date + '\'' +
+                ", intro='" + intro + '\'' +
+                ", language='" + language + '\'' +
+                ", publish_company='" + publish_company + '\'' +
+                '}';
     }
 }

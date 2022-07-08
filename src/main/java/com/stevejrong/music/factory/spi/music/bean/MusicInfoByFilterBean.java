@@ -26,7 +26,7 @@ import java.util.Arrays;
  * @author Steve Jrong
  * @since 1.0
  */
-public class MusicInfoByFilterBean extends AbstractFilterBean implements Serializable {
+public final class MusicInfoByFilterBean extends AbstractFilterBean implements Serializable {
     private static final long serialVersionUID = -4925180047338035848L;
 
     /**
@@ -229,5 +229,21 @@ public class MusicInfoByFilterBean extends AbstractFilterBean implements Seriali
 
     public String getAlbumCopyright() {
         return albumCopyright;
+    }
+
+    @Override
+    public String toString() {
+        return "MusicInfoByFilterBean{" +
+                "songTitle='" + songTitle + '\'' +
+                ", songArtist='" + songArtist + '\'' +
+                ", albumName='" + albumName + '\'' +
+                ", albumPicture=" + Arrays.toString(albumPicture) +
+                ", songLyrics='" + songLyrics + '\'' +
+                ", albumArtist='" + albumArtist + '\'' +
+                ", albumPublishDate=" + albumPublishDate +
+                ", albumDescription='" + albumDescription + '\'' +
+                ", albumLanguage='" + albumLanguage + '\'' +
+                ", albumCopyright='" + albumCopyright + '\'' +
+                '}';
     }
 }

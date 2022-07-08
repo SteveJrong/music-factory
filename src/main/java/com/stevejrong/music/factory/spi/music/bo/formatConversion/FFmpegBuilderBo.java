@@ -28,7 +28,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class FFmpegBuilderBo implements Serializable {
+public final class FFmpegBuilderBo implements Serializable {
     private static final long serialVersionUID = -4292881036916049008L;
 
     /**
@@ -145,5 +145,17 @@ public class FFmpegBuilderBo implements Serializable {
 
     public FFmpegBuilder getFfmpegBuilder() {
         return ffmpegBuilder;
+    }
+
+    @Override
+    public String toString() {
+        return "FFmpegBuilderBo{" +
+                "sourcePath='" + sourcePath + '\'' +
+                ", targetDirectory='" + targetDirectory + '\'' +
+                ", targetFileName='" + targetFileName + '\'' +
+                ", targetFileSuffix='" + targetFileSuffix + '\'' +
+                ", targetAudioCodecName='" + targetAudioCodecName + '\'' +
+                ", ffmpegBuilder=" + ffmpegBuilder +
+                '}';
     }
 }

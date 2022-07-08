@@ -8,4 +8,5 @@
     <import resource="application-config/module-application-bean.xml"/>
     <import resource="application-config/analysing-complements-application-bean.xml"/>
     <import resource="application-config/format-conversion-application-bean.xml"/>
+    <import resource="application-config/album-picture-compression-application-bean.xml"/>
 </beans>

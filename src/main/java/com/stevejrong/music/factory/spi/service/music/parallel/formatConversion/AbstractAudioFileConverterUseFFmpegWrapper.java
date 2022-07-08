@@ -16,12 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stevejrong.music.factory.spi.service.music.formatConversion;
+package com.stevejrong.music.factory.spi.service.music.parallel.formatConversion;
 
+import com.stevejrong.music.factory.common.constants.BaseConstants;
 import com.stevejrong.music.factory.common.util.AlbumPictureUtil;
 import com.stevejrong.music.factory.common.util.FFmpegUtil;
 import com.stevejrong.music.factory.common.util.LoggerUtil;
 import com.stevejrong.music.factory.spi.music.bo.formatConversion.FFmpegBuilderBo;
+import com.stevejrong.music.factory.spi.music.bo.parallel.formatConversion.AudioFileFormatConversionTaskBo;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,39 +60,51 @@ public abstract class AbstractAudioFileConverterUseFFmpegWrapper extends Abstrac
 
     @Override
     public FFmpegBuilder getFFmpegBuilder(FFmpegBuilderBo ffmpegBuilderBo) {
-        String targetPath = ffmpegBuilderBo.getTargetDirectory() + File.separatorChar + ffmpegBuilderBo.getTargetFileName()
+        String targetPath = ffmpegBuilderBo.getTargetDirectory() + File.separatorChar
+                + ffmpegBuilderBo.getTargetFileName()
                 + this.targetFileSuffix();
 
         return ffmpegBuilderBo.getFfmpegBuilder().addOutput(targetPath)
                 .disableVideo()
                 .setAudioCodec(ffmpegBuilderBo.getTargetAudioCodecName())
-                .setFormat(ffmpegBuilderBo.getTargetFileSuffix().replace(".", ""))
-                .setAudioQuality(10.0)
-                .addMetaTag("metadata_block_picture", AlbumPictureUtil.buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis(
+                .setFormat(ffmpegBuilderBo.getTargetFileSuffix().replace(BaseConstants.POINT_CHAR, BaseConstants.SPACE_STRING))
+                .setAudioQuality(BaseConstants.DEFAULT_AUDIO_QUALITY)
+                .addMetaTag(BaseConstants.METADATA_BLOCK_PICTURE, AlbumPictureUtil.buildBase64BlobMetadataStringOfAlbumPictureByOggVorbis(
                         AlbumPictureUtil.albumPictureCompressByAlbumPictureByteArray(
-                                500, 500,
-                                super.getAlbumPictureByteArray(ffmpegBuilderBo.getSourcePath()))))
+                                super.getSystemConfig().getAlbumPictureCompressionConfig().getCompressPixelValue(),
+                                super.getSystemConfig().getAlbumPictureCompressionConfig().getCompressPixelValue(),
+                                AlbumPictureUtil.getAlbumPictureByteArray(super.getSystemConfig(), ffmpegBuilderBo.getSourcePath()))))
                 .setStrict(FFmpegBuilder.Strict.NORMAL)
                 .done();
     }
 
     @Override
-    public boolean convert(String sourcePath, String targetDirectory, String targetFileName) {
-        FFmpegBuilder ffmpegBuilder = this.getFFmpegBuilder(this.buildFFmpegBuilderBo(sourcePath, targetDirectory, targetFileName));
+    public boolean execute(AudioFileFormatConversionTaskBo paramBo) {
+        String sourcePath = paramBo.getSourcePath();
+        String targetDirectory = paramBo.getTargetDirectory();
+        String targetFileName = paramBo.getSourceFileName();
+
+        FFmpegBuilderBo fFmpegBuilderBo = this.buildFFmpegBuilderBo(sourcePath, targetDirectory, targetFileName);
+        FFmpegBuilder ffmpegBuilder = this.getFFmpegBuilder(fFmpegBuilderBo);
 
         try {
             FFmpegUtil.convert(ffmpegBuilder);
 
-            LOGGER.info(LoggerUtil.builder().append("abstractAudioFileConverterUseFFmpegWrapper_convert", "成功地转换了音频文件")
-                    .append("result", true)
+            LOGGER.info(LoggerUtil.builder().append("abstractAudioFileConverterUseFFmpegWrapper_execute", "音频文件格式转换成功")
                     .append("sourcePath", sourcePath)
-                    .append("targetPath", targetDirectory + File.separatorChar + targetFileName + targetFileSuffix())
+                    .append("targetPath", targetDirectory + File.separatorChar + targetFileName + this.targetFileSuffix())
                     .toString());
 
             return true;
         } catch (Exception e) {
-            LOGGER.error(LoggerUtil.builder().append("abstractAudioFileConverterUseFFmpegWrapper_convert", "转换音频文件失败")
-                    .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+            LOGGER.error(LoggerUtil.builder().append("abstractAudioFileConverterUseFFmpegWrapper_convert", "音频文件格式转换异常")
+                    .append("exception", e).append("exceptionMsg", e.getMessage())
+                    .append("fFmpegBuilderBo", fFmpegBuilderBo)
+                    .append("sourcePath", sourcePath)
+                    .append("targetDirectory", targetDirectory)
+                    .append("targetFileName", targetFileName)
+                    .append("targetPath", targetDirectory + File.separatorChar + targetFileName + this.targetFileSuffix())
+                    .toString());
 
             return false;
         }

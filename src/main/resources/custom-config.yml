@@ -6,6 +6,9 @@ musicFactory:
     convert:
       convertedAudioFileDirectory: '< 使用前，请先根据功能编号，自定义转换格式后的音频文件存放目录！>' # 转换格式后的音频文件存放位置。
       formatConverterId: 1
+    albumPictureCompression:
+      albumPictureCompressedAudioFileDirectory: '< 使用前，请先根据功能编号，自定义专辑封面压缩后的音频文件存放目录！>' # 专辑封面压缩后的音频文件存放位置。
+      compressPixelValue: 500 # 音频文件专辑封面压缩的像素值（长宽像素值相同）。
   filters:
     analyzingInfoForAudioFile:
       songLyricsFilter: true # 设置是否以歌曲内嵌歌词的有无，作为文件是否需要进行元数据信息补全的依据。true - 验证歌曲内嵌歌词是否存在；false - 跳过验证歌曲内嵌歌词。

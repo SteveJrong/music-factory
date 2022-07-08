@@ -62,11 +62,12 @@ public final class FFmpegUtil {
             File ffmpegFile = FileUtil.getResourceFile(ffmpegPathsByOSTypeMaps.get(operatingSystemEnum), null);
             ffmpegFile.setExecutable(true, false);
 
+            String ffmpegFilePath = ffmpegFile.getPath();
             try {
-                FFMPEG = new FFmpeg(ffmpegFile.getPath());
+                FFMPEG = new FFmpeg(ffmpegFilePath);
             } catch (IOException e) {
                 LOGGER.error(LoggerUtil.builder().append("ffmpegUtil_getFfmpegInstanceByOSType")
-                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).append("ffmpegFilePath", ffmpegFilePath).toString());
             }
         }
 
@@ -89,11 +90,12 @@ public final class FFmpegUtil {
             File ffprobeFile = FileUtil.getResourceFile(ffprobePathsByOSTypeMaps.get(operatingSystemEnum), null);
             ffprobeFile.setExecutable(true);
 
+            String ffprobeFilePath = ffprobeFile.getPath();
             try {
-                FFPROBE = new FFprobe(ffprobeFile.getPath());
+                FFPROBE = new FFprobe(ffprobeFilePath);
             } catch (IOException e) {
                 LOGGER.error(LoggerUtil.builder().append("ffmpegUtil_getFfprobeInstanceByOSType")
-                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).append("ffprobeFilePath", ffprobeFilePath).toString());
             }
         }
 
@@ -148,7 +150,7 @@ public final class FFmpegUtil {
                 FFMPEG_PROBE_RESULT = ffprobeInstance.probe(sourceFilePath);
             } catch (IOException e) {
                 LOGGER.error(LoggerUtil.builder().append("ffmpegUtil_getFfmpegProbeResultInstance")
-                        .append("exception", e).append("exceptionMsg", e.getMessage()).toString());
+                        .append("exception", e).append("exceptionMsg", e.getMessage()).append("sourceFilePath", sourceFilePath).toString());
             }
         }
 

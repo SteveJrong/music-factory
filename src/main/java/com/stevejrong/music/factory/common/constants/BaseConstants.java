@@ -34,6 +34,8 @@ public final class BaseConstants {
     public static final String SEMICOLON_CHAR = ";";
     public static final String POINT_CHAR = ".";
     public static final String SPACE_CHAR = " ";
+    public static final String SPACE_STRING = "";
+    public static final String STRING_REPLACE_PREFIX_CHAR = "@";
 
     /**
      * 东八区时区
@@ -72,4 +74,14 @@ public final class BaseConstants {
     public static final String AUDIO_ENCODE_APE = "ape";
     public static final String AUDIO_ENCODE_WAV = "wav";
     public static final String AUDIO_ENCODE_OGG_VORBIS = "libvorbis";
+
+    /**
+     * FFMPEG
+     */
+    public static final String METADATA_BLOCK_PICTURE = "metadata_block_picture";
+    public static final double DEFAULT_AUDIO_QUALITY = 10.0;
+
+    public static final String FFMPEG_PATH = "ffmpegPath";
+    public static final String SOURCE_FILE_PATH = "sourceFilePath";
+    public static final String TARGET_FILE_PATH = "targetFilePath";
 }

@@ -25,7 +25,7 @@ import java.util.List;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_1DataVo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_1DataVo implements Serializable {
     private static final long serialVersionUID = 8976568556104769216L;
 
     private List<KuGouMusicPartnerSongInfoFilter_1InfoVo> info;

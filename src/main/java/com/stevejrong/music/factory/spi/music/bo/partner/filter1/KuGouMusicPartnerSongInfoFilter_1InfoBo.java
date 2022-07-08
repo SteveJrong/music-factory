@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class KuGouMusicPartnerSongInfoFilter_1InfoBo implements Serializable {
+public final class KuGouMusicPartnerSongInfoFilter_1InfoBo implements Serializable {
     private static final long serialVersionUID = 3925372464535566043L;
 
     /**
@@ -90,5 +90,16 @@ public class KuGouMusicPartnerSongInfoFilter_1InfoBo implements Serializable {
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    @Override
+    public String toString() {
+        return "KuGouMusicPartnerSongInfoFilter_1InfoBo{" +
+                "album_id='" + album_id + '\'' +
+                ", album_audio_id='" + album_audio_id + '\'' +
+                ", songname='" + songname + '\'' +
+                ", singername='" + singername + '\'' +
+                ", hash='" + hash + '\'' +
+                '}';
     }
 }

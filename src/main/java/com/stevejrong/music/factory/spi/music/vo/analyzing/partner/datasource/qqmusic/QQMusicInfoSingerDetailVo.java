@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class QQMusicInfoSingerDetailVo implements Serializable {
+public final class QQMusicInfoSingerDetailVo implements Serializable {
     private static final long serialVersionUID = -5853483927704623621L;
 
     /**
@@ -45,5 +45,12 @@ public class QQMusicInfoSingerDetailVo implements Serializable {
 
     public QQMusicInfoSingerDetailVo(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "QQMusicInfoSingerDetailVo{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

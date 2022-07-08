@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @author Steve Jrong
  * @since 1.0
  */
-public class FiltratedResultBo implements Serializable {
+public final class FiltratedResultBo implements Serializable {
     private static final long serialVersionUID = -1591136590926715426L;
 
     private Class<? extends AbstractFilter> filterClass;
